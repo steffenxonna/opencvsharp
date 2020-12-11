@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using OpenCvSharp.Util;
 
@@ -649,7 +650,7 @@ namespace OpenCvSharp
 
 #if LANG_JP
         /// <summary>
-        /// 画像データ(JPEG等の画像をメモリに展開したもの)からMatを生成する (cv::decode)
+        /// 画像データ(JPEG等の画像をメモリに展開したもの)からMatを生成する (cv::imdecode)
         /// </summary>
         /// <param name="imageBytes"></param>
         /// <param name="mode"></param>
@@ -669,9 +670,20 @@ namespace OpenCvSharp
             return Cv2.ImDecode(imageBytes, mode);
         }
 
+        /// <summary>
+        /// Reads image from the specified buffer in memory.
+        /// </summary>
+        /// <param name="span">The input slice of bytes.</param>
+        /// <param name="mode">The same flags as in imread</param>
+        /// <returns></returns>
+        public static Mat ImDecode(ReadOnlySpan<byte> span, ImreadModes mode = ImreadModes.Color)
+        {
+            return Cv2.ImDecode(span, mode);
+        }
+
 #if LANG_JP
         /// <summary>
-        /// 画像データ(JPEG等の画像をメモリに展開したもの)からMatを生成する (cv::decode)
+        /// 画像データ(JPEG等の画像をメモリに展開したもの)からMatを生成する (cv::imdecode)
         /// </summary>
         /// <param name="imageBytes"></param>
         /// <param name="mode"></param>
@@ -687,6 +699,17 @@ namespace OpenCvSharp
         public static Mat FromImageData(byte[] imageBytes, ImreadModes mode = ImreadModes.Color)
         {
             return ImDecode(imageBytes, mode);
+        }
+
+        /// <summary>
+        /// Reads image from the specified buffer in memory.
+        /// </summary>
+        /// <param name="span">The input slice of bytes.</param>
+        /// <param name="mode">The same flags as in imread</param>
+        /// <returns></returns>
+        public static Mat FromImageData(ReadOnlySpan<byte> span, ImreadModes mode = ImreadModes.Color)
+        {
+            return Cv2.ImDecode(span, mode);
         }
 
         #endregion
@@ -1549,6 +1572,7 @@ namespace OpenCvSharp
             }
         }
 
+#if NETCOREAPP3_1 || NETSTANDARD2_1
         /// <summary>
         /// Extracts a rectangular submatrix.
         /// </summary>
@@ -1557,7 +1581,36 @@ namespace OpenCvSharp
         /// <param name="colRange">Start and end column of the extracted submatrix. 
         /// The upper boundary is not included. To select all the columns, use Range.All().</param>
         /// <returns></returns>
-        public Mat this[Range rowRange, Range colRange]
+        public Mat this[System.Range rowRange, System.Range colRange]
+        {
+            get => SubMat(rowRange, colRange);
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value));
+                value.ThrowIfDisposed();
+                //if (Type() != value.Type())
+                //    throw new ArgumentException("Mat type mismatch");
+                if (Dims != value.Dims)
+                    throw new ArgumentException("Dimension mismatch");
+
+                var sub = SubMat(rowRange, colRange);
+                if (sub.Size() != value.Size())
+                    throw new ArgumentException("Specified ROI != mat.Size()");
+                value.CopyTo(sub);
+            }
+        }
+#endif
+
+        /// <summary>
+        /// Extracts a rectangular submatrix.
+        /// </summary>
+        /// <param name="rowRange">Start and end row of the extracted submatrix. The upper boundary is not included. 
+        /// To select all the rows, use Range.All().</param>
+        /// <param name="colRange">Start and end column of the extracted submatrix. 
+        /// The upper boundary is not included. To select all the columns, use Range.All().</param>
+        /// <returns></returns>
+        public Mat this[OpenCvSharp.Range rowRange, OpenCvSharp.Range colRange]
         {
             get => SubMat(rowRange, colRange);
             set
@@ -1668,11 +1721,24 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public Mat ColRange(Range range)
+        public Mat ColRange(OpenCvSharp.Range range)
         {
             return ColRange(range.Start, range.End);
         }
-        
+
+#if NETCOREAPP3_1 || NETSTANDARD2_1
+        /// <summary>
+        /// Creates a matrix header for the specified column span.
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        public Mat ColRange(System.Range range)
+        {
+            var (colStart, colLength) = range.GetOffsetAndLength(Cols);
+            return ColRange(colStart, colStart + colLength);
+        }
+#endif
+
         /// <summary>
         /// Creates a matrix header for the specified matrix row.
         /// </summary>
@@ -1687,7 +1753,7 @@ namespace OpenCvSharp
         }
 
         /// <summary>
-        /// 
+        /// Creates a matrix header for the specified row span.
         /// </summary>
         /// <param name="startRow"></param>
         /// <param name="endRow"></param>
@@ -1702,14 +1768,27 @@ namespace OpenCvSharp
         }
 
         /// <summary>
-        /// 
+        ///  Creates a matrix header for the specified row span.
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public Mat RowRange(Range range)
+        public Mat RowRange(OpenCvSharp.Range range)
         {
             return RowRange(range.Start, range.End);
         }
+
+#if NETCOREAPP3_1 || NETSTANDARD2_1
+        /// <summary>
+        ///  Creates a matrix header for the specified row span.
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        public Mat RowRange(System.Range range)
+        {
+            var (rowStart, rowLength) = range.GetOffsetAndLength(Rows);
+            return RowRange(rowStart, rowStart + rowLength);
+        }
+#endif
 
         /// <summary>
         /// Single-column matrix that forms a diagonal matrix or index of the diagonal, with the following values:
@@ -3174,10 +3253,27 @@ namespace OpenCvSharp
         /// <param name="colRange">Start and end column of the extracted submatrix. The upper boundary is not included.
         /// To select all the columns, use Range::all().</param>
         /// <returns></returns>
-        public Mat SubMat(Range rowRange, Range colRange)
+        public Mat SubMat(OpenCvSharp.Range rowRange, OpenCvSharp.Range colRange)
         {
             return SubMat(rowRange.Start, rowRange.End, colRange.Start, colRange.End);
         }
+
+#if NETCOREAPP3_1 || NETSTANDARD2_1
+        /// <summary>
+        /// Extracts a rectangular submatrix.
+        /// </summary>
+        /// <param name="rowRange">Start and end row of the extracted submatrix. The upper boundary is not included.
+        /// To select all the rows, use Range::all().</param>
+        /// <param name="colRange">Start and end column of the extracted submatrix. The upper boundary is not included.
+        /// To select all the columns, use Range::all().</param>
+        /// <returns></returns>
+        public Mat SubMat(System.Range rowRange, System.Range colRange)
+        {
+            var (rowStart, rowLength) = rowRange.GetOffsetAndLength(Rows);
+            var (colStart, colLength) = colRange.GetOffsetAndLength(Cols);
+            return SubMat(rowStart, rowStart + rowLength, colStart, colStart + colLength);
+        }
+#endif
 
         /// <summary>
         /// Extracts a rectangular submatrix.
@@ -3681,11 +3777,11 @@ namespace OpenCvSharp
         #region EmptyClone
 
 #if LANG_JP
-/// <summary>
-/// このMatと同じサイズ・ビット深度・チャネル数を持つ
-/// Matオブジェクトを新たに作成し、返す
-/// </summary>
-/// <returns>コピーされた画像</returns>
+        /// <summary>
+        /// このMatと同じサイズ・ビット深度・チャネル数を持つ
+        /// Matオブジェクトを新たに作成し、返す
+        /// </summary>
+        /// <returns>コピーされた画像</returns>
 #else
         /// <summary>
         /// Makes a Mat that have the same size, depth and channels as this image
@@ -3945,7 +4041,8 @@ namespace OpenCvSharp
         /// <returns>A value to the specified array element.</returns>
         public T Get<T>(int i0) where T : struct
         {
-            return new Indexer<T>(this)[i0];
+            var p = Ptr(i0);
+            return Marshal.PtrToStructure<T>(p);
         }
 
         /// <summary>
@@ -3957,7 +4054,8 @@ namespace OpenCvSharp
         /// <returns>A value to the specified array element.</returns>
         public T Get<T>(int i0, int i1) where T : struct
         {
-            return new Indexer<T>(this)[i0, i1];
+            var p = Ptr(i0, i1);
+            return Marshal.PtrToStructure<T>(p);
         }
 
         /// <summary>
@@ -3970,7 +4068,8 @@ namespace OpenCvSharp
         /// <returns>A value to the specified array element.</returns>
         public T Get<T>(int i0, int i1, int i2) where T : struct
         {
-            return new Indexer<T>(this)[i0, i1, i2];
+            var p = Ptr(i0, i1, i2);
+            return Marshal.PtrToStructure<T>(p);
         }
 
         /// <summary>
@@ -3981,7 +4080,8 @@ namespace OpenCvSharp
         /// <returns>A value to the specified array element.</returns>
         public T Get<T>(params int[] idx) where T : struct
         {
-            return new Indexer<T>(this)[idx];
+            var p = Ptr(idx);
+            return Marshal.PtrToStructure<T>(p);
         }
 
         /// <summary>
@@ -3990,9 +4090,10 @@ namespace OpenCvSharp
         /// <typeparam name="T"></typeparam>
         /// <param name="i0">Index along the dimension 0</param>
         /// <returns>A value to the specified array element.</returns>
-        public T At<T>(int i0) where T : struct
+        public unsafe ref T At<T>(int i0) where T : unmanaged
         {
-            return new Indexer<T>(this)[i0];
+            var p = Ptr(i0);
+            return ref Unsafe.AsRef<T>(p.ToPointer());
         }
 
         /// <summary>
@@ -4002,9 +4103,10 @@ namespace OpenCvSharp
         /// <param name="i0">Index along the dimension 0</param>
         /// <param name="i1">Index along the dimension 1</param>
         /// <returns>A value to the specified array element.</returns>
-        public T At<T>(int i0, int i1) where T : struct
+        public unsafe ref T At<T>(int i0, int i1) where T : unmanaged
         {
-            return new Indexer<T>(this)[i0, i1];
+            var p = Ptr(i0, i1);
+            return ref Unsafe.AsRef<T>(p.ToPointer());
         }
 
         /// <summary>
@@ -4015,9 +4117,10 @@ namespace OpenCvSharp
         /// <param name="i1">Index along the dimension 1</param>
         /// <param name="i2">Index along the dimension 2</param>
         /// <returns>A value to the specified array element.</returns>
-        public T At<T>(int i0, int i1, int i2) where T : struct
+        public unsafe ref T At<T>(int i0, int i1, int i2) where T : unmanaged
         {
-            return new Indexer<T>(this)[i0, i1, i2];
+            var p = Ptr(i0, i1, i2);
+            return ref Unsafe.AsRef<T>(p.ToPointer());
         }
 
         /// <summary>
@@ -4026,11 +4129,11 @@ namespace OpenCvSharp
         /// <typeparam name="T"></typeparam>
         /// <param name="idx">Array of Mat::dims indices.</param>
         /// <returns>A value to the specified array element.</returns>
-        public T At<T>(params int[] idx) where T : struct
+        public unsafe ref T At<T>(params int[] idx) where T : unmanaged
         {
-            return new Indexer<T>(this)[idx];
+            var p = Ptr(idx);
+            return ref Unsafe.AsRef<T>(p.ToPointer());
         }
-
 
         /// <summary>
         /// Set a value to the specified array element.
@@ -4040,7 +4143,8 @@ namespace OpenCvSharp
         /// <param name="value"></param>
         public void Set<T>(int i0, T value) where T : struct
         {
-            (new Indexer<T>(this))[i0] = value;
+            var p = Ptr(i0);
+            Marshal.StructureToPtr(value, p, false);
         }
 
         /// <summary>
@@ -4052,7 +4156,8 @@ namespace OpenCvSharp
         /// <param name="value"></param>
         public void Set<T>(int i0, int i1, T value) where T : struct
         {
-            (new Indexer<T>(this))[i0, i1] = value;
+            var p = Ptr(i0, i1);
+            Marshal.StructureToPtr(value, p, false);
         }
 
         /// <summary>
@@ -4065,7 +4170,8 @@ namespace OpenCvSharp
         /// <param name="value"></param>
         public void Set<T>(int i0, int i1, int i2, T value) where T : struct
         {
-            (new Indexer<T>(this)[i0, i1, i2]) = value;
+            var p = Ptr(i0, i1, i2);
+            Marshal.StructureToPtr(value, p, false);
         }
 
         /// <summary>
@@ -4076,13 +4182,12 @@ namespace OpenCvSharp
         /// <param name="value"></param>
         public void Set<T>(int[] idx, T value) where T : struct
         {
-            (new Indexer<T>(this)[idx]) = value;
+            var p = Ptr(idx);
+            Marshal.StructureToPtr(value, p, false);
         }
 
         #endregion
-
-
-
+        
         #region Get/SetArray
 
         private static readonly Dictionary<Type, int> dataDimensionMap = new Dictionary<Type, int>
@@ -4210,8 +4315,21 @@ namespace OpenCvSharp
         /// <summary>
         /// Get the data of this matrix as array
         /// </summary>
-        /// <param name="data">Byte array to be copied</param>
+        /// <param name="data">Primitive or Vec array to be copied</param>
         /// <returns>Length of copied bytes</returns>
+        /// <example>
+        /// using var m1 = new Mat(1, 1, MatType.CV_8UC1);
+        /// m1.GetArray(out byte[] array);
+        ///
+        /// using var m2 = new Mat(1, 1, MatType.CV_32SC1);
+        /// m2.GetArray(out int[] array);
+        ///
+        /// using var m3 = new Mat(1, 1, MatType.CV_8UC(6));
+        /// m3.GetArray(out Vec6b[] array);
+        ///
+        /// using var m4 = new Mat(1, 1, MatType.CV_64FC4);
+        /// m4.GetArray(out Vec4d[] array);
+        /// </example>
         [Pure]
         public bool GetArray<T>(out T[] data)
             where T : unmanaged
@@ -4235,8 +4353,21 @@ namespace OpenCvSharp
         /// <summary>
         /// Get the data of this matrix as array
         /// </summary>
-        /// <param name="data">Byte array to be copied</param>
+        /// <param name="data">Primitive or Vec array to be copied</param>
         /// <returns>Length of copied bytes</returns>
+        /// <example>
+        /// using var m1 = new Mat(1, 1, MatType.CV_8UC1);
+        /// m1.GetRectangularArray(out byte[,] array);
+        ///
+        /// using var m2 = new Mat(1, 1, MatType.CV_32SC1);
+        /// m2.GetRectangularArray(out int[,] array);
+        ///
+        /// using var m3 = new Mat(1, 1, MatType.CV_8UC(6));
+        /// m3.GetRectangularArray(out Vec6b[,] array);
+        ///
+        /// using var m4 = new Mat(1, 1, MatType.CV_64FC4);
+        /// m4.GetRectangularArray(out Vec4d[,] array);
+        /// </example>
         [Pure]
         public bool GetRectangularArray<T>(out T[,] data)
             where T : unmanaged
@@ -4260,7 +4391,7 @@ namespace OpenCvSharp
         /// <summary>
         /// Set the specified array data to this matrix
         /// </summary>
-        /// <param name="data">Byte array to be copied</param>
+        /// <param name="data">Primitive or Vec array to be copied</param>
         /// <returns>Length of copied bytes</returns>
         public bool SetArray<T>(T[] data)
             where T : unmanaged
@@ -4282,7 +4413,7 @@ namespace OpenCvSharp
         /// <summary>
         /// Set the specified array data to this matrix
         /// </summary>
-        /// <param name="data">Byte array to be copied</param>
+        /// <param name="data">Primitive or Vec array to be copied</param>
         /// <returns>Length of copied bytes</returns>
         public bool SetRectangularArray<T>(T[,] data)
             where T : unmanaged
@@ -4302,7 +4433,7 @@ namespace OpenCvSharp
         }
 
         #endregion
-        
+
         #region To*
 
         /// <summary>

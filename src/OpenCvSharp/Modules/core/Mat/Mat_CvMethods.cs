@@ -294,10 +294,10 @@ namespace OpenCvSharp
         }
 
         /// <summary>
-        /// set mask elements for those array elements which are within the element-specific bounding box (dst = lowerb &lt;= src &amp;&amp; src &lt; upperb)
+        /// Checks if array elements lie between the elements of two other arrays.
         /// </summary>
-        /// <param name="lowerb">The inclusive lower boundary array of the same size and type as src</param>
-        /// <param name="upperb">The exclusive upper boundary array of the same size and type as src</param>
+        /// <param name="lowerb">inclusive lower boundary array or a scalar.</param>
+        /// <param name="upperb">inclusive upper boundary array or a scalar.</param>
         /// <returns>The destination array, will have the same size as src and CV_8U type</returns>
         public Mat InRange(InputArray lowerb, InputArray upperb)
         {
@@ -306,11 +306,12 @@ namespace OpenCvSharp
             return dst;
         }
 
+
         /// <summary>
-        /// set mask elements for those array elements which are within the element-specific bounding box (dst = lowerb &lt;= src &amp;&amp; src &lt; upperb)
+        /// Checks if array elements lie between the elements of two other arrays.
         /// </summary>
-        /// <param name="lowerb">The inclusive lower boundary array of the same size and type as src</param>
-        /// <param name="upperb">The exclusive upper boundary array of the same size and type as src</param>
+        /// <param name="lowerb">inclusive lower boundary array or a scalar.</param>
+        /// <param name="upperb">inclusive upper boundary array or a scalar.</param>
         /// <returns>The destination array, will have the same size as src and CV_8U type</returns>
         public Mat InRange(Scalar lowerb, Scalar upperb)
         {
@@ -1457,7 +1458,7 @@ namespace OpenCvSharp
         /// Finds circles in a grayscale image using a Hough transform.
         /// The input matrix must be 8-bit, single-channel and grayscale.
         /// </summary>
-        /// <param name="method">Currently, the only implemented method is HoughCirclesMethod.Gradient</param>
+        /// <param name="method">The available methods are HoughMethods.Gradient and HoughMethods.GradientAlt</param>
         /// <param name="dp">The inverse ratio of the accumulator resolution to the image resolution. </param>
         /// <param name="minDist">Minimum distance between the centers of the detected circles. </param>
         /// <param name="param1">The first method-specific parameter. [By default this is 100]</param>
@@ -1493,7 +1494,7 @@ namespace OpenCvSharp
         /// <param name="borderValue">The border value in case of a constant border. The default value has a special meaning. [By default this is CvCpp.MorphologyDefaultBorderValue()]</param>
         /// <returns>The destination image. It will have the same size and the same type as src</returns>
 #endif
-        public Mat Dilate(InputArray element, Point? anchor = null, int iterations = 1, 
+        public Mat Dilate(InputArray? element, Point? anchor = null, int iterations = 1, 
             BorderTypes borderType = BorderTypes.Constant, Scalar? borderValue = null)
         {
             var dst = new Mat();
@@ -1522,7 +1523,7 @@ namespace OpenCvSharp
         /// <param name="borderValue">The border value in case of a constant border. The default value has a special meaning. [By default this is CvCpp.MorphologyDefaultBorderValue()]</param>
         /// <returns>The destination image. It will have the same size and the same type as src</returns>
 #endif
-        public Mat Erode(InputArray element, Point? anchor = null, int iterations = 1, 
+        public Mat Erode(InputArray? element, Point? anchor = null, int iterations = 1, 
             BorderTypes borderType = BorderTypes.Constant, Scalar? borderValue = null)
         {
             var dst = new Mat();
@@ -1553,7 +1554,7 @@ namespace OpenCvSharp
         /// <param name="borderValue">The border value in case of a constant border. The default value has a special meaning. [By default this is CvCpp.MorphologyDefaultBorderValue()]</param>
         /// <returns>Destination image. It will have the same size and the same type as src</returns>
 #endif
-        public Mat MorphologyEx(MorphTypes op, InputArray element,
+        public Mat MorphologyEx(MorphTypes op, InputArray? element,
             Point? anchor = null, int iterations = 1, BorderTypes borderType = BorderTypes.Constant,
             Scalar? borderValue = null)
         {
@@ -2009,12 +2010,13 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="templ">Searched template; must be not greater than the source image and have the same data type</param>
         /// <param name="method">Specifies the comparison method</param>
+        /// <param name="mask">Mask of searched template. It must have the same datatype and size with templ. It is not set by default.</param>
         /// <returns>A map of comparison results; will be single-channel 32-bit floating-point. 
         /// If image is WxH and templ is wxh then result will be (W-w+1) x (H-h+1).</returns>
-        public Mat MatchTemplate(InputArray templ, TemplateMatchModes method)
+        public Mat MatchTemplate(InputArray templ, TemplateMatchModes method, InputArray? mask = null)
         {
             var dst = new Mat();
-            Cv2.MatchTemplate(this, templ, dst, method);
+            Cv2.MatchTemplate(this, templ, dst, method, mask);
             return dst;
         }
 

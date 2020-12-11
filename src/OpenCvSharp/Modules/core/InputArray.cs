@@ -9,7 +9,7 @@ using OpenCvSharp.Cuda;
 namespace OpenCvSharp
 {
     /// <summary>
-    /// Proxy datatype for passing Mat's and vector&lt;&gt;'s as input parameters
+    /// Proxy data type for passing Mat's and vector&lt;&gt;'s as input parameters
     /// </summary>
     public class InputArray : DisposableCvObject
     {
@@ -19,6 +19,7 @@ namespace OpenCvSharp
             Mat,
             Scalar,
             Double,
+            Vec
         }
 
         private object? obj;
@@ -35,7 +36,7 @@ namespace OpenCvSharp
         #region Init & Disposal
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         /// <param name="ptr"></param>
         internal InputArray(IntPtr ptr)
@@ -46,10 +47,11 @@ namespace OpenCvSharp
         }
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         /// <param name="mat"></param>
-        internal InputArray(Mat mat)
+        // ReSharper disable once SuggestBaseTypeForParameter
+        internal InputArray(Mat? mat)
         {
             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (mat == null)
@@ -63,10 +65,11 @@ namespace OpenCvSharp
         }
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         /// <param name="expr"></param>
-        internal InputArray(MatExpr expr)
+        // ReSharper disable once SuggestBaseTypeForParameter
+        internal InputArray(MatExpr? expr)
         {
             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (expr == null)
@@ -79,7 +82,7 @@ namespace OpenCvSharp
         }
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         /// <param name="val"></param>
         internal InputArray(Scalar val)
@@ -90,7 +93,7 @@ namespace OpenCvSharp
         }
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         /// <param name="val"></param>
         internal InputArray(double val)
@@ -101,6 +104,120 @@ namespace OpenCvSharp
                 NativeMethods.core_InputArray_new_byDouble(handle, out ptr));
             handleKind = HandleKind.Double;
         }
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="vec"></param>
+        internal InputArray(byte[] vec)
+        {
+            if (vec == null) 
+                throw new ArgumentNullException(nameof(vec));
+            if (vec.Length == 0) 
+                throw new ArgumentException("Empty array.", nameof(vec));
+
+            var gch = GCHandle.Alloc(vec, GCHandleType.Pinned);
+            handle = GCHandle.ToIntPtr(gch);
+
+            NativeMethods.HandleException(
+                NativeMethods.core_InputArray_new_byVecb(gch.AddrOfPinnedObject(), vec.Length, out ptr));
+            handleKind = HandleKind.Vec;
+        }
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="vec"></param>
+        internal InputArray(short[] vec)
+        {
+            if (vec == null) 
+                throw new ArgumentNullException(nameof(vec));
+            if (vec.Length == 0) 
+                throw new ArgumentException("Empty array.", nameof(vec));
+
+            var gch = GCHandle.Alloc(vec, GCHandleType.Pinned);
+            handle = GCHandle.ToIntPtr(gch);
+
+            NativeMethods.HandleException(
+                NativeMethods.core_InputArray_new_byVecs(gch.AddrOfPinnedObject(), vec.Length, out ptr));
+            handleKind = HandleKind.Vec;
+        }
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="vec"></param>
+        internal InputArray(ushort[] vec)
+        {
+            if (vec == null) 
+                throw new ArgumentNullException(nameof(vec));
+            if (vec.Length == 0) 
+                throw new ArgumentException("Empty array.", nameof(vec));
+
+            var gch = GCHandle.Alloc(vec, GCHandleType.Pinned);
+            handle = GCHandle.ToIntPtr(gch);
+
+            NativeMethods.HandleException(
+                NativeMethods.core_InputArray_new_byVecw(gch.AddrOfPinnedObject(), vec.Length, out ptr));
+            handleKind = HandleKind.Vec;
+        }
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="vec"></param>
+        internal InputArray(int[] vec)
+        {
+            if (vec == null) 
+                throw new ArgumentNullException(nameof(vec));
+            if (vec.Length == 0) 
+                throw new ArgumentException("Empty array.", nameof(vec));
+
+            var gch = GCHandle.Alloc(vec, GCHandleType.Pinned);
+            handle = GCHandle.ToIntPtr(gch);
+
+            NativeMethods.HandleException(
+                NativeMethods.core_InputArray_new_byVeci(gch.AddrOfPinnedObject(), vec.Length, out ptr));
+            handleKind = HandleKind.Vec;
+        }
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="vec"></param>
+        internal InputArray(float[] vec)
+        {
+            if (vec == null) 
+                throw new ArgumentNullException(nameof(vec));
+            if (vec.Length == 0) 
+                throw new ArgumentException("Empty array.", nameof(vec));
+
+            var gch = GCHandle.Alloc(vec, GCHandleType.Pinned);
+            handle = GCHandle.ToIntPtr(gch);
+
+            NativeMethods.HandleException(
+                NativeMethods.core_InputArray_new_byVecf(gch.AddrOfPinnedObject(), vec.Length, out ptr));
+            handleKind = HandleKind.Vec;
+        }
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="vec"></param>
+        internal InputArray(double[] vec)
+        {
+            if (vec == null) 
+                throw new ArgumentNullException(nameof(vec));
+            if (vec.Length == 0) 
+                throw new ArgumentException("Empty array.", nameof(vec));
+
+            var gch = GCHandle.Alloc(vec, GCHandleType.Pinned);
+            handle = GCHandle.ToIntPtr(gch);
+
+            NativeMethods.HandleException(
+                NativeMethods.core_InputArray_new_byVecd(gch.AddrOfPinnedObject(), vec.Length, out ptr));
+            handleKind = HandleKind.Vec;
+        }
 
         /// <summary>
         /// 
@@ -110,6 +227,7 @@ namespace OpenCvSharp
         {
             if (mat == null)
                 throw new ArgumentNullException(nameof(mat));
+
             using (var matVector = new VectorOfMat(mat))
             {
                 NativeMethods.HandleException(
@@ -141,6 +259,11 @@ namespace OpenCvSharp
                     break;
                 case HandleKind.Double:
                     Marshal.FreeHGlobal(handle);
+                    goto default;
+                case HandleKind.Vec:
+                    var gch = GCHandle.FromIntPtr(handle);
+                    if (gch.IsAllocated)
+                        gch.Free();
                     goto default;
                 default:
                     NativeMethods.HandleException(
@@ -308,6 +431,46 @@ namespace OpenCvSharp
                 throw new ArgumentException("array.GetLength(1) == 0");
             var mat = new Mat(rows, cols, type, array);
             return new InputArray(mat);
+        }
+
+        /// <summary>
+        /// Creates a proxy class of the specified Vec*b
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        public static InputArray Create(IVec vec)
+        {
+            if (vec == null)
+                throw new ArgumentNullException(nameof(vec));
+
+            return vec switch
+            {
+                Vec2b v => new InputArray(new[] { v.Item0, v.Item1 }),
+                Vec3b v => new InputArray(new[] { v.Item0, v.Item1, v.Item2 }),
+                Vec4b v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3 }),
+                Vec6b v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3, v.Item4, v.Item5 }),
+                Vec2s v => new InputArray(new[] { v.Item0, v.Item1 }),
+                Vec3s v => new InputArray(new[] { v.Item0, v.Item1, v.Item2 }),
+                Vec4s v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3 }),
+                Vec6s v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3, v.Item4, v.Item5 }),
+                Vec2w v => new InputArray(new[] { v.Item0, v.Item1 }),
+                Vec3w v => new InputArray(new[] { v.Item0, v.Item1, v.Item2 }),
+                Vec4w v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3 }),
+                Vec6w v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3, v.Item4, v.Item5 }),
+                Vec2i v => new InputArray(new[] { v.Item0, v.Item1 }),
+                Vec3i v => new InputArray(new[] { v.Item0, v.Item1, v.Item2 }),
+                Vec4i v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3 }),
+                Vec6i v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3, v.Item4, v.Item5 }),
+                Vec2f v => new InputArray(new[] { v.Item0, v.Item1 }),
+                Vec3f v => new InputArray(new[] { v.Item0, v.Item1, v.Item2 }),
+                Vec4f v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3 }),
+                Vec6f v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3, v.Item4, v.Item5 }),
+                Vec2d v => new InputArray(new[] { v.Item0, v.Item1}),
+                Vec3d v => new InputArray(new[] { v.Item0, v.Item1, v.Item2}),
+                Vec4d v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3}),
+                Vec6d v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3, v.Item4, v.Item5}),
+                _ => throw new ArgumentException($"Not supported type: '{vec.GetType().Name}'", nameof(vec))
+            };
         }
 
         /// <summary>
@@ -513,6 +676,33 @@ namespace OpenCvSharp
         {
             return Create(mats);
         }
+        
+#pragma warning disable 1591
+        public static implicit operator InputArray(Vec2b vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec3b vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec4b vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec6b vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec2s vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec3s vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec4s vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec6s vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec2w vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec3w vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec4w vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec6w vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec2i vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec3i vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec4i vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec6i vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec2f vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec3f vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec4f vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec6f vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec2d vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec3d vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec4d vec) { return Create(vec); }
+        public static implicit operator InputArray(Vec6d vec) { return Create(vec); }
+#pragma warning restore 1591
 
         #endregion
 

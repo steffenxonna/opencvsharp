@@ -21,9 +21,7 @@ namespace OpenCvSharp.Dnn
     /// LayerId can store either layer name or layer id.
     /// This class supports reference counting of its instances, i.e.copies point to the same instance.
     /// </remarks>
-#pragma warning disable CA1724
     public class Net : DisposableCvObject
-#pragma warning restore CA1724
     {
         #region Init & Disposal
 
@@ -56,20 +54,60 @@ namespace OpenCvSharp.Dnn
         }
 
         /// <summary>
+        /// Create a network from Intel's Model Optimizer intermediate representation (IR).
+        /// Networks imported from Intel's Model Optimizer are launched in Intel's Inference Engine backend.
+        /// </summary>
+        /// <param name="xml">XML configuration file with network's topology.</param>
+        /// <param name="bin">Binary file with trained weights.</param>
+        /// <returns></returns>
+        public static Net? ReadFromModelOptimizer(string xml, string bin)
+        {
+            if (xml == null) 
+                throw new ArgumentNullException(nameof(xml));
+            if (bin == null) 
+                throw new ArgumentNullException(nameof(bin));
+
+            NativeMethods.HandleException(
+                NativeMethods.dnn_Net_readFromModelOptimizer(xml, bin, out var p));
+            return (p == IntPtr.Zero) ? null : new Net(p);
+        }
+
+        /// <summary>
         /// Reads a network model stored in Darknet (https://pjreddie.com/darknet/) model files.
         /// </summary>
         /// <param name="cfgFile">path to the .cfg file with text description of the network architecture.</param>
         /// <param name="darknetModel">path to the .weights file with learned network.</param>
         /// <returns>Network object that ready to do forward, throw an exception in failure cases.</returns>
         /// <remarks>This is shortcut consisting from DarknetImporter and Net::populateNet calls.</remarks>
-        public static Net ReadNetFromDarknet(string cfgFile, string? darknetModel = null)
+        public static Net? ReadNetFromDarknet(string cfgFile, string? darknetModel = null)
         {
             if (cfgFile == null)
                 throw new ArgumentNullException(nameof(cfgFile));
 
             NativeMethods.HandleException(
                 NativeMethods.dnn_readNetFromDarknet(cfgFile, darknetModel, out var p));
-            return new Net(p);
+            return (p == IntPtr.Zero) ? null : new Net(p);
+        }
+
+        /// <summary>
+        /// Reads a network model stored in Caffe model files from memory.
+        /// </summary>
+        /// <param name="cfgFileData"></param>
+        /// <param name="darknetModelData"></param>
+        /// <returns></returns>
+        /// <remarks>This is shortcut consisting from createCaffeImporter and Net::populateNet calls.</remarks>
+        public static Net? ReadNetFromDarknet(byte[] cfgFileData, byte[] darknetModelData = null)
+        {
+            if (cfgFileData == null)
+                throw new ArgumentNullException(nameof(cfgFileData));
+
+            var configLen = darknetModelData == null ? 0 : darknetModelData.Length;
+
+            NativeMethods.HandleException(
+                NativeMethods.dnn_readNetFromDarknet(cfgFileData, new IntPtr(cfgFileData.Length),
+                    darknetModelData, new IntPtr(darknetModelData.Length),
+                    out var p));
+            return (p == IntPtr.Zero) ? null : new Net(p);
         }
 
         /// <summary>
@@ -79,14 +117,35 @@ namespace OpenCvSharp.Dnn
         /// <param name="caffeModel"></param>
         /// <returns></returns>
         /// <remarks>This is shortcut consisting from createCaffeImporter and Net::populateNet calls.</remarks>
-        public static Net ReadNetFromCaffe(string prototxt, string? caffeModel = null)
+        public static Net? ReadNetFromCaffe(string prototxt, string? caffeModel = null)
         {
             if (prototxt == null)
                 throw new ArgumentNullException(nameof(prototxt));
 
             NativeMethods.HandleException(
                 NativeMethods.dnn_readNetFromCaffe(prototxt, caffeModel, out var p));
-            return new Net(p);
+            return (p == IntPtr.Zero) ? null : new Net(p);
+        }
+
+        /// <summary>
+        /// Reads a network model stored in Caffe model files from memory.
+        /// </summary>
+        /// <param name="prototxtData"></param>
+        /// <param name="caffeModelData"></param>
+        /// <returns></returns>
+        /// <remarks>This is shortcut consisting from createCaffeImporter and Net::populateNet calls.</remarks>
+        public static Net? ReadNetFromCaffe(byte[] prototxtData, byte[] caffeModelData = null)
+        {
+            if (prototxtData == null)
+                throw new ArgumentNullException(nameof(prototxtData));
+
+            var configLen = caffeModelData == null ? 0 : caffeModelData.Length;
+
+            NativeMethods.HandleException(
+                NativeMethods.dnn_readNetFromCaffe(prototxtData, new IntPtr(prototxtData.Length), 
+                    caffeModelData, new IntPtr(caffeModelData.Length), 
+                    out var p));
+            return (p == IntPtr.Zero) ? null : new Net(p);
         }
 
         /// <summary>
@@ -96,14 +155,35 @@ namespace OpenCvSharp.Dnn
         /// <param name="config"></param>
         /// <returns></returns>
         /// <remarks>This is shortcut consisting from createTensorflowImporter and Net::populateNet calls.</remarks>
-        public static Net ReadNetFromTensorflow(string model, string? config = null)
+        public static Net? ReadNetFromTensorflow(string model, string? config = null)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
             NativeMethods.HandleException(
                 NativeMethods.dnn_readNetFromTensorflow(model, config, out var p));
-            return new Net(p);
+            return (p == IntPtr.Zero) ? null : new Net(p);
+        }
+
+        /// <summary>
+        /// Reads a network model stored in Tensorflow model from memory.
+        /// </summary>
+        /// <param name="modelData"></param>
+        /// <param name="configData"></param>
+        /// <returns></returns>
+        /// <remarks>This is shortcut consisting from createTensorflowImporter and Net::populateNet calls.</remarks>
+        public static Net? ReadNetFromTensorflow(byte[] modelData, byte[] configData = null)
+        {
+            if (modelData == null)
+                throw new ArgumentNullException(nameof(modelData));
+
+            var configLen = configData == null ? 0 : configData.Length;
+
+            NativeMethods.HandleException(
+                NativeMethods.dnn_readNetFromTensorflow(modelData, new IntPtr(modelData.Length), 
+                    configData, new IntPtr(configLen), 
+                    out var p));
+            return (p == IntPtr.Zero) ? null : new Net(p);
         }
 
         /// <summary>
@@ -113,14 +193,14 @@ namespace OpenCvSharp.Dnn
         /// <param name="isBinary"></param>
         /// <returns></returns>
         /// <remarks>This is shortcut consisting from createTorchImporter and Net::populateNet calls.</remarks>
-        public static Net ReadNetFromTorch(string model, bool isBinary = true)
+        public static Net? ReadNetFromTorch(string model, bool isBinary = true)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
             NativeMethods.HandleException(
                 NativeMethods.dnn_readNetFromTorch(model, isBinary ? 1 : 0, out var p));
-            return new Net(p);
+            return (p == IntPtr.Zero) ? null : new Net(p);
         }
 
         /// <summary>
@@ -191,6 +271,22 @@ namespace OpenCvSharp.Dnn
             return (p == IntPtr.Zero) ? null : new Net(p);
         }
 
+        /// <summary>
+        /// Reads a network model ONNX https://onnx.ai/ from memory
+        /// </summary>
+        /// <param name="onnxFileData"></param>
+        /// <returns>Network object that ready to do forward, throw an exception in failure cases.</returns>
+        // ReSharper disable once InconsistentNaming
+        public static Net? ReadNetFromONNX(byte[] onnxFileData)
+        {
+            if (onnxFileData == null)
+                throw new ArgumentNullException(nameof(onnxFileData));
+
+            NativeMethods.HandleException(
+                NativeMethods.dnn_readNetFromONNX(onnxFileData, new IntPtr(onnxFileData.Length), out var p));
+            return (p == IntPtr.Zero) ? null : new Net(p);
+        }
+
         #endregion
 
         #region Methods
@@ -201,10 +297,41 @@ namespace OpenCvSharp.Dnn
         /// <returns></returns>
         public bool Empty()
         {
+            ThrowIfDisposed();
+
             NativeMethods.HandleException(
                 NativeMethods.dnn_Net_empty(ptr, out var ret));
             GC.KeepAlive(this);
             return ret != 0;
+        }
+
+        /// <summary>
+        /// Dump net to String.
+        /// Call method after setInput(). To see correct backend, target and fusion run after forward().
+        /// </summary>
+        /// <returns>String with structure, hyperparameters, backend, target and fusion</returns>
+        public string Dump()
+        {
+            ThrowIfDisposed();
+
+            using var stdString = new StdString();
+            NativeMethods.HandleException(
+                NativeMethods.dnn_Net_dump(ptr, stdString.CvPtr));
+            GC.KeepAlive(this);
+            return stdString.ToString();
+        }
+        
+        /// <summary>
+        /// Dump net structure, hyperparameters, backend, target and fusion to dot file
+        /// </summary>
+        /// <param name="path">path to output file with .dot extension</param>
+        public void DumpToFile(string path)
+        {
+            if (path == null) 
+                throw new ArgumentNullException(nameof(path));
+            NativeMethods.HandleException(
+                NativeMethods.dnn_Net_dumpToFile(ptr, path));
+            GC.KeepAlive(this);
         }
 
         /// <summary>
@@ -216,6 +343,7 @@ namespace OpenCvSharp.Dnn
         {
             if (layer == null)
                 throw new ArgumentNullException(nameof(layer));
+            ThrowIfDisposed();
 
             NativeMethods.HandleException(
                 NativeMethods.dnn_Net_getLayerId(ptr, layer, out var ret));

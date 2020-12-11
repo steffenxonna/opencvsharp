@@ -994,8 +994,8 @@ namespace OpenCvSharp
         /// <param name="aspectRatio">If it is zero or negative, both f_x and f_y are estimated independently. Otherwise, f_x = f_y * aspectRatio .</param>
         /// <returns></returns>
         public static Mat InitCameraMatrix2D(
-            IEnumerable<IEnumerable<Point3d>> objectPoints,
-            IEnumerable<IEnumerable<Point2d>> imagePoints,
+            IEnumerable<IEnumerable<Point3f>> objectPoints,
+            IEnumerable<IEnumerable<Point2f>> imagePoints,
             Size imageSize,
             double aspectRatio = 1.0)
         {
@@ -1004,8 +1004,8 @@ namespace OpenCvSharp
             if (imagePoints == null)
                 throw new ArgumentNullException(nameof(imagePoints));
 
-            using var opArray = new ArrayAddress2<Point3d>(objectPoints);
-            using var ipArray = new ArrayAddress2<Point2d>(imagePoints);
+            using var opArray = new ArrayAddress2<Point3f>(objectPoints);
+            using var ipArray = new ArrayAddress2<Point2f>(imagePoints);
             NativeMethods.HandleException(
                 NativeMethods.calib3d_initCameraMatrix2D_array(
                     opArray.GetPointer(), opArray.GetDim1Length(), opArray.GetDim2Lengths(),
@@ -2313,6 +2313,102 @@ namespace OpenCvSharp
         }
 
         /// <summary>
+        /// Computes Hand-Eye calibration.
+        /// 
+        /// The function performs the Hand-Eye calibration using various methods. One approach consists in estimating the
+        /// rotation then the translation(separable solutions) and the following methods are implemented:
+        /// - R.Tsai, R.Lenz A New Technique for Fully Autonomous and Efficient 3D Robotics Hand/EyeCalibration \cite Tsai89
+        /// - F.Park, B.Martin Robot Sensor Calibration: Solving AX = XB on the Euclidean Group \cite Park94
+        /// - R.Horaud, F.Dornaika Hand-Eye Calibration \cite Horaud95
+        ///
+        /// Another approach consists in estimating simultaneously the rotation and the translation(simultaneous solutions),
+        /// with the following implemented method:
+        /// - N.Andreff, R.Horaud, B.Espiau On-line Hand-Eye Calibration \cite Andreff99
+        /// - K.Daniilidis Hand-Eye Calibration Using Dual Quaternions \cite Daniilidis98
+        /// </summary>
+        /// <param name="R_gripper2base">Rotation part extracted from the homogeneous matrix that
+        /// transforms a pointexpressed in the gripper frame to the robot base frame that contains the rotation
+        /// matrices for all the transformationsfrom gripper frame to robot base frame.</param>
+        /// <param name="t_gripper2base">Translation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the gripper frame to the robot base frame.
+        /// This is a vector(`vector&lt;Mat&gt;`) that contains the translation vectors for all the transformations
+        /// from gripper frame to robot base frame.</param>
+        /// <param name="R_target2cam">Rotation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the target frame to the camera frame.
+        /// This is a vector(`vector&lt;Mat&gt;`) that contains the rotation matrices for all the transformations
+        /// from calibration target frame to camera frame.</param>
+        /// <param name="t_target2cam">Rotation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the target frame to the camera frame.
+        /// This is a vector(`vector&lt;Mat&gt;`) that contains the translation vectors for all the transformations
+        /// from calibration target frame to camera frame.</param>
+        /// <param name="R_cam2gripper">Estimated rotation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the camera frame to the gripper frame.</param>
+        /// <param name="t_cam2gripper">Estimated translation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the camera frame to the gripper frame.</param>
+        /// <param name="method">One of the implemented Hand-Eye calibration method</param>
+        public static void CalibrateHandEye(
+            IEnumerable<Mat> R_gripper2base,
+            IEnumerable<Mat> t_gripper2base,
+            IEnumerable<Mat> R_target2cam,
+            IEnumerable<Mat> t_target2cam,
+            OutputArray R_cam2gripper,
+            OutputArray t_cam2gripper,
+            HandEyeCalibrationMethod method = HandEyeCalibrationMethod.TSAI)
+        {
+            if (R_gripper2base == null)
+                throw new ArgumentNullException(nameof(R_gripper2base));
+            if (t_gripper2base == null)
+                throw new ArgumentNullException(nameof(t_gripper2base));
+            if (R_target2cam == null)
+                throw new ArgumentNullException(nameof(R_target2cam));
+            if (t_target2cam == null)
+                throw new ArgumentNullException(nameof(t_target2cam));
+            if (R_cam2gripper == null)
+                throw new ArgumentNullException(nameof(R_cam2gripper));
+            if (t_cam2gripper == null)
+                throw new ArgumentNullException(nameof(t_cam2gripper));
+            R_cam2gripper.ThrowIfNotReady();
+            t_cam2gripper.ThrowIfNotReady();
+
+            var R_gripper2baseArray = R_gripper2base as Mat[] ?? R_gripper2base.ToArray();
+            var t_gripper2baseArray = t_gripper2base as Mat[] ?? t_gripper2base.ToArray();
+            var R_target2camArray = R_target2cam as Mat[] ?? R_target2cam.ToArray();
+            var t_target2camArray = t_target2cam as Mat[] ?? t_target2cam.ToArray();
+            if (R_gripper2baseArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(R_gripper2base));
+            if (t_gripper2baseArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(t_gripper2base));
+            if (R_target2camArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(R_target2cam));
+            if (t_target2camArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(t_target2cam));
+
+            var R_gripper2basePtrArray = R_gripper2baseArray.Select(m => m.CvPtr).ToArray();
+            var t_gripper2basePtrArray = t_gripper2baseArray.Select(m => m.CvPtr).ToArray();
+            var R_target2camPtrArray = R_target2camArray.Select(m => m.CvPtr).ToArray();
+            var t_target2camPtrArray = t_target2camArray.Select(m => m.CvPtr).ToArray();
+            NativeMethods.HandleException(
+                NativeMethods.calib3d_calibrateHandEye(
+                    R_gripper2basePtrArray, R_gripper2basePtrArray.Length,
+                    t_gripper2basePtrArray, t_gripper2basePtrArray.Length,
+                    R_target2camPtrArray, R_target2camPtrArray.Length,
+                    t_target2camPtrArray, t_target2camPtrArray.Length,
+                    R_cam2gripper.CvPtr, t_cam2gripper.CvPtr, (int)method));
+
+            GC.KeepAlive(R_gripper2base);
+            GC.KeepAlive(t_gripper2base);
+            GC.KeepAlive(R_target2cam);
+            GC.KeepAlive(t_target2cam);
+            R_cam2gripper.Fix();
+            t_cam2gripper.Fix();
+
+            foreach (var mat in R_gripper2baseArray) GC.KeepAlive(mat);
+            foreach (var mat in t_gripper2baseArray) GC.KeepAlive(mat);
+            foreach (var mat in R_target2camArray) GC.KeepAlive(mat);
+            foreach (var mat in t_target2camArray) GC.KeepAlive(mat);
+        }
+
+        /// <summary>
         /// converts point coordinates from normal pixel coordinates to homogeneous coordinates ((x,y)->(x,y,1))
         /// </summary>
         /// <param name="src">Input vector of N-dimensional points.</param>
@@ -2496,6 +2592,47 @@ namespace OpenCvSharp
         /// to 1 for the other points. The array is computed only in the RANSAC and LMedS methods. For other methods, it is set to all 1’s.</param>
         /// <returns>fundamental matrix</returns>
         public static Mat FindFundamentalMat(
+            IEnumerable<Point2f> points1, 
+            IEnumerable<Point2f> points2,
+            FundamentalMatMethod method = FundamentalMatMethod.Ransac,
+            double param1 = 3.0,
+            double param2 = 0.99,
+            OutputArray? mask = null)
+        {
+            if (points1 == null)
+                throw new ArgumentNullException(nameof(points1));
+            if (points2 == null)
+                throw new ArgumentNullException(nameof(points2));
+
+            var points1Array = points1 as Point2f[] ?? points1.ToArray();
+            var points2Array = points2 as Point2f[] ?? points2.ToArray();
+
+            NativeMethods.HandleException(
+                NativeMethods.calib3d_findFundamentalMat_arrayF32(
+                    points1Array, points1Array.Length,
+                    points2Array, points2Array.Length, (int) method,
+                    param1, param2, ToPtr(mask), out var ret));
+            mask?.Fix();
+            return new Mat(ret);
+        }
+
+        /// <summary>
+        /// Calculates a fundamental matrix from the corresponding points in two images.
+        /// </summary>
+        /// <param name="points1">Array of N points from the first image. 
+        /// The point coordinates should be floating-point (single or double precision).</param>
+        /// <param name="points2">Array of the second image points of the same size and format as points1 .</param>
+        /// <param name="method">Method for computing a fundamental matrix.</param>
+        /// <param name="param1">Parameter used for RANSAC. 
+        /// It is the maximum distance from a point to an epipolar line in pixels, beyond which the point is 
+        /// considered an outlier and is not used for computing the final fundamental matrix. It can be set to 
+        /// something like 1-3, depending on the accuracy of the point localization, image resolution, and the image noise.</param>
+        /// <param name="param2">Parameter used for the RANSAC or LMedS methods only. 
+        /// It specifies a desirable level of confidence (probability) that the estimated matrix is correct.</param>
+        /// <param name="mask">Output array of N elements, every element of which is set to 0 for outliers and 
+        /// to 1 for the other points. The array is computed only in the RANSAC and LMedS methods. For other methods, it is set to all 1’s.</param>
+        /// <returns>fundamental matrix</returns>
+        public static Mat FindFundamentalMat(
             IEnumerable<Point2d> points1, 
             IEnumerable<Point2d> points2,
             FundamentalMatMethod method = FundamentalMatMethod.Ransac,
@@ -2512,7 +2649,7 @@ namespace OpenCvSharp
             var points2Array = points2 as Point2d[] ?? points2.ToArray();
 
             NativeMethods.HandleException(
-                NativeMethods.calib3d_findFundamentalMat_array(
+                NativeMethods.calib3d_findFundamentalMat_arrayF64(
                     points1Array, points1Array.Length,
                     points2Array, points2Array.Length, (int) method,
                     param1, param2, ToPtr(mask), out var ret));
@@ -2888,7 +3025,7 @@ namespace OpenCvSharp
             NativeMethods.HandleException(
                 NativeMethods.calib3d_recoverPose_InputArray2(
                     E.CvPtr, points1.CvPtr, points2.CvPtr,
-                    R.CvPtr, t.CvPtr, focal, new StructurePointer<Point2d>(pp), ToPtr(mask), out var ret));
+                    R.CvPtr, t.CvPtr, focal, pp, ToPtr(mask), out var ret));
 
             GC.KeepAlive(E);
             GC.KeepAlive(points1);
@@ -3037,7 +3174,7 @@ namespace OpenCvSharp
 
             NativeMethods.HandleException(
                 NativeMethods.calib3d_findEssentialMat_InputArray2(
-                    points1.CvPtr, points2.CvPtr, focal, new StructurePointer<Point2d>(pp),
+                    points1.CvPtr, points2.CvPtr, focal, pp,
                     (int) method, prob, threshold, ToPtr(mask), out var ret));
 
             mask?.Fix();

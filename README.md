@@ -1,26 +1,34 @@
-# OpenCvSharp [![CircleCI](https://circleci.com/gh/shimat/opencvsharp/tree/master.svg?style=svg)](https://circleci.com/gh/shimat/opencvsharp/tree/master) [![Build status](https://ci.appveyor.com/api/projects/status/dvjexft02s6b3re6/branch/master?svg=true)](https://ci.appveyor.com/project/shimat/opencvsharp/branch/master) [![Actions Status](https://github.com/shimat/opencvsharp/workflows/Ubuntu%2016.04/badge.svg)](https://github.com/shimat/opencvsharp/actions) [![GitHub license](https://img.shields.io/github/license/shimat/opencvsharp.svg)](https://github.com/shimat/opencvsharp/blob/master/LICENSE) 
+# OpenCvSharp [![CircleCI Status](https://circleci.com/gh/shimat/opencvsharp/tree/master.svg?style=svg)](https://circleci.com/gh/shimat/opencvsharp/tree/master) [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/dvjexft02s6b3re6/branch/master?svg=true)](https://ci.appveyor.com/project/shimat/opencvsharp/branch/master) [![Github Actions Ubuntu Status](https://github.com/shimat/opencvsharp/workflows/Ubuntu%2018.04/badge.svg)](https://github.com/shimat/opencvsharp/actions) [![Github Actions MacOS Status](https://github.com/shimat/opencvsharp/workflows/macOS%2010.15/badge.svg)](https://github.com/shimat/opencvsharp/actions) [![GitHub license](https://img.shields.io/github/license/shimat/opencvsharp.svg)](https://github.com/shimat/opencvsharp/blob/master/LICENSE) 
 
-Cross platform wrapper of OpenCV for .NET Framework.
+Wrapper of OpenCV for .NET
 
 Old versions of OpenCvSharp are stored in [opencvsharp_2410](https://github.com/shimat/opencvsharp_2410).
 
-## Installation
-### NuGet
+## NuGet
 
 | Package | Description | Link |
 |---------|-------------|------|
 |**OpenCvSharp4**| OpenCvSharp core libraries | [![NuGet version](https://badge.fury.io/nu/OpenCvSharp4.svg)](https://badge.fury.io/nu/OpenCvSharp4) |
+|**OpenCvSharp4.WpfExtensions**| WPF Extensions | [![NuGet version](https://badge.fury.io/nu/OpenCvSharp4.WpfExtensions.svg)](https://badge.fury.io/nu/OpenCvSharp4.WpfExtensions) |
 |**OpenCvSharp4.Windows**| All-in-one package for Windows (except UWP) | [![NuGet version](https://badge.fury.io/nu/OpenCvSharp4.Windows.svg)](https://badge.fury.io/nu/OpenCvSharp4.Windows) |
 |**OpenCvSharp4.runtime.win**| Native bindings for Windows x64/x86 (except UWP) | [![NuGet version](https://badge.fury.io/nu/OpenCvSharp4.runtime.win.svg)](https://badge.fury.io/nu/OpenCvSharp4.runtime.win) |
 |**OpenCvSharp4.runtime.uwp**| Native bindings for UWP (Universal Windows Platform) x64/x86/ARM | [![NuGet version](https://badge.fury.io/nu/OpenCvSharp4.runtime.uwp.svg)](https://badge.fury.io/nu/OpenCvSharp4.runtime.uwp) |
 |**OpenCvSharp4.runtime.ubuntu.18.04-x64**| Native bindings for Ubuntu 18.04 x64 | [![NuGet version](https://badge.fury.io/nu/OpenCvSharp4.runtime.ubuntu.18.04-x64.svg)](https://badge.fury.io/nu/OpenCvSharp4.runtime.ubuntu.18.04-x64) |
-|**OpenCvSharp4.runtime.ubuntu.16.04-x64 (beta)**| Native bindings for Ubuntu 16.04 x64. This is for Google AppEngine Flexible and made in gcr.io/google-appengine/aspnetcore:2.1 docker image. | [![NuGet version](https://badge.fury.io/nu/OpenCvSharp4.runtime.ubuntu.16.04-x64.svg)](https://badge.fury.io/nu/OpenCvSharp4.runtime.ubuntu.16.04-x64) |
+|**OpenCvSharp4.runtime.osx.10.15-x64**| Native bindings for macOS 10.15 x64 | [![NuGet version](https://badge.fury.io/nu/OpenCvSharp4.runtime.osx.10.15-x64.svg)](https://www.nuget.org/packages/OpenCvSharp4.runtime.osx.10.15-x64/) |
 |(beta packages)| Development Build Package    | https://ci.appveyor.com/nuget/opencvsharp |
 
-Native binding (OpenCvSharpExtern.dll / libOpenCvSharpExtern.so) is required to work OpenCvSharp. To use OpenCvSharp, you should add both `OpenCvSharp4` and `OpenCvSharp4.runtime.*` packages to your project. Currently, native bindings for Windows, UWP, Ubuntu 18.04 and Ubuntu 16.04 are released.
+Native binding (OpenCvSharpExtern.dll / libOpenCvSharpExtern.so) is required to work OpenCvSharp. To use OpenCvSharp, you should add both `OpenCvSharp4` and `OpenCvSharp4.runtime.*` packages to your project. Currently, native bindings for Windows, UWP, Ubuntu 18.04 and macOS are released.
 
 Packages named OpenCvSharp3-* and OpenCvSharp-* are deprecated.
 > [OpenCvSharp3-AnyCPU](https://www.nuget.org/packages/OpenCvSharp3-AnyCPU/) / [OpenCvSharp3-WithoutDll](https://www.nuget.org/packages/OpenCvSharp3-WithoutDll/) / [OpenCvSharp-AnyCPU](https://www.nuget.org/packages/OpenCvSharp-AnyCPU/) /  [OpenCvSharp-WithoutDll](https://www.nuget.org/packages/OpenCvSharp-WithoutDll/)
+
+## Docker images
+https://hub.docker.com/u/shimat
+- [shimat/ubuntu18-dotnetcore3.1-opencv4.5.0](https://hub.docker.com/r/shimat/ubuntu18-dotnetcore3.1-opencv4.5.0)
+- [shimat/appengine-aspnetcore3.1-opencv4.5.0](https://hub.docker.com/r/shimat/appengine-aspnetcore3.1-opencv4.5.0)
+
+
+## Installation
 
 ### Windows (except UWP)
 Add `OpenCvSharp4` and `OpenCvSharp4.runtime.win` NuGet packages to your project. You can use `OpenCvSharp4.Windows` instead.
@@ -39,26 +47,49 @@ dotnet add package OpenCvSharp4.runtime.ubuntu.18.04-x64
 dotnet run
 ```
 
-### Ubuntu 16.04 (Google AppEngine Flexible)
-Add `OpenCvSharp4` and `OpenCvSharp4.runtime.ubuntu.16.04.x64 (beta)` NuGet packages to your project.
+### Google AppEngine Flexible (Ubuntu 16.04)
+Some Docker images are provided to use OpenCvSharp with AppEngine Flexible. The native binding (libOpenCvSharpExtern) is already built in the docker image and you don't need to worry about it.
+```
+FROM shimat/appengine-aspnetcore3.1-opencv4.5.0:20201030
+
+ADD ./ /app 
+ENV ASPNETCORE_URLS=http://*:${PORT} 
+
+WORKDIR /app 
+ENTRYPOINT [ "dotnet", "YourAspNetCoreProject.dll" ]
+```
+
+### Ubuntu 18.04 Docker image
+You can use the `shimat/ubuntu18-dotnetcore3.1-opencv4.5.0` docker image.
+This issue may be helpful: https://github.com/shimat/opencvsharp/issues/920
 
 ### Downloads
 If you do not use NuGet, get DLL files from the [release page](https://github.com/shimat/opencvsharp/releases).
 
 ## Target OpenCV
-* [OpenCV 4.3.0](http://opencv.org/) with [opencv_contrib](https://github.com/opencv/opencv_contrib)
+* [OpenCV 4.5.0](http://opencv.org/) with [opencv_contrib](https://github.com/opencv/opencv_contrib)
 
 ## Requirements
-* [.NET Framework 4.6.1](http://www.microsoft.com/ja-jp/download/details.aspx?id=1639) or later / [.NET Core 2.0](https://www.microsoft.com/net/download) / [Mono](http://www.mono-project.com/Main_Page)
+* [.NET Framework 4.6.1](http://www.microsoft.com/ja-jp/download/details.aspx?id=1639) / [.NET Core 2.0](https://www.microsoft.com/net/download) / [Mono](http://www.mono-project.com/Main_Page)
 * (Windows) [Visual C++ 2019 Redistributable Package](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads)
-* (Ubuntu) Build OpenCV with opencv_contrib in advance. Many packages such as libjpeg must be installed in order to work. https://www.learnopencv.com/install-opencv-4-on-ubuntu-18-04/
+* (Windows Server) Media Foundation
+```
+PS1> Install-WindowsFeature Server-Media-Foundation
+```
+* (Ubuntu, Mac) You must pre-install all the dependency packages needed to build OpenCV. Many packages such as libjpeg must be installed in order to work OpenCV. 
+https://www.learnopencv.com/install-opencv-4-on-ubuntu-18-04/
 
-OpenCvSharp may not work on Unity platform. Please consider using [OpenCV for Unity](https://www.assetstore.unity3d.com/en/#!/content/21088)
+
+**OpenCvSharp won't work on Unity and Xamarin platform.** For Unity, please consider using [OpenCV for Unity](https://www.assetstore.unity3d.com/en/#!/content/21088) or some other solutions.
+
+**OpenCvSharp does not support CUDA.** If you want to use the CUDA features, you need to customize the native bindings yourself.
 
 ## Usage
 For more details, see **[samples](https://github.com/shimat/opencvsharp_samples/)** and **[Wiki](https://github.com/shimat/opencvsharp/wiki)** pages.
 
+**Always remember to release Mat instances! The `using` syntax is useful.**
 ```C#
+// C# 8
 // Edge detection by Canny algorithm
 using OpenCvSharp;
 
@@ -66,9 +97,8 @@ class Program
 {
     static void Main() 
     {
-        Mat src = new Mat("lenna.png", ImreadModes.Grayscale);
-        // Mat src = Cv2.ImRead("lenna.png", ImreadModes.Grayscale);
-        Mat dst = new Mat();
+        using var src = new Mat("lenna.png", ImreadModes.Grayscale);
+        using var dst = new Mat();
         
         Cv2.Canny(src, dst, 50, 200);
         using (new Window("src image", src)) 
@@ -111,7 +141,6 @@ If you want to use some OpenCV features that are not provided by default in Open
 - Run the PowerShell script.
 
 ### Ubuntu 18.04
-
 - Build OpenCV with opencv_contrib. 
   - https://www.learnopencv.com/install-opencv-4-on-ubuntu-18-04/
 - Install .NET Core SDK. https://docs.microsoft.com/ja-jp/dotnet/core/install/linux-package-manager-ubuntu-1804
@@ -148,21 +177,7 @@ dotnet run
 ### Older Ubuntu
 Refer to the [Dockerfile](https://github.com/shimat/opencvsharp/blob/master/docker/google-appengine-ubuntu.16.04-x64/Dockerfile) and [Wiki pages](https://github.com/shimat/opencvsharp/wiki).
 
-## License
-Licensed under the [BSD 3-Clause License](https://github.com/shimat/opencvsharp/blob/master/LICENSE).
-
-## Chat
-https://riot.im/app/#/room/#opencvsharp:matrix.org
-
 ## Donations
-
 If you find the OpenCvSharp library useful and would like to show your gratitude by donating, here are some donation options. Thank you.
 
 https://github.com/sponsors/shimat
-
-Type | Address
------- | -------
-**BTC** (Bitcoin) | 3EWhyNe3xzNNrbUgk4nXAVEkaWdpGncotc
-**BCH** (Bitcoin Cash) | 3EWhyNe3xzNNrbUgk4nXAVEkaWdpGncotc
-**ETH** (Ethereum) | 0x8a6089d60812ec88822d81bc6c65ba4ae63ea269
-**LTC** (Litecoin) | LLpmBjjVGZf93MEohEZpkADMpnyqAS3iQC

@@ -336,6 +336,15 @@
     <ClInclude Include="photo_Tonemap.h">
       <Filter>Header Files\photo</Filter>
     </ClInclude>
+    <ClInclude Include="ximgproc_EdgeFilter.h">
+      <Filter>Header Files\ximgproc</Filter>
+    </ClInclude>
+    <ClInclude Include="ximgproc_SuperPixel.h">
+      <Filter>Header Files\ximgproc</Filter>
+    </ClInclude>
+    <ClInclude Include="tracking_UnscentedKalmanFilter.h">
+      <Filter>Header Files\tracking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -403,8 +412,5 @@
     <Filter Include="Header Files\text">
       <UniqueIdentifier>{94192d8f-b2fa-46be-ba1c-0fcd09bf1393}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

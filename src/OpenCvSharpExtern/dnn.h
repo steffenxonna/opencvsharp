@@ -12,35 +12,59 @@
 CVAPI(ExceptionStatus) dnn_readNetFromDarknet(const char *cfgFile, const char *darknetModel, cv::dnn::Net **returnValue)
 {
     BEGIN_WRAP
-	const auto darknetModelStr = (darknetModel == nullptr) ? cv::String() : cv::String(darknetModel);
-	const auto net = cv::dnn::readNetFromDarknet(cfgFile, darknetModelStr);
-	*returnValue = new cv::dnn::Net(net);
+    const auto darknetModelStr = (darknetModel == nullptr) ? cv::String() : cv::String(darknetModel);
+    const auto net = cv::dnn::readNetFromDarknet(cfgFile, darknetModelStr);
+    *returnValue = new cv::dnn::Net(net);
+    END_WRAP
+}
+
+CVAPI(ExceptionStatus) dnn_readNetFromDarknet_InputArray(const char* cfgFileData, size_t lenCfgFile, const char* darknetModelData, size_t lenDarknetModel, cv::dnn::Net** returnValue)
+{
+    BEGIN_WRAP
+        const auto net = cv::dnn::readNetFromDarknet(cfgFileData, lenCfgFile, darknetModelData, lenDarknetModel);
+    *returnValue = new cv::dnn::Net(net);
     END_WRAP
 }
 
 CVAPI(ExceptionStatus) dnn_readNetFromCaffe(const char *prototxt, const char *caffeModel, cv::dnn::Net **returnValue)
 {
     BEGIN_WRAP
-	const auto caffeModelStr = (caffeModel == nullptr) ? cv::String() : cv::String(caffeModel);
-	const auto net = cv::dnn::readNetFromCaffe(prototxt, caffeModelStr);
-	*returnValue = new cv::dnn::Net(net);
+    const auto caffeModelStr = (caffeModel == nullptr) ? cv::String() : cv::String(caffeModel);
+    const auto net = cv::dnn::readNetFromCaffe(prototxt, caffeModelStr);
+    *returnValue = new cv::dnn::Net(net);
+    END_WRAP
+}
+
+CVAPI(ExceptionStatus) dnn_readNetFromCaffe_InputArray(const char* prototxtData, size_t lenPrototxt, const char* caffeModelData, size_t lencaffeModel, cv::dnn::Net** returnValue)
+{
+    BEGIN_WRAP
+        const auto net = cv::dnn::readNetFromCaffe(prototxtData, lenPrototxt, caffeModelData, lencaffeModel);
+    *returnValue = new cv::dnn::Net(net);
     END_WRAP
 }
 
 CVAPI(ExceptionStatus) dnn_readNetFromTensorflow(const char *model, const char *config, cv::dnn::Net **returnValue)
 {
     BEGIN_WRAP
-	const auto configStr = (config == nullptr) ? cv::String() : cv::String(config);
-	const auto net = cv::dnn::readNetFromTensorflow(model, configStr);
-	*returnValue = new cv::dnn::Net(net);
+    const auto configStr = (config == nullptr) ? cv::String() : cv::String(config);
+    const auto net = cv::dnn::readNetFromTensorflow(model, configStr);
+    *returnValue = new cv::dnn::Net(net);
+    END_WRAP
+}
+
+CVAPI(ExceptionStatus) dnn_readNetFromTensorflow_InputArray(const char *model,size_t lenModel, const char *config, size_t lenConfig, cv::dnn::Net **returnValue)
+{
+    BEGIN_WRAP
+    const auto net = cv::dnn::readNetFromTensorflow(model, lenModel, config, lenConfig);
+    *returnValue = new cv::dnn::Net(net);
     END_WRAP
 }
 
 CVAPI(ExceptionStatus) dnn_readNetFromTorch(const char *model, const int isBinary, cv::dnn::Net **returnValue)
 {
     BEGIN_WRAP
-	const auto net = cv::dnn::readNetFromTorch(model, isBinary != 0);
-	*returnValue = new cv::dnn::Net(net);
+    const auto net = cv::dnn::readNetFromTorch(model, isBinary != 0);
+    *returnValue = new cv::dnn::Net(net);
     END_WRAP
 }
 
@@ -57,8 +81,8 @@ CVAPI(ExceptionStatus) dnn_readNet(const char *model, const char *config, const 
 CVAPI(ExceptionStatus) dnn_readTorchBlob(const char *filename, const int isBinary, cv::Mat **returnValue)
 {
     BEGIN_WRAP
-	const auto blob = cv::dnn::readTorchBlob(filename, isBinary != 0);
-	*returnValue = new cv::Mat(blob);
+    const auto blob = cv::dnn::readTorchBlob(filename, isBinary != 0);
+    *returnValue = new cv::Mat(blob);
     END_WRAP
 }
 
@@ -78,6 +102,15 @@ CVAPI(ExceptionStatus) dnn_readNetFromONNX(const char *onnxFile, cv::dnn::Net **
     END_WRAP
 }
 
+CVAPI(ExceptionStatus) dnn_readNetFromONNX_InputArray(const char* onnxFileData, size_t lenOnnxFile, cv::dnn::Net** returnValue)
+{
+    BEGIN_WRAP
+        const auto net = cv::dnn::readNetFromONNX(onnxFileData, lenOnnxFile);
+    *returnValue = new cv::dnn::Net(net);
+    END_WRAP
+}
+
+
 CVAPI(ExceptionStatus) dnn_readTensorFromONNX(const char *path, cv::Mat **returnValue)
 {
     BEGIN_WRAP
@@ -87,32 +120,32 @@ CVAPI(ExceptionStatus) dnn_readTensorFromONNX(const char *path, cv::Mat **return
 }
 
 CVAPI(ExceptionStatus) dnn_blobFromImage(
-	cv::Mat *image, const double scalefactor, const MyCvSize size, const MyCvScalar mean, const int swapRB, const int crop, 
+    cv::Mat *image, const double scalefactor, const MyCvSize size, const MyCvScalar mean, const int swapRB, const int crop, 
     cv::Mat **returnValue)
 {
     BEGIN_WRAP
-	const auto blob = cv::dnn::blobFromImage(*image, scalefactor, cpp(size), cpp(mean), swapRB != 0, crop != 0);
-	*returnValue = new cv::Mat(blob);
+    const auto blob = cv::dnn::blobFromImage(*image, scalefactor, cpp(size), cpp(mean), swapRB != 0, crop != 0);
+    *returnValue = new cv::Mat(blob);
     END_WRAP
 }
 
 CVAPI(ExceptionStatus) dnn_blobFromImages(
-	const cv::Mat **images, const int imagesLength, const double scalefactor, const MyCvSize size, const MyCvScalar mean, const int swapRB, const int crop, 
+    const cv::Mat **images, const int imagesLength, const double scalefactor, const MyCvSize size, const MyCvScalar mean, const int swapRB, const int crop, 
     cv::Mat **returnValue)
 {
     BEGIN_WRAP
-	std::vector<cv::Mat> imagesVec;
-	toVec(images, imagesLength, imagesVec);
+    std::vector<cv::Mat> imagesVec;
+    toVec(images, imagesLength, imagesVec);
 
-	const auto blob = cv::dnn::blobFromImages(imagesVec, scalefactor, cpp(size), cpp(mean), swapRB != 0, crop != 0);
-	*returnValue = new cv::Mat(blob);
+    const auto blob = cv::dnn::blobFromImages(imagesVec, scalefactor, cpp(size), cpp(mean), swapRB != 0, crop != 0);
+    *returnValue = new cv::Mat(blob);
     END_WRAP
 }
 
 CVAPI(ExceptionStatus) dnn_shrinkCaffeModel(const char *src, const char *dst)
 {
     BEGIN_WRAP
-	cv::dnn::shrinkCaffeModel(src, dst);
+    cv::dnn::shrinkCaffeModel(src, dst);
     END_WRAP
 }
 

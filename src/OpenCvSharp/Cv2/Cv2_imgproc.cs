@@ -578,6 +578,69 @@ namespace OpenCvSharp
         }
 
         /// <summary>
+        /// Calculates the minimal eigenvalue of gradient matrices for corner detection.
+        /// </summary>
+        /// <param name="src">Input single-channel 8-bit or floating-point image.</param>
+        /// <param name="dst">Image to store the minimal eigenvalues. It has the type CV_32FC1 and the same size as src .</param>
+        /// <param name="blockSize">Neighborhood size (see the details on #cornerEigenValsAndVecs ).</param>
+        /// <param name="ksize">Aperture parameter for the Sobel operator.</param>
+        /// <param name="borderType">Pixel extrapolation method. See #BorderTypes. #BORDER_WRAP is not supported.</param>
+        public static void CornerMinEigenVal(
+            InputArray src,
+            OutputArray dst,
+            int blockSize, 
+            int ksize = 3,
+            BorderTypes borderType = BorderTypes.Default)
+        {
+            if (src == null)
+                throw new ArgumentNullException(nameof(src));
+            if (dst == null)
+                throw new ArgumentNullException(nameof(dst));
+            src.ThrowIfDisposed();
+            dst.ThrowIfNotReady();
+
+            NativeMethods.HandleException(
+                NativeMethods.imgproc_cornerMinEigenVal(src.CvPtr, dst.CvPtr, blockSize, ksize, (int) borderType));
+
+            GC.KeepAlive(src);
+            GC.KeepAlive(dst);
+            dst.Fix();
+        }
+
+        /// <summary>
+        /// Harris corner detector.
+        /// </summary>
+        /// <param name="src">Input single-channel 8-bit or floating-point image.</param>
+        /// <param name="dst">Image to store the Harris detector responses.
+        /// It has the type CV_32FC1 and the same size as src.</param>
+        /// <param name="blockSize">Neighborhood size (see the details on #cornerEigenValsAndVecs ).</param>
+        /// <param name="ksize">Aperture parameter for the Sobel operator.</param>
+        /// <param name="k">Harris detector free parameter. See the formula above.</param>
+        /// <param name="borderType">Pixel extrapolation method. See #BorderTypes. #BORDER_WRAP is not supported.</param>
+        public static void CornerHarris(
+            InputArray src, 
+            OutputArray dst, 
+            int blockSize,
+            int ksize,
+            double k,
+            BorderTypes borderType = BorderTypes.Default)
+        {
+            if (src == null)
+                throw new ArgumentNullException(nameof(src));
+            if (dst == null)
+                throw new ArgumentNullException(nameof(dst));
+            src.ThrowIfDisposed();
+            dst.ThrowIfNotReady();
+
+            NativeMethods.HandleException(
+                NativeMethods.imgproc_cornerHarris(src.CvPtr, dst.CvPtr, blockSize, ksize, k, (int)borderType));
+
+            GC.KeepAlive(src);
+            GC.KeepAlive(dst);
+            dst.Fix();
+        }
+
+        /// <summary>
         /// computes both eigenvalues and the eigenvectors of 2x2 derivative covariation matrix  at each pixel. The output is stored as 6-channel matrix.
         /// </summary>
         /// <param name="src"></param>
@@ -827,7 +890,7 @@ namespace OpenCvSharp
         /// Finds circles in a grayscale image using a Hough transform.
         /// </summary>
         /// <param name="image">The 8-bit, single-channel, grayscale input image</param>
-        /// <param name="method">Currently, the only implemented method is HoughCirclesMethod.Gradient</param>
+        /// <param name="method">The available methods are HoughMethods.Gradient and HoughMethods.GradientAlt</param>
         /// <param name="dp">The inverse ratio of the accumulator resolution to the image resolution. </param>
         /// <param name="minDist">Minimum distance between the centers of the detected circles. </param>
         /// <param name="param1">The first method-specific parameter. [By default this is 100]</param>
@@ -884,7 +947,7 @@ namespace OpenCvSharp
         /// <param name="borderValue">The border value in case of a constant border. The default value has a special meaning. [By default this is CvCpp.MorphologyDefaultBorderValue()]</param>
 #endif
         public static void Dilate(
-            InputArray src, OutputArray dst, InputArray element,
+            InputArray src, OutputArray dst, InputArray? element,
             Point? anchor = null, int iterations = 1, 
             BorderTypes borderType = BorderTypes.Constant, Scalar? borderValue = null)
         {
@@ -931,7 +994,7 @@ namespace OpenCvSharp
         /// <param name="borderValue">The border value in case of a constant border. The default value has a special meaning. [By default this is CvCpp.MorphologyDefaultBorderValue()]</param>
 #endif
         public static void Erode(
-            InputArray src, OutputArray dst, InputArray element,
+            InputArray src, OutputArray dst, InputArray? element,
             Point? anchor = null, int iterations = 1, 
             BorderTypes borderType = BorderTypes.Constant, Scalar? borderValue = null)
         {
@@ -1870,7 +1933,7 @@ namespace OpenCvSharp
         /// <param name="uniform"></param>
         /// <param name="accumulate"></param>
         public static void CalcHist(Mat[] images, 
-            int[] channels, InputArray mask,
+            int[] channels, InputArray? mask,
             OutputArray hist, int dims, int[] histSize,
             Rangef[] ranges, bool uniform = true, bool accumulate = false)
         {
@@ -1894,7 +1957,7 @@ namespace OpenCvSharp
         /// <param name="uniform"></param>
         /// <param name="accumulate"></param>
         public static void CalcHist(Mat[] images,
-            int[] channels, InputArray mask,
+            int[] channels, InputArray? mask,
             OutputArray hist, int dims, int[] histSize,
             float[][] ranges, bool uniform = true, bool accumulate = false)
         {
@@ -2990,12 +3053,12 @@ namespace OpenCvSharp
         /// <param name="offset"> Optional offset by which every contour point is shifted. 
         /// This is useful if the contours are extracted from the image ROI and then they should be analyzed in the whole image context.</param>
 #endif
-        public static void FindContours(InputOutputArray image, out Point[][] contours,
+        public static void FindContours(InputArray image, out Point[][] contours,
             out HierarchyIndex[] hierarchy, RetrievalModes mode, ContourApproximationModes method, Point? offset = null)
         {
             if (image == null)
                 throw new ArgumentNullException(nameof(image));
-            image.ThrowIfNotReady();
+            image.ThrowIfDisposed();
 
             var offset0 = offset.GetValueOrDefault(new Point());
             NativeMethods.HandleException(
@@ -3009,7 +3072,6 @@ namespace OpenCvSharp
                 hierarchy = hierarchyOrg.Select(HierarchyIndex.FromVec4i).ToArray();
             }
 
-            image.Fix();
             GC.KeepAlive(image);
         }
 
@@ -3045,14 +3107,14 @@ namespace OpenCvSharp
         /// <param name="offset"> Optional offset by which every contour point is shifted. 
         /// This is useful if the contours are extracted from the image ROI and then they should be analyzed in the whole image context.</param>
 #endif
-        public static void FindContours(InputOutputArray image, out Mat[] contours,
+        public static void FindContours(InputArray image, out Mat[] contours,
             OutputArray hierarchy, RetrievalModes mode, ContourApproximationModes method, Point? offset = null)
         {
             if (image == null)
                 throw new ArgumentNullException(nameof(image));
             if (hierarchy == null)
                 throw new ArgumentNullException(nameof(hierarchy));
-            image.ThrowIfNotReady();
+            image.ThrowIfDisposed();
             hierarchy.ThrowIfNotReady();
 
             var offset0 = offset.GetValueOrDefault(new Point());
@@ -3063,7 +3125,7 @@ namespace OpenCvSharp
             {
                 contours = contoursVec.ToArray();
             }
-            image.Fix();
+
             hierarchy.Fix();
             GC.KeepAlive(image);
             GC.KeepAlive(hierarchy);
@@ -3092,17 +3154,16 @@ namespace OpenCvSharp
         /// This is useful if the contours are extracted from the image ROI and then they should be analyzed in the whole image context.</param>
         /// <returns>Detected contours. Each contour is stored as a vector of points.</returns>
 #endif
-        public static Point[][] FindContoursAsArray(InputOutputArray image,
+        public static Point[][] FindContoursAsArray(InputArray image,
             RetrievalModes mode, ContourApproximationModes method, Point? offset = null)
         {
             if (image == null)
                 throw new ArgumentNullException(nameof(image));
-            image.ThrowIfNotReady();
+            image.ThrowIfDisposed();
 
             var offset0 = offset.GetValueOrDefault(new Point());
             NativeMethods.HandleException(
                 NativeMethods.imgproc_findContours2_vector(image.CvPtr, out var contoursPtr, (int) mode, (int) method, offset0));
-            image.Fix();
             GC.KeepAlive(image);
 
             using var contoursVec = new VectorOfVectorPoint(contoursPtr);
@@ -3132,17 +3193,16 @@ namespace OpenCvSharp
         /// This is useful if the contours are extracted from the image ROI and then they should be analyzed in the whole image context.</param>
         /// <returns>Detected contours. Each contour is stored as a vector of points.</returns>
 #endif
-        public static Mat<Point>[] FindContoursAsMat(InputOutputArray image,
+        public static Mat<Point>[] FindContoursAsMat(InputArray image,
             RetrievalModes mode, ContourApproximationModes method, Point? offset = null)
         {
             if (image == null)
                 throw new ArgumentNullException(nameof(image));
-            image.ThrowIfNotReady();
+            image.ThrowIfDisposed();
 
             var offset0 = offset.GetValueOrDefault(new Point());
             NativeMethods.HandleException(
                 NativeMethods.imgproc_findContours2_OutputArray(image.CvPtr, out var contoursPtr, (int)mode, (int)method, offset0));
-            image.Fix();
             GC.KeepAlive(image);
 
             using var contoursVec = new VectorOfMat(contoursPtr);
@@ -4433,11 +4493,37 @@ namespace OpenCvSharp
             dst.ThrowIfNotReady();
 
             NativeMethods.HandleException(
-                NativeMethods.imgproc_applyColorMap(src.CvPtr, dst.CvPtr, (int) colormap));
+                NativeMethods.imgproc_applyColorMap1(src.CvPtr, dst.CvPtr, (int) colormap));
 
             GC.KeepAlive(src);
             GC.KeepAlive(dst);
             dst.Fix();
+        }
+        
+        /// <summary>
+        /// Applies a user colormap on a given image.
+        /// </summary>
+        /// <param name="src">The source image, grayscale or colored of type CV_8UC1 or CV_8UC3.</param>
+        /// <param name="dst">The result is the colormapped source image. Note: Mat::create is called on dst.</param>
+        /// <param name="userColor">The colormap to apply of type CV_8UC1 or CV_8UC3 and size 256</param>
+        public static void ApplyColorMap(InputArray src, OutputArray dst, InputArray userColor)
+        {
+            if (src == null)
+                throw new ArgumentNullException(nameof(src));
+            if (dst == null)
+                throw new ArgumentNullException(nameof(dst));
+            if (userColor == null)
+                throw new ArgumentNullException(nameof(userColor));
+            src.ThrowIfDisposed();
+            dst.ThrowIfNotReady();
+            userColor.ThrowIfDisposed();
+
+            NativeMethods.HandleException(
+                NativeMethods.imgproc_applyColorMap2(src.CvPtr, dst.CvPtr, userColor.CvPtr));
+
+            GC.KeepAlive(src);
+            dst.Fix();
+            GC.KeepAlive(userColor);
         }
 
         #region Drawing
@@ -4578,13 +4664,13 @@ namespace OpenCvSharp
                 throw new ArgumentNullException(nameof(img));
 
             NativeMethods.HandleException(
-                NativeMethods.imgproc_rectangle_InputOutputArray(
+                NativeMethods.imgproc_rectangle_InputOutputArray_Point(
                     img.CvPtr, pt1, pt2, color, thickness, (int) lineType, shift));
 
             img.Fix();
             GC.KeepAlive(img);
         }
-
+        
 #if LANG_JP
         /// <summary>
         /// 枠のみ，もしくは塗りつぶされた矩形を描画する
@@ -4608,53 +4694,16 @@ namespace OpenCvSharp
         /// <param name="shift">Number of fractional bits in the point coordinates. [By default this is 0]</param>
 #endif
         public static void Rectangle(
-            InputOutputArray img, Rect rect, Scalar color, int thickness = 1, 
+            InputOutputArray img, Rect rect, Scalar color, int thickness = 1,
             LineTypes lineType = LineTypes.Link8, int shift = 0)
         {
             if (img == null)
                 throw new ArgumentNullException(nameof(img));
 
             NativeMethods.HandleException(
-                NativeMethods.imgproc_rectangle_InputOutputArray(
-                    img.CvPtr, rect.TopLeft, rect.BottomRight - new Point(1, 1), color, thickness, (int) lineType, shift));
+                NativeMethods.imgproc_rectangle_InputOutputArray_Rect(
+                    img.CvPtr, rect, color, thickness, (int) lineType, shift));
             img.Fix();
-            GC.KeepAlive(img);
-        }
-
-#if LANG_JP
-        /// <summary>
-        /// 枠のみ，もしくは塗りつぶされた矩形を描画する
-        /// </summary>
-        /// <param name="img">画像</param>
-        /// <param name="pt1">矩形の一つの頂点</param>
-        /// <param name="pt2">矩形の反対側の頂点</param>
-        /// <param name="color">線の色(RGB)，もしくは輝度(グレースケール画像).</param>
-        /// <param name="thickness">矩形を描く線の太さ．負の値を指定した場合は塗りつぶされる. [既定値は1]</param>
-        /// <param name="lineType">線の種類. [既定値はLineType.Link8]</param>
-        /// <param name="shift">座標の小数点以下の桁を表すビット数. [既定値は0]</param>
-#else
-        /// <summary>
-        /// Draws simple, thick or filled rectangle
-        /// </summary>
-        /// <param name="img">Image. </param>
-        /// <param name="pt1">One of the rectangle vertices. </param>
-        /// <param name="pt2">Opposite rectangle vertex. </param>
-        /// <param name="color">Line color (RGB) or brightness (grayscale image). </param>
-        /// <param name="thickness">Thickness of lines that make up the rectangle.
-        /// Negative values make the function to draw a filled rectangle. [By default this is 1]</param>
-        /// <param name="lineType">Type of the line, see cvLine description. [By default this is LineType.Link8]</param>
-        /// <param name="shift">Number of fractional bits in the point coordinates. [By default this is 0]</param>
-#endif
-        public static void Rectangle(
-            Mat img, Point pt1, Point pt2, Scalar color, int thickness = 1, 
-            LineTypes lineType = LineTypes.Link8, int shift = 0)
-        {
-            if (img == null)
-                throw new ArgumentNullException(nameof(img));
-            var rect = Rect.FromLTRB(pt1.X, pt1.Y, pt2.X, pt2.Y);
-
-            NativeMethods.HandleException(
-                NativeMethods.imgproc_rectangle_Mat(img.CvPtr, rect, color, thickness, (int) lineType, shift));
             GC.KeepAlive(img);
         }
 
@@ -4687,7 +4736,43 @@ namespace OpenCvSharp
                 throw new ArgumentNullException(nameof(img));
 
             NativeMethods.HandleException(
-                NativeMethods.imgproc_rectangle_Mat(img.CvPtr, rect, color, thickness, (int) lineType, shift));
+                NativeMethods.imgproc_rectangle_Mat_Rect(img.CvPtr, rect, color, thickness, (int) lineType, shift));
+            GC.KeepAlive(img);
+        }
+
+#if LANG_JP
+        /// <summary>
+        /// 枠のみ，もしくは塗りつぶされた矩形を描画する
+        /// </summary>
+        /// <param name="img">画像</param>
+        /// <param name="pt1">矩形の一つの頂点</param>
+        /// <param name="pt2">矩形の反対側の頂点</param>
+        /// <param name="color">線の色(RGB)，もしくは輝度(グレースケール画像).</param>
+        /// <param name="thickness">矩形を描く線の太さ．負の値を指定した場合は塗りつぶされる. [既定値は1]</param>
+        /// <param name="lineType">線の種類. [既定値はLineType.Link8]</param>
+        /// <param name="shift">座標の小数点以下の桁を表すビット数. [既定値は0]</param>
+#else
+        /// <summary>
+        /// Draws simple, thick or filled rectangle
+        /// </summary>
+        /// <param name="img">Image. </param>
+        /// <param name="pt1">One of the rectangle vertices. </param>
+        /// <param name="pt2">Opposite rectangle vertex. </param>
+        /// <param name="color">Line color (RGB) or brightness (grayscale image). </param>
+        /// <param name="thickness">Thickness of lines that make up the rectangle.
+        /// Negative values make the function to draw a filled rectangle. [By default this is 1]</param>
+        /// <param name="lineType">Type of the line, see cvLine description. [By default this is LineType.Link8]</param>
+        /// <param name="shift">Number of fractional bits in the point coordinates. [By default this is 0]</param>
+#endif
+        public static void Rectangle(
+            Mat img, Point pt1, Point pt2, Scalar color, int thickness = 1,
+            LineTypes lineType = LineTypes.Link8, int shift = 0)
+        {
+            if (img == null)
+                throw new ArgumentNullException(nameof(img));
+
+            NativeMethods.HandleException(
+                NativeMethods.imgproc_rectangle_Mat_Point(img.CvPtr, pt1, pt2, color, thickness, (int)lineType, shift));
             GC.KeepAlive(img);
         }
 

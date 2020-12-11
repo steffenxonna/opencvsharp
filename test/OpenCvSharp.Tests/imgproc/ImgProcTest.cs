@@ -12,31 +12,27 @@ namespace OpenCvSharp.Tests.ImgProc
         [Fact]
         public void MorphologyExDilate()
         {
-            using (Mat src = new Mat(100, 100, MatType.CV_8UC1, 255))
-            using (Mat dst = new Mat())
-            {
-                Cv2.Rectangle(src, new Rect(30, 30, 40, 40), Scalar.Black, 1);
-                Cv2.MorphologyEx(src, dst, MorphTypes.Dilate, null);
+            using Mat src = new Mat(100, 100, MatType.CV_8UC1, 255);
+            using Mat dst = new Mat();
+            Cv2.Rectangle(src, new Rect(30, 30, 40, 40), Scalar.Black, 1);
+            Cv2.MorphologyEx(src, dst, MorphTypes.Dilate, null);
 
-                ShowImagesWhenDebugMode(src, dst);
+            ShowImagesWhenDebugMode(src, dst);
 
-                Assert.Equal(src.Rows * src.Cols, Cv2.CountNonZero(dst));
-            }
+            Assert.Equal(src.Rows * src.Cols, Cv2.CountNonZero(dst));
         }
 
         [Fact]
         public void MorphologyExErode()
         {
-            using (Mat src = Mat.Zeros(100, 100, MatType.CV_8UC1))
-            using (Mat dst = new Mat())
-            {
-                Cv2.Rectangle(src, new Rect(30, 30, 40, 40), Scalar.White, 1);
-                Cv2.MorphologyEx(src, dst, MorphTypes.Erode, null);
+            using Mat src = Mat.Zeros(100, 100, MatType.CV_8UC1);
+            using Mat dst = new Mat();
+            Cv2.Rectangle(src, new Rect(30, 30, 40, 40), Scalar.White, 1);
+            Cv2.MorphologyEx(src, dst, MorphTypes.Erode, null);
 
-                ShowImagesWhenDebugMode(src, dst);
+            ShowImagesWhenDebugMode(src, dst);
 
-                Assert.Equal(0, Cv2.CountNonZero(dst));
-            }
+            Assert.Equal(0, Cv2.CountNonZero(dst));
         }
 
         [Fact]
@@ -337,13 +333,11 @@ namespace OpenCvSharp.Tests.ImgProc
         {
             var rr1 = new RotatedRect(new Point2f(10, 10), new Size2f(10, 10), 45);
             var rr2 = new RotatedRect(new Point2f(15, 10), new Size2f(10, 10), 0);
-            using (var intersectingRegion = new Mat())
-            {
-                Cv2.RotatedRectangleIntersection(rr1, rr2, intersectingRegion);
-                Assert.Equal(5, intersectingRegion.Rows);
-                Assert.Equal(1, intersectingRegion.Cols);
-                Assert.Equal(MatType.CV_32FC2, intersectingRegion.Type());
-            }
+            using var intersectingRegion = new Mat();
+            Cv2.RotatedRectangleIntersection(rr1, rr2, intersectingRegion);
+            Assert.Equal(5, intersectingRegion.Rows);
+            Assert.Equal(1, intersectingRegion.Cols);
+            Assert.Equal(MatType.CV_32FC2, intersectingRegion.Type());
         }
 
         [Fact]
@@ -361,14 +355,12 @@ namespace OpenCvSharp.Tests.ImgProc
                     return enumerable.Select(p => new Point(p.X, p.Y)).ToArray();
                 }
 
-                using (var img = new Mat(200, 200, MatType.CV_8UC3, 0))
-                {
-                    img.Polylines(new[] { ToPoints(rr1.Points()) }, true, Scalar.Red);
-                    img.Polylines(new[] { ToPoints(rr2.Points()) }, true, Scalar.Green);
-                    img.Polylines(new[] { ToPoints(intersectingRegion) }, true, Scalar.White);
+                using var img = new Mat(200, 200, MatType.CV_8UC3, 0);
+                img.Polylines(new[] { ToPoints(rr1.Points()) }, true, Scalar.Red);
+                img.Polylines(new[] { ToPoints(rr2.Points()) }, true, Scalar.Green);
+                img.Polylines(new[] { ToPoints(intersectingRegion) }, true, Scalar.White);
 
-                    Window.ShowImages(img);
-                }
+                Window.ShowImages(img);
             }
         }
 
@@ -377,27 +369,48 @@ namespace OpenCvSharp.Tests.ImgProc
         {
             var color = Scalar.Red;
 
-            using (Mat img = Mat.Zeros(100, 100, MatType.CV_8UC3))
+            using Mat img1 = Mat.Zeros(100, 100, MatType.CV_8UC3);
+            using Mat img2 = img1.Clone();
+            using Mat img3 = img1.Clone();
+            using Mat img4 = img1.Clone();
+            using InputOutputArray ioa3 = InputOutputArray.Create(img3);
+            using InputOutputArray ioa4 = InputOutputArray.Create(img4);
+
+            Cv2.Rectangle(img1, new Rect(10, 10, 80, 80), color, 1);
+            Cv2.Rectangle(img2, new Point(10, 10), new Point(89, 89), color, 1);
+            Cv2.Rectangle(ioa3, new Rect(10, 10, 80, 80), color, 1);
+            Cv2.Rectangle(ioa4, new Point(10, 10), new Point(89, 89), color, 1);
+
+            ShowImagesWhenDebugMode(img1, img2);
+
+            var colorVec = color.ToVec3b();
+            var expected = new Vec3b[100, 100];
+            for (int x = 10; x <= 89; x++)
             {
-                img.Rectangle(new Rect(10, 10, 80, 80), color, 1);
-
-                ShowImagesWhenDebugMode(img);
-
-                var colorVec = color.ToVec3b();
-                var expected = new Vec3b[100, 100];
-                for (int x = 10; x < 90; x++)
-                {
-                    expected[10, x] = colorVec;
-                    expected[89, x] = colorVec;
-                }
-                for (int y = 10; y < 90; y++)
-                {
-                    expected[y, 10] = colorVec;
-                    expected[y, 89] = colorVec;
-                }
-
-                TestImage(img, expected);
+                expected[10, x] = colorVec;
+                expected[89, x] = colorVec;
             }
+            for (int y = 10; y <= 89; y++)
+            {
+                expected[y, 10] = colorVec;
+                expected[y, 89] = colorVec;
+            }
+
+            TestImage(img1, expected);
+            TestImage(img2, expected);
+            TestImage(img3, expected);
+            TestImage(img4, expected);
+        }
+
+        [Fact]
+        public void RectangleShift()
+        {
+            using var mat = new Mat(300, 300, MatType.CV_8UC3, Scalar.All(0));
+            Cv2.Rectangle(mat, new Rect(10, 20, 100, 200), Scalar.Red, -1, LineTypes.Link8, 0);
+            Cv2.Rectangle(mat, new Rect(10, 20, 100, 200), Scalar.Green, -1, LineTypes.Link8, 1);
+            Cv2.Rectangle(mat, new Rect(10, 20, 100, 200), Scalar.Blue, -1, LineTypes.Link8, 2);
+
+            ShowImagesWhenDebugMode(mat);
         }
 
         [Fact]
@@ -405,27 +418,25 @@ namespace OpenCvSharp.Tests.ImgProc
         {
             var color = Scalar.Red;
 
-            using (Mat img = Mat.Zeros(100, 100, MatType.CV_8UC3))
+            using Mat img = Mat.Zeros(100, 100, MatType.CV_8UC3);
+            img.Rectangle(new Rect(10, 10, 80, 80), color, Cv2.FILLED/*-1*/);
+
+            if (Debugger.IsAttached)
             {
-                img.Rectangle(new Rect(10, 10, 80, 80), color, Cv2.FILLED/*-1*/);
-
-                if (Debugger.IsAttached)
-                {
-                    Window.ShowImages(img);
-                }
-
-                var colorVec = color.ToVec3b();
-                var expected = new Vec3b[100, 100];
-                for (int y = 10; y < 90; y++)
-                {
-                    for (int x = 10; x < 90; x++)
-                    {
-                        expected[y, x] = colorVec;
-                    }
-                }
-
-                TestImage(img, expected);
+                Window.ShowImages(img);
             }
+
+            var colorVec = color.ToVec3b();
+            var expected = new Vec3b[100, 100];
+            for (int y = 10; y < 90; y++)
+            {
+                for (int x = 10; x < 90; x++)
+                {
+                    expected[y, x] = colorVec;
+                }
+            }
+
+            TestImage(img, expected);
         }
 
         private static void TestImage(Mat img, Vec3b[,] expected)
@@ -435,6 +446,9 @@ namespace OpenCvSharp.Tests.ImgProc
             if (expected == null)
                 throw new ArgumentNullException(nameof(expected));
             
+            if (img.Type() != MatType.CV_8UC3)
+                throw new ArgumentException("Mat.Type() != 8UC3", nameof(img));
+
             int height = img.Rows;
             int width = img.Cols;
             if (height != expected.GetLength(0) || width != expected.GetLength(1))
@@ -456,6 +470,81 @@ namespace OpenCvSharp.Tests.ImgProc
                             $"(B:{expectedValue.Item0} G:{expectedValue.Item1} R:{expectedValue.Item2})",
                             $"(B:{actualValue.Item0} G:{actualValue.Item1} R:{actualValue.Item2})"));
                 }
+            }
+        }
+
+        [Fact]
+        public void ApplyColorMap()
+        {
+            using var src = Image("building.jpg", ImreadModes.Color);
+            using var dst = new Mat();
+            Cv2.ApplyColorMap(src, dst, ColormapTypes.Cool);
+
+            ShowImagesWhenDebugMode(src, dst);
+
+            using var userColor = new Mat(256, 1, MatType.CV_8UC3, Scalar.All(128));
+            Cv2.ApplyColorMap(src, dst, userColor);
+
+            ShowImagesWhenDebugMode(src, dst);
+        }
+        
+        [Fact]
+        public void CornerHarris()
+        {
+            using var src = Image("building.jpg", ImreadModes.Grayscale);
+            using var corners = new Mat();
+            using var dst = new Mat();
+            Cv2.CornerHarris(src, corners, 2, 3, 0.04);
+
+            if (Debugger.IsAttached)
+            {
+                Cv2.Normalize(corners, corners, 0, 255, NormTypes.MinMax);
+                Cv2.Threshold(corners, dst, 180, 255, ThresholdTypes.Binary);
+                Window.ShowImages(src, corners, dst);
+            }
+        }
+
+        [Fact]
+        public void CornerMinEigenVal()
+        {
+            using var src = Image("building.jpg", ImreadModes.Grayscale);
+            using var corners = new Mat();
+            using var dst = new Mat();
+            Cv2.CornerMinEigenVal(src, corners, 2, 3, BorderTypes.Reflect);
+
+            if (Debugger.IsAttached)
+            {
+                Cv2.Normalize(corners, corners, 0, 255, NormTypes.MinMax);
+                Cv2.Threshold(corners, dst, 180, 255, ThresholdTypes.Binary);
+                Window.ShowImages(src, corners, dst);
+            }
+        }
+
+        [Fact]
+        public void FindContours()
+        {
+            using var src = Image("markers_6x6_250.png", ImreadModes.Grayscale);
+            Cv2.BitwiseNot(src, src);
+            Cv2.FindContours(
+                src, 
+                out var contours,
+                out var hierarchy, 
+                RetrievalModes.External,
+                ContourApproximationModes.ApproxSimple);
+
+            Assert.NotEmpty(contours);
+            Assert.NotEmpty(hierarchy);
+
+            Assert.All(contours, contour =>
+            {
+                Assert.Equal(4, contour.Length);
+            });
+
+            if (Debugger.IsAttached)
+            {
+                using var view = new Mat(src.Size(), MatType.CV_8UC3, Scalar.All(0));
+                Cv2.DrawContours(view, contours, -1, Scalar.Red);
+                Window.ShowImages(src, view);
             }
         }
     }

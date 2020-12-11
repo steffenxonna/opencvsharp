@@ -232,17 +232,17 @@ CVAPI(ExceptionStatus) calib3d_initCameraMatrix2D_Mat(
     END_WRAP
 }
 CVAPI(ExceptionStatus) calib3d_initCameraMatrix2D_array(
-    cv::Point3d **objectPoints, int opSize1, int *opSize2,
-    cv::Point2d **imagePoints, int ipSize1, int *ipSize2, MyCvSize imageSize, double aspectRatio,
+    cv::Point3f **objectPoints, int opSize1, int *opSize2,
+    cv::Point2f **imagePoints, int ipSize1, int *ipSize2, MyCvSize imageSize, double aspectRatio,
     cv::Mat **returnValue)
 {
     BEGIN_WRAP
-    std::vector<std::vector<cv::Point3d> > objectPointsVec(opSize1);
+    std::vector<std::vector<cv::Point3f> > objectPointsVec(opSize1);
     for (auto i = 0; i < opSize1; i++)
-        objectPointsVec[i] = std::vector<cv::Point3d>(objectPoints[i], objectPoints[i] + opSize2[i]);
-    std::vector<std::vector<cv::Point3d> > imagePointsVec(ipSize1);
+        objectPointsVec[i] = std::vector<cv::Point3f>(objectPoints[i], objectPoints[i] + opSize2[i]);
+    std::vector<std::vector<cv::Point3f> > imagePointsVec(ipSize1);
     for (auto i = 0; i < ipSize1; i++)
-        imagePointsVec[i] = std::vector<cv::Point3d>(imagePoints[i], imagePoints[i] + ipSize2[i]);
+        imagePointsVec[i] = std::vector<cv::Point3f>(imagePoints[i], imagePoints[i] + ipSize2[i]);
 
     const auto ret = cv::initCameraMatrix2D(objectPointsVec, imagePointsVec, cpp(imageSize), aspectRatio);
     *returnValue = new cv::Mat(ret);
@@ -672,6 +672,32 @@ CVAPI(ExceptionStatus) calib3d_getOptimalNewCameraMatrix_array(
     END_WRAP
 }
 
+CVAPI(ExceptionStatus) calib3d_calibrateHandEye(
+    cv::Mat **R_gripper2baseMats, const int32_t R_gripper2baseMatsSize,
+    cv::Mat **t_gripper2baseMats, const int32_t t_gripper2baseMatsSize,
+    cv::Mat **R_target2camMats, const int32_t R_target2camMatsSize,
+    cv::Mat **t_target2camMats, const int32_t t_target2camMatsSize,
+    cv::_OutputArray *R_cam2gripper, 
+    cv::_OutputArray *t_cam2gripper,
+    int32_t method)
+{
+    BEGIN_WRAP
+    std::vector<cv::Mat> R_gripper2base;
+    std::vector<cv::Mat> t_gripper2base;
+    std::vector<cv::Mat> R_target2cam;
+    std::vector<cv::Mat> t_target2cam;
+    toVec(R_gripper2baseMats, R_gripper2baseMatsSize, R_gripper2base);
+    toVec(t_gripper2baseMats, t_gripper2baseMatsSize, t_gripper2base);
+    toVec(R_target2camMats, R_target2camMatsSize, R_target2cam);
+    toVec(t_target2camMats, t_target2camMatsSize, t_target2cam);
+    cv::calibrateHandEye(
+        R_gripper2base, t_gripper2base, 
+        R_target2cam, t_target2cam, 
+        *R_cam2gripper, *t_cam2gripper,
+        static_cast<cv::HandEyeCalibrationMethod>(method));
+    END_WRAP    
+}
+
 CVAPI(ExceptionStatus) calib3d_convertPointsToHomogeneous_InputArray(cv::_InputArray *src, cv::_OutputArray *dst)
 {
     BEGIN_WRAP
@@ -737,7 +763,7 @@ CVAPI(ExceptionStatus) calib3d_findFundamentalMat_InputArray(
     *returnValue = new cv::Mat(mat);
     END_WRAP
 }
-CVAPI(ExceptionStatus) calib3d_findFundamentalMat_array(
+CVAPI(ExceptionStatus) calib3d_findFundamentalMat_arrayF64(
     cv::Point2d *points1, int points1Size,
     cv::Point2d *points2, int points2Size,
     int method, double param1, double param2,
@@ -747,6 +773,21 @@ CVAPI(ExceptionStatus) calib3d_findFundamentalMat_array(
     BEGIN_WRAP
     const cv::Mat points1M(points1Size, 1, CV_64FC2, points1);
     const cv::Mat points2M(points2Size, 1, CV_64FC2, points2);
+    const auto mat = cv::findFundamentalMat(
+        points1M, points2M, method, param1, param2, entity(mask));
+    *returnValue = new cv::Mat(mat);
+    END_WRAP
+}
+CVAPI(ExceptionStatus) calib3d_findFundamentalMat_arrayF32(
+    cv::Point2f *points1, int points1Size,
+    cv::Point2f *points2, int points2Size,
+    int method, double param1, double param2,
+    cv::_OutputArray *mask,
+    cv::Mat **returnValue)
+{
+    BEGIN_WRAP
+    const cv::Mat points1M(points1Size, 1, CV_32FC2, points1);
+    const cv::Mat points2M(points2Size, 1, CV_32FC2, points2);
     const auto mat = cv::findFundamentalMat(
         points1M, points2M, method, param1, param2, entity(mask));
     *returnValue = new cv::Mat(mat);
@@ -1028,59 +1069,59 @@ CVAPI(ExceptionStatus) calib3d_undistortPointsIter(
 
 CVAPI(ExceptionStatus) calib3d_recoverPose_InputArray1(
     cv::_InputArray *E, cv::_InputArray *points1, cv::_InputArray *points2,
-	cv::_InputArray *cameraMatrix,
-	cv::_OutputArray *R, cv::_OutputArray *t, cv::_InputOutputArray *mask,
+    cv::_InputArray *cameraMatrix,
+    cv::_OutputArray *R, cv::_OutputArray *t, cv::_InputOutputArray *mask,
     int *returnValue)
 {
     BEGIN_WRAP
-	*returnValue = cv::recoverPose(*E, *points1, *points2, *cameraMatrix, *R, *t, *mask);
+    *returnValue = cv::recoverPose(*E, *points1, *points2, *cameraMatrix, *R, *t, entity(mask));
     END_WRAP
 }
 
 CVAPI(ExceptionStatus) calib3d_recoverPose_InputArray2(
     cv::_InputArray *E, cv::_InputArray *points1, cv::_InputArray *points2,
-	cv::_OutputArray *R, cv::_OutputArray *t, double focal, cv::Point2d* pp,
-	cv::_InputOutputArray *mask,
+    cv::_OutputArray *R, cv::_OutputArray *t, double focal, MyCvPoint2D64f pp,
+    cv::_InputOutputArray *mask,
     int *returnValue)
 {
     BEGIN_WRAP
-	*returnValue = cv::recoverPose(*E, *points1, *points2, *R, *t, focal, *pp, *mask);
+    *returnValue = cv::recoverPose(*E, *points1, *points2, *R, *t, focal, cpp(pp), entity(mask));
     END_WRAP
 }
 
 CVAPI(ExceptionStatus) calib3d_recoverPose_InputArray3(
     cv::_InputArray *E, cv::_InputArray *points1, cv::_InputArray *points2,
-	cv::_InputArray *cameraMatrix, double distanceTresh,
-	cv::_OutputArray *R, cv::_OutputArray *t, cv::_InputOutputArray *mask, cv::_OutputArray *triangulatedPoints,
+    cv::_InputArray *cameraMatrix, double distanceTresh,
+    cv::_OutputArray *R, cv::_OutputArray *t, cv::_InputOutputArray *mask, cv::_OutputArray *triangulatedPoints,
     int *returnValue)
 {
     BEGIN_WRAP
-	*returnValue = cv::recoverPose(*E, *points1, *points2, *cameraMatrix, *R, *t, distanceTresh, *mask, *triangulatedPoints);
+    *returnValue = cv::recoverPose(*E, *points1, *points2, *cameraMatrix, *R, *t, distanceTresh, entity(mask), entity(triangulatedPoints));
     END_WRAP
 }
 
 CVAPI(ExceptionStatus) calib3d_findEssentialMat_InputArray1(
-	cv::_InputArray *points1, cv::_InputArray *points2, cv::_InputArray *cameraMatrix,
-	int method, double prob, double threshold,
-	cv::_OutputArray *mask,
+    cv::_InputArray *points1, cv::_InputArray *points2, cv::_InputArray *cameraMatrix,
+    int method, double prob, double threshold,
+    cv::_OutputArray *mask,
     cv::Mat **returnValue)
 {
     BEGIN_WRAP
     const auto mat = cv::findEssentialMat(
-		*points1, *points2, *cameraMatrix, method, prob, threshold, entity(mask));
-	*returnValue = new cv::Mat(mat);
+        *points1, *points2, *cameraMatrix, method, prob, threshold, entity(mask));
+    *returnValue = new cv::Mat(mat);
     END_WRAP
 }
 CVAPI(ExceptionStatus) calib3d_findEssentialMat_InputArray2(
-	cv::_InputArray *points1, cv::_InputArray *points2, double focal, cv::Point2d* pp,
-	int method, double prob, double threshold,
-	cv::_OutputArray *mask,
+    cv::_InputArray *points1, cv::_InputArray *points2, double focal, MyCvPoint2D64f pp,
+    int method, double prob, double threshold,
+    cv::_OutputArray *mask,
     cv::Mat **returnValue)
 {
     BEGIN_WRAP
     const auto mat = cv::findEssentialMat(
-		*points1, *points2, focal, *pp, method, prob, threshold, entity(mask));
-	*returnValue = new cv::Mat(mat);
+        *points1, *points2, focal, cpp(pp), method, prob, threshold, entity(mask));
+    *returnValue = new cv::Mat(mat);
     END_WRAP
 }
 

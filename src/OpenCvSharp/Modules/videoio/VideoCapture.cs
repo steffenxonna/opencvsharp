@@ -308,15 +308,8 @@ namespace OpenCvSharp
             {
                 if (captureType == CaptureType.File)
                     throw new NotSupportedException("Only for cameras");
-                if (value.Length != 4)
-                    throw new ArgumentException("Length of the argument string must be 4");
-                
-                var c1 = Convert.ToByte(value[0]);
-                var c2 = Convert.ToByte(value[1]);
-                var c3 = Convert.ToByte(value[2]);
-                var c4 = Convert.ToByte(value[3]);
-                var v = FourCCCalculator.Run(c1, c2, c3, c4);
-                Set(VideoCaptureProperties.FourCC, v);
+                var v = OpenCvSharp.FourCC.FromString(value);
+                Set(VideoCaptureProperties.FourCC, v.Value);
             }
         }
 
@@ -530,7 +523,7 @@ namespace OpenCvSharp
         public bool ConvertRgb
         {
             get => (int)Get(VideoCaptureProperties.ConvertRgb) != 0;
-            set => Set(VideoCaptureProperties.ConvertRgb, value ? 0 : 1);
+            set => Set(VideoCaptureProperties.ConvertRgb, value ? 1 : 0);
         }
         
         /// <summary>
