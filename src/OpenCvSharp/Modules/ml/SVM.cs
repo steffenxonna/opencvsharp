@@ -1,19 +1,13 @@
 ﻿using System;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp.ML
 {
     // ReSharper disable InconsistentNaming
 
-#if LANG_JP
-    /// <summary>
-    /// SVM model classifier
-    /// </summary>
-#else
     /// <summary>
     /// Support Vector Machines
     /// </summary>
-#endif
-
     public class SVM : StatModel
     {
         private Ptr? ptrObj;
@@ -254,6 +248,9 @@ namespace OpenCvSharp.ML
             }
             set
             {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value));
+
                 NativeMethods.HandleException(
                     NativeMethods.ml_SVM_setClassWeights(ptr, value.CvPtr));
                 GC.KeepAlive(this);
@@ -309,15 +306,6 @@ namespace OpenCvSharp.ML
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Initialize with custom kernel.
-        /// </summary>
-        /// <param name="kernel"></param>
-        public void SetCustomKernel(Kernel kernel)
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// Trains an %SVM with optimal parameters.
@@ -422,20 +410,6 @@ namespace OpenCvSharp.ML
         #endregion
 
         #region Types
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public class Kernel
-        {
-            /// <summary>
-            /// 
-            /// </summary>
-            public Kernel()
-            {
-                throw new NotImplementedException();
-            }
-        }
 
         /// <summary>
         /// SVM type

@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Vectors;
+
 // ReSharper disable CommentTypo
 // ReSharper disable IdentifierTypo
 // ReSharper disable UnusedMember.Global
@@ -58,16 +62,6 @@ namespace OpenCvSharp
             dst.Fix();
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 2つの配列同士，あるいは配列とスカラの 要素毎の和を求めます．
-        /// </summary>
-        /// <param name="src1">1番目の入力配列</param>
-        /// <param name="src2">src1 と同じサイズ，同じ型である2番目の入力配列</param>
-        /// <param name="dst">src1 と同じサイズ，同じ型の出力配列．</param>
-        /// <param name="mask">8ビット，シングルチャンネル配列のオプションの処理マスク．出力配列内の変更される要素を表します. [既定値はnull]</param>        
-        /// <param name="dtype"></param>
-#else
         /// <summary>
         /// Computes the per-element sum of two arrays or an array and a scalar.
         /// </summary>
@@ -76,7 +70,6 @@ namespace OpenCvSharp
         /// <param name="dst">The destination array; it will have the same size and same type as src1</param>
         /// <param name="mask">The optional operation mask, 8-bit single channel array; specifies elements of the destination array to be changed. [By default this is null]</param>
         /// <param name="dtype"></param>
-#endif
         public static void Add(InputArray src1, InputArray src2, OutputArray dst, InputArray? mask = null,
             int dtype = -1)
         {
@@ -99,16 +92,7 @@ namespace OpenCvSharp
             GC.KeepAlive(mask);
             dst.Fix();
         }
-#if LANG_JP
-        /// <summary>
-        /// 2つの配列同士，あるいは配列とスカラの 要素毎の差を求めます．
-        /// </summary>
-        /// <param name="src1">1番目の入力配列</param>
-        /// <param name="src2">src1 と同じサイズ，同じ型である2番目の入力配列</param>
-        /// <param name="dst">src1 と同じサイズ，同じ型の出力配列．</param>
-        /// <param name="mask">オプション．8ビット，シングルチャンネル配列の処理マスク．出力配列内の変更される要素を表します. [既定値はnull]</param>
-        /// <param name="dtype"></param>
-#else
+
         /// <summary>
         /// Calculates per-element difference between two arrays or array and a scalar
         /// </summary>
@@ -117,7 +101,6 @@ namespace OpenCvSharp
         /// <param name="dst">The destination array; it will have the same size and same type as src1</param>
         /// <param name="mask">The optional operation mask, 8-bit single channel array; specifies elements of the destination array to be changed. [By default this is null]</param>
         /// <param name="dtype"></param>
-#endif
         public static void Subtract(InputArray src1, InputArray src2, OutputArray dst, InputArray? mask = null,
             int dtype = -1)
         {
@@ -141,16 +124,6 @@ namespace OpenCvSharp
             GC.KeepAlive(mask);
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 2つの配列同士，あるいは配列とスカラの 要素毎の差を求めます．
-        /// </summary>
-        /// <param name="src1">1番目の入力配列</param>
-        /// <param name="src2">src1 と同じサイズ，同じ型である2番目の入力配列</param>
-        /// <param name="dst">src1 と同じサイズ，同じ型の出力配列．</param>
-        /// <param name="mask">オプション．8ビット，シングルチャンネル配列の処理マスク．出力配列内の変更される要素を表します. [既定値はnull]</param>
-        /// <param name="dtype"></param>
-#else
         /// <summary>
         /// Calculates per-element difference between two arrays or array and a scalar
         /// </summary>
@@ -159,14 +132,11 @@ namespace OpenCvSharp
         /// <param name="dst">The destination array; it will have the same size and same type as src1</param>
         /// <param name="mask">The optional operation mask, 8-bit single channel array; specifies elements of the destination array to be changed. [By default this is null]</param>
         /// <param name="dtype"></param>
-#endif
         public static void Subtract(InputArray src1, Scalar src2, OutputArray dst, InputArray? mask = null,
             int dtype = -1)
         {
             if (src1 == null)
                 throw new ArgumentNullException(nameof(src1));
-            if (src2 == null)
-                throw new ArgumentNullException(nameof(src2));
             if (dst == null)
                 throw new ArgumentNullException(nameof(dst));
             src1.ThrowIfDisposed();
@@ -181,16 +151,6 @@ namespace OpenCvSharp
             GC.KeepAlive(mask);
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 2つの配列同士，あるいは配列とスカラの 要素毎の差を求めます．
-        /// </summary>
-        /// <param name="src1">1番目の入力配列</param>
-        /// <param name="src2">src1 と同じサイズ，同じ型である2番目の入力配列</param>
-        /// <param name="dst">src1 と同じサイズ，同じ型の出力配列．</param>
-        /// <param name="mask">オプション．8ビット，シングルチャンネル配列の処理マスク．出力配列内の変更される要素を表します. [既定値はnull]</param>
-        /// <param name="dtype"></param>
-#else
         /// <summary>
         /// Calculates per-element difference between two arrays or array and a scalar
         /// </summary>
@@ -199,12 +159,9 @@ namespace OpenCvSharp
         /// <param name="dst">The destination array; it will have the same size and same type as src1</param>
         /// <param name="mask">The optional operation mask, 8-bit single channel array; specifies elements of the destination array to be changed. [By default this is null]</param>
         /// <param name="dtype"></param>
-#endif
         public static void Subtract(Scalar src1, InputArray src2, OutputArray dst, InputArray? mask = null,
             int dtype = -1)
         {
-            if (src1 == null)
-                throw new ArgumentNullException(nameof(src1));
             if (src2 == null)
                 throw new ArgumentNullException(nameof(src2));
             if (dst == null)
@@ -221,16 +178,6 @@ namespace OpenCvSharp
             GC.KeepAlive(mask);
         }
         
-#if LANG_JP
-        /// <summary>
-        /// 2つの配列同士の，要素毎のスケーリングされた積を求めます．
-        /// </summary>
-        /// <param name="src1">1番目の入力配列</param>
-        /// <param name="src2">src1 と同じサイズ，同じ型である2番目の入力配列</param>
-        /// <param name="dst">src1 と同じサイズ，同じ型の出力配列</param>
-        /// <param name="scale">オプションであるスケールファクタ. [既定値は1]</param>
-        /// <param name="dtype"></param>
-#else
         /// <summary>
         /// Calculates the per-element scaled product of two arrays
         /// </summary>
@@ -239,7 +186,6 @@ namespace OpenCvSharp
         /// <param name="dst">The destination array; will have the same size and the same type as src1</param>
         /// <param name="scale">The optional scale factor. [By default this is 1]</param>
         /// <param name="dtype"></param>
-#endif
         public static void Multiply(InputArray src1, InputArray src2, OutputArray dst, double scale = 1, int dtype = -1)
         {
             if (src1 == null)
@@ -261,16 +207,6 @@ namespace OpenCvSharp
             dst.Fix();
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 2つの配列同士，あるいは配列とスカラの 要素毎の商を求めます．
-        /// </summary>
-        /// <param name="src1">1番目の入力配列</param>
-        /// <param name="src2">src1 と同じサイズ，同じ型である2番目の入力配列</param>
-        /// <param name="dst">src2 と同じサイズ，同じ型である出力配列</param>
-        /// <param name="scale">スケールファクタ [既定値は1]</param>
-        /// <param name="dtype"></param>
-#else
         /// <summary>
         /// Performs per-element division of two arrays or a scalar by an array.
         /// </summary>
@@ -279,7 +215,6 @@ namespace OpenCvSharp
         /// <param name="dst">The destination array; will have the same size and same type as src2</param>
         /// <param name="scale">Scale factor [By default this is 1]</param>
         /// <param name="dtype"></param>
-#endif
         public static void Divide(InputArray src1, InputArray src2, OutputArray dst, double scale = 1, int dtype = -1)
         {
             if (src1 == null)
@@ -301,15 +236,6 @@ namespace OpenCvSharp
             dst.Fix();
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 2つの配列同士，あるいは配列とスカラの 要素毎の商を求めます．
-        /// </summary>
-        /// <param name="scale">スケールファクタ</param>
-        /// <param name="src2">1番目の入力配列</param>
-        /// <param name="dst">src2 と同じサイズ，同じ型である出力配列</param>
-        /// <param name="dtype"></param>
-#else
         /// <summary>
         /// Performs per-element division of two arrays or a scalar by an array.
         /// </summary>
@@ -317,7 +243,6 @@ namespace OpenCvSharp
         /// <param name="src2">The first source array</param>
         /// <param name="dst">The destination array; will have the same size and same type as src2</param>
         /// <param name="dtype"></param>
-#endif
         public static void Divide(double scale, InputArray src2, OutputArray dst, int dtype = -1)
         {
             if (src2 == null)
@@ -393,15 +318,6 @@ namespace OpenCvSharp
             dst.Fix();
         }
 
-#if LANG_JP
-        /// <summary>
-        /// スケーリング後，絶対値を計算し，結果を結果を 8 ビットに変換します．
-        /// </summary>
-        /// <param name="src">入力配列</param>
-        /// <param name="dst">出力配列</param>
-        /// <param name="alpha">オプションのスケールファクタ. [既定値は1]</param>
-        /// <param name="beta">スケーリングされた値に加えられるオプション値. [既定値は0]</param>
-#else
         /// <summary>
         /// Scales, computes absolute values and converts the result to 8-bit.
         /// </summary>
@@ -409,7 +325,6 @@ namespace OpenCvSharp
         /// <param name="dst">The destination array</param>
         /// <param name="alpha">The optional scale factor. [By default this is 1]</param>
         /// <param name="beta">The optional delta added to the scaled values. [By default this is 0]</param>
-#endif
         public static void ConvertScaleAbs(InputArray src, OutputArray dst, double alpha = 1, double beta = 0)
         {
             if (src == null)
@@ -1191,6 +1106,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="src">input array or vector of matrices. all of the matrices must have the same number of rows and the same depth.</param>
         /// <param name="dst">output array. It has the same number of rows and depth as the src, and the sum of cols of the src.</param>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static void HConcat(IEnumerable<Mat> src, OutputArray dst)
         {
             if (src == null)
@@ -1248,6 +1164,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="src">input array or vector of matrices. all of the matrices must have the same number of cols and the same depth.</param>
         /// <param name="dst">output array. It has the same number of cols and depth as the src, and the sum of rows of the src.</param>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static void VConcat(IEnumerable<Mat> src, OutputArray dst)
         {
             if (src == null)
@@ -1528,7 +1445,7 @@ namespace OpenCvSharp
         /// <param name="dst">output array of type ref CV_8U that has the same size and the same number of channels as the input arrays.</param>
         /// <param name="cmpop">a flag, that specifies correspondence between the arrays (cv::CmpTypes)</param>
         // ReSharper disable once IdentifierTypo
-        public static void Compare(InputArray src1, InputArray src2, OutputArray dst, CmpTypes cmpop)
+        public static void Compare(InputArray src1, InputArray src2, OutputArray dst, CmpType cmpop)
         {
             if (src1 == null)
                 throw new ArgumentNullException(nameof(src1));
@@ -2136,7 +2053,7 @@ namespace OpenCvSharp
             if (m == null)
                 throw new ArgumentNullException(nameof(m));
 
-            using var srcMat = Mat<Point2f>.FromArray(src);
+            using var srcMat = Mat.FromArray(src);
             using var dstMat = new Mat<Point2f>();
 
             NativeMethods.HandleException(
@@ -2160,7 +2077,7 @@ namespace OpenCvSharp
             if (m == null)
                 throw new ArgumentNullException(nameof(m));
 
-            using var srcMat = Mat<Point2d>.FromArray(src);
+            using var srcMat = Mat.FromArray(src);
             using var dstMat = new Mat<Point2d>();
 
             NativeMethods.HandleException(
@@ -2184,7 +2101,7 @@ namespace OpenCvSharp
             if (m == null)
                 throw new ArgumentNullException(nameof(m));
 
-            using var srcMat = Mat<Point3f>.FromArray(src);
+            using var srcMat = Mat.FromArray(src);
             using var dstMat = new Mat<Point3f>();
 
             NativeMethods.HandleException(
@@ -2208,7 +2125,7 @@ namespace OpenCvSharp
             if (m == null)
                 throw new ArgumentNullException(nameof(m));
 
-            using var srcMat = Mat<Point3d>.FromArray(src);
+            using var srcMat = Mat.FromArray(src);
             using var dstMat = new Mat<Point3d>();
 
             NativeMethods.HandleException(
@@ -3396,15 +3313,18 @@ namespace OpenCvSharp
         /// For example "3.4.1-dev".
         /// </summary>
         /// <returns></returns>
-        public static string GetVersionString()
+        public static string? GetVersionString()
         {
-            const int length = 128;
-            var buf = new StringBuilder(length + 1);
+            const int bufferSize = 128;
 
-            NativeMethods.HandleException(
-                NativeMethods.core_getVersionString(buf, buf.Capacity));
-
-            return buf.ToString();
+            unsafe
+            {
+                byte* buffer = stackalloc byte[bufferSize];
+                NativeMethods.HandleException(
+                    NativeMethods.core_getVersionString(buffer, bufferSize));
+                var result = System.Runtime.InteropServices.Marshal.PtrToStringAnsi((IntPtr)buffer);
+                return result;
+            }
         }
 
         /// <summary>
@@ -3624,7 +3544,7 @@ namespace OpenCvSharp
         /// <param name="mtx"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        public static string? Format(InputArray mtx, FormatType format = FormatType.Default)
+        public static string Format(InputArray mtx, FormatType format = FormatType.Default)
         {
             if (mtx == null)
                 throw new ArgumentNullException(nameof(mtx));
@@ -3690,8 +3610,14 @@ namespace OpenCvSharp
         /// <param name="predicate">Equivalence predicate (a boolean function of two arguments).
         /// The predicate returns true when the elements are certainly in the same class, and returns false if they may or may not be in the same class.</param>
         /// <returns></returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static int Partition<T>(IEnumerable<T> vec, out int[] labels, PartitionPredicate<T> predicate)
         {
+            if (vec == null) 
+                throw new ArgumentNullException(nameof(vec));
+            if (predicate == null) 
+                throw new ArgumentNullException(nameof(predicate));
+
             var vecArray = vec as T[] ?? vec.ToArray();
             labels = new int[vecArray.Length];
             var groupHeads = new List<T>();

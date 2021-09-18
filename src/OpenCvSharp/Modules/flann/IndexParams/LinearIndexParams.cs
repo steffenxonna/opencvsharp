@@ -1,20 +1,15 @@
 ﻿using System;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp.Flann
 {
-#if LANG_JP
-    /// <summary>
-    /// 線形のブルートフォース探索が行われます
-    /// </summary>
-#else
     /// <summary>
     /// the index will perform a linear, brute-force search.
     /// </summary>
-#endif
     public class LinearIndexParams : IndexParams
     {
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         public LinearIndexParams()
             : base(null)

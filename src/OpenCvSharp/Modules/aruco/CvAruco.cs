@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenCvSharp.Util;
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Util;
+using OpenCvSharp.Internal.Vectors;
 
 namespace OpenCvSharp.Aruco
 {
@@ -35,6 +37,8 @@ namespace OpenCvSharp.Aruco
                 throw new ArgumentNullException(nameof(image));
             if (dictionary == null)
                 throw new ArgumentNullException(nameof(dictionary));
+            if (parameters == null) 
+                throw new ArgumentNullException(nameof(parameters));
             if (dictionary.ObjectPtr == null)
                 throw new ArgumentException($"{nameof(dictionary)} is disposed", nameof(dictionary));
 

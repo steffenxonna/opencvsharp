@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Vectors;
 
 namespace OpenCvSharp
 {
@@ -182,6 +184,8 @@ namespace OpenCvSharp
         {
             if (image == null)
                 throw new ArgumentNullException(nameof(image));
+            if (descriptors == null) 
+                throw new ArgumentNullException(nameof(descriptors));
             ThrowIfDisposed();
 
             using var keypointsVec = new VectorOfKeyPoint(keypoints);

@@ -1,19 +1,13 @@
 ﻿using System;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp
 {
     // ReSharper disable InconsistentNaming
-#pragma warning disable 1591
 
-#if LANG_JP
-    /// <summary>
-    /// セミグローバルブロックマッチングアルゴリズムを用てステレオ対応点探索を行うためのクラス
-    /// </summary>
-#else
     /// <summary>
     /// Semi-Global Stereo Matching
     /// </summary>
-#endif
     public class StereoBM : StereoMatcher
     {
         private Ptr? ptrObj;

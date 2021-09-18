@@ -1,4 +1,6 @@
 ﻿using System;
+using OpenCvSharp.Internal;
+
 // ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 
@@ -10,12 +12,6 @@ namespace OpenCvSharp
     public class AgastFeatureDetector : Feature2D
     {
         private Ptr? ptrObj;
-
-#pragma warning disable 1591
-        public const int
-            THRESHOLD = 10000,
-            NONMAX_SUPPRESSION = 10001;
-#pragma warning restore 1591
 
         /// <summary>
         /// Constructor

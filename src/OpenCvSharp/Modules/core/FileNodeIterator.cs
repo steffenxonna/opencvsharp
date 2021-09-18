@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using OpenCvSharp.Internal;
 
 // ReSharper disable UnusedMember.Global
 
@@ -10,7 +11,7 @@ namespace OpenCvSharp
     /// <summary>
     /// File Storage Node class
     /// </summary>
-    public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator?>, IEnumerator<FileNode>
+    public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>, IEnumerator<FileNode>
     {
         /// <summary>
         /// The default constructor
@@ -135,33 +136,33 @@ namespace OpenCvSharp
             GC.KeepAlive(this);
             return this;
         }
+        
+        #pragma warning disable 1591
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="it"></param>
-        /// <returns></returns>
-        public bool Equals(FileNodeIterator? it)
+        public override bool Equals(object? obj)
         {
-            if (it is null)
-                return false;
+            return obj is FileNodeIterator fni && Equals(fni);
+        }
+        
+        public bool Equals(FileNodeIterator? other)
+        {
+            if (other is null)            
+                return false;            
+
             ThrowIfDisposed();
-            it.ThrowIfDisposed();
+            other.ThrowIfDisposed();
 
             NativeMethods.HandleException(
-                NativeMethods.core_FileNodeIterator_operatorEqual(ptr, it.CvPtr, out var ret));
+                NativeMethods.core_FileNodeIterator_operatorEqual(ptr, other.CvPtr, out var ret));
 
             GC.KeepAlive(this);
-            GC.KeepAlive(it);
+            GC.KeepAlive(other);
 
             return ret != 0;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="it"></param>
-        /// <returns></returns>
+        public override int GetHashCode() => ptr.GetHashCode();
+        
         public long Minus(FileNodeIterator it)
         {
             if (it == null)
@@ -177,12 +178,7 @@ namespace OpenCvSharp
 
             return ret.ToInt64();
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="it"></param>
-        /// <returns></returns>
+        
         public bool LessThan(FileNodeIterator it)
         {
             if (it == null)
@@ -198,5 +194,7 @@ namespace OpenCvSharp
 
             return ret != 0;
         }
+
+#pragma warning restore 1591
     }
 }

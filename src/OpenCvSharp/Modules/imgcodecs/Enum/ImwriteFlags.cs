@@ -1,26 +1,14 @@
 ﻿
 namespace OpenCvSharp
 {
-#if LANG_JP
-    /// <summary>
-    /// cv::imwrite, cv::inencode で用いるエンコードの種類
-    /// </summary>
-#else
     /// <summary>
     /// The format type IDs for cv::imwrite and cv::inencode
     /// </summary>
-#endif
     public enum ImwriteFlags
     {
-#if LANG_JP
-    /// <summary>
-    /// JPEGの場合のフラグ。0から100の値を取る（大きいほど高品質）。デフォルト値は95。
-    /// </summary>
-#else
         /// <summary>
         /// For JPEG, it can be a quality from 0 to 100 (the higher is the better). Default value is 95.
         /// </summary>
-#endif
         JpegQuality = 1,
 
         /// <summary>
@@ -48,16 +36,10 @@ namespace OpenCvSharp
         /// </summary>
         JpegChromaQuality = 6,
 
-#if LANG_JP
-    /// <summary>
-    /// PNGの場合のフラグ。圧縮レベルを0から9の値で指定する（大きいほど高圧縮率で、かつ圧縮に時間を要する）。デフォルト値は3。
-    /// </summary>
-#else
         /// <summary>
         /// For PNG, it can be the compression level from 0 to 9. 
         /// A higher value means a smaller size and longer compression time. Default value is 3.
         /// </summary>
-#endif
         PngCompression = 16,
 
         /// <summary>
@@ -70,15 +52,9 @@ namespace OpenCvSharp
         /// </summary>
         PngBilevel = 18,
 
-#if LANG_JP
-    /// <summary>
-    /// PPM, PGM, PBMの場合のフラグ。フォーマットをバイナリ(1)かアスキー(0)かで指定する。デフォルト値は1。
-    /// </summary>
-#else
         /// <summary>
         /// For PPM, PGM, or PBM, it can be a binary format flag, 0 or 1. Default value is 1.
         /// </summary>
-#endif
         PxmBinary = 32,
 
         /// <summary>
@@ -109,6 +85,20 @@ namespace OpenCvSharp
         /// <summary>
         /// For TIFF, use to specify the Y direction DPI
         /// </summary>
-        TiffYDpi = 258 
+        TiffYDpi = 258,
+        
+        /// <summary>
+        /// For TIFF, use to specify the image compression scheme. 
+        /// See libtiff for integer constants corresponding to compression formats. 
+        /// Note, for images whose depth is CV_32F, only libtiff's SGILOG compression scheme is used. 
+        /// For other supported depths, the compression scheme can be specified by this flag; LZW compression is the default.
+        /// </summary>
+        TiffCompression = 259,
+        
+        /// <summary>
+        /// For JPEG2000, use to specify the target compression rate (multiplied by 1000). 
+        /// The value can be from 0 to 1000. Default is 1000.
+        /// </summary>
+        Jpeg2000CompressionX1000 = 272    
     }
 }

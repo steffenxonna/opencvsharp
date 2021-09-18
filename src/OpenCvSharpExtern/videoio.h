@@ -1,7 +1,10 @@
-#ifndef _CPP_VIDEOIO_H_
-#define _CPP_VIDEOIO_H_
+#pragma once
 
 #include "include_opencv.h"
+
+// ReSharper disable IdentifierTypo
+// ReSharper disable CppInconsistentNaming
+// ReSharper disable CppNonInlineFunctionDefinitionInHeaderFile
 
 
 #pragma region VideoCapture
@@ -24,6 +27,24 @@ CVAPI(ExceptionStatus) videoio_VideoCapture_new3(int device, int apiPreference, 
     *returnValue = new cv::VideoCapture(device, apiPreference);
     END_WRAP
 }
+
+CVAPI(ExceptionStatus) videoio_VideoCapture_new4(const char* filename, int apiPreference, int* params, int paramsLength, cv::VideoCapture** returnValue)
+{
+    BEGIN_WRAP
+        std::vector<int> paramsVec;
+        paramsVec.assign(params, params + paramsLength);
+        * returnValue = new cv::VideoCapture(filename, apiPreference, paramsVec);
+    END_WRAP
+}
+CVAPI(ExceptionStatus) videoio_VideoCapture_new5(int device, int apiPreference, int* params, int paramsLength, cv::VideoCapture** returnValue)
+{
+    BEGIN_WRAP
+        std::vector<int> paramsVec;
+        paramsVec.assign(params, params + paramsLength);
+        * returnValue = new cv::VideoCapture(device, apiPreference, paramsVec);
+    END_WRAP
+}
+
 
 CVAPI(ExceptionStatus) videoio_VideoCapture_delete(cv::VideoCapture *obj)
 {
@@ -143,6 +164,19 @@ CVAPI(ExceptionStatus) videoio_VideoCapture_getExceptionMode(cv::VideoCapture *o
     END_WRAP
 }
 
+CVAPI(ExceptionStatus) videoio_VideoCapture_waitAny(
+    cv::VideoCapture** streams, const size_t streamsSize,
+    std::vector<int> *readyIndex, const int64 timeoutNs, int *returnValue)
+{
+    BEGIN_WRAP
+    std::vector<cv::VideoCapture> streamsVec(streamsSize);
+    for (size_t i = 0; i < streamsSize; i++)
+        streamsVec[i] = *streams[i];
+
+    *returnValue = cv::VideoCapture::waitAny(streamsVec, *readyIndex, timeoutNs) ? 1 : 0;
+    END_WRAP
+}
+
 #pragma endregion
 
 #pragma region VideoWriter
@@ -171,6 +205,30 @@ CVAPI(ExceptionStatus) videoio_VideoWriter_new3(
 {
     BEGIN_WRAP
     *returnValue = new cv::VideoWriter(filename, apiPreference, fourcc, fps, cpp(frameSize), isColor != 0);
+    END_WRAP
+}
+CVAPI(ExceptionStatus) videoio_VideoWriter_new4(
+    const char* filename,
+    int fourcc, double fps,
+    MyCvSize frameSize, int* params, int paramsLength,
+    cv::VideoWriter** returnValue)
+{
+    BEGIN_WRAP
+        std::vector<int> paramsVec;
+        paramsVec.assign(params, params + paramsLength);
+        * returnValue = new cv::VideoWriter(filename, fourcc, fps, cpp(frameSize), paramsVec);
+    END_WRAP
+}
+CVAPI(ExceptionStatus) videoio_VideoWriter_new5(
+    const char* filename, int apiPreference,
+    int fourcc, double fps,
+    MyCvSize frameSize, int* params, int paramsLength,
+    cv::VideoWriter** returnValue)
+{
+    BEGIN_WRAP
+        std::vector<int> paramsVec;
+        paramsVec.assign(params, params + paramsLength);
+        * returnValue = new cv::VideoWriter(filename, apiPreference, fourcc, fps, cpp(frameSize), paramsVec);
     END_WRAP
 }
 
@@ -259,5 +317,3 @@ CVAPI(ExceptionStatus) videoio_VideoWriter_getBackendName(cv::VideoWriter *obj, 
 }
 
 #pragma endregion
-
-#endif

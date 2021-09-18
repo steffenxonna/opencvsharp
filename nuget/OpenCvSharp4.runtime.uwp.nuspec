@@ -14,6 +14,7 @@
         <releaseNotes></releaseNotes>
         <copyright>Copyright 2008-2019</copyright>
         <tags>Image Processing OpenCV Wrapper FFI opencvsharp</tags>
+        <repository type="git" url="https://github.com/shimat/opencvsharp.git" />
         <dependencies>
             <group targetFramework="netstandard2.0"></group>
             <group targetFramework="netstandard2.1"></group>
@@ -26,11 +27,11 @@
         <file src="..\src\Release\uwpOpenCvSharpExtern\x64\OpenCvSharpExtern.dll"   target="runtimes\win-x64\native" />
         <file src="..\src\Release\uwpOpenCvSharpExtern\Win32\OpenCvSharpExtern.dll" target="runtimes\win-x86\native" />
         <file src="..\src\Release\uwpOpenCvSharpExtern\ARM\OpenCvSharpExtern.dll" target="runtimes\win-arm\native" />
-        <file src="..\opencv_files\opencv450_uwp_x64\x64\vc16\bin\opencv_world450.dll" target="runtimes\win-x64\native" />
-        <file src="..\opencv_files\opencv450_uwp_x86\x86\vc16\bin\opencv_world450.dll" target="runtimes\win-x86\native" />
-        <file src="..\opencv_files\opencv450_uwp_arm\x86\vc16\bin\opencv_world450.dll" target="runtimes\win-arm\native" />
-        <file src="..\opencv_files\opencv450_uwp_x64\x64\vc16\bin\opencv_img_hash450.dll" target="runtimes\win-x64\native" />
-        <file src="..\opencv_files\opencv450_uwp_x86\x86\vc16\bin\opencv_img_hash450.dll" target="runtimes\win-x86\native" />
-        <file src="..\opencv_files\opencv450_uwp_arm\x86\vc16\bin\opencv_img_hash450.dll" target="runtimes\win-arm\native" />
+        <file src="..\opencv_files\opencv453_uwp_x64\x64\vc16\bin\opencv_world453.dll" target="runtimes\win-x64\native" />
+        <file src="..\opencv_files\opencv453_uwp_x86\x86\vc16\bin\opencv_world453.dll" target="runtimes\win-x86\native" />
+        <file src="..\opencv_files\opencv453_uwp_arm\x86\vc16\bin\opencv_world453.dll" target="runtimes\win-arm\native" />
+        <file src="..\opencv_files\opencv453_uwp_x64\x64\vc16\bin\opencv_img_hash453.dll" target="runtimes\win-x64\native" />
+        <file src="..\opencv_files\opencv453_uwp_x86\x86\vc16\bin\opencv_img_hash453.dll" target="runtimes\win-x86\native" />
+        <file src="..\opencv_files\opencv453_uwp_arm\x86\vc16\bin\opencv_img_hash453.dll" target="runtimes\win-arm\native" />
     </files>
 </package>

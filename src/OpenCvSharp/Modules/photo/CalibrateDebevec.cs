@@ -1,16 +1,17 @@
 ﻿using System;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp
 {
     /// <summary>
-    /// The base class for camera response calibration algorithms.
+    /// CalibrateDebevec object
     /// </summary>
     public class CalibrateDebevec : CalibrateCRF
     {
         private Ptr? ptrObj;
 
         /// <summary>
-        /// Creates instance by raw pointer cv::ml::Boost*
+        /// Creates instance by raw pointer cv::CalibrateDebevec*
         /// </summary>
         protected CalibrateDebevec(IntPtr p)
         {
@@ -42,6 +43,60 @@ namespace OpenCvSharp
             ptrObj?.Dispose();
             ptrObj = null;
             base.DisposeManaged();
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public float Lambda
+        {
+            get
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.photo_CalibrateDebevec_getLambda(ptr, out var ret));
+                return ret;
+            }
+            set
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.photo_CalibrateDebevec_setLambda(ptr, value));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Samples
+        {
+            get
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.photo_CalibrateDebevec_getSamples(ptr, out var ret));
+                return ret;
+            }
+            set
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.photo_CalibrateDebevec_setSamples(ptr, value));
+            }
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool Random
+        {
+            get
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.photo_CalibrateDebevec_getRandom(ptr, out var ret));
+                return ret != 0;
+            }
+            set
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.photo_CalibrateDebevec_setRandom(ptr, value ? 1 : 0));
+            }
         }
 
         internal class Ptr : OpenCvSharp.Ptr

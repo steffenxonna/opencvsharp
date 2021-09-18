@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace OpenCvSharp.Detail
@@ -60,6 +61,8 @@ namespace OpenCvSharp.Detail
 
 #pragma warning disable 1591
     [StructLayout(LayoutKind.Sequential)]
+    [SuppressMessage("Design", "CA1051: Do not declare visible instance fields")]
+    [SuppressMessage("Microsoft.Design", "CA1815: Override equals and operator equals on value types")]
     public struct WImageFeatures
     {
         public int ImgIdx;

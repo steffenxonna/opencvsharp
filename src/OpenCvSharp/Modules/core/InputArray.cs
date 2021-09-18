@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
-#if ENABLED_CUDA
-using OpenCvSharp.Cuda;
-#endif
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Vectors;
+
+#pragma warning disable CA1002 // Do not expose generic lists
 
 namespace OpenCvSharp
 {
@@ -59,6 +60,24 @@ namespace OpenCvSharp
             else
                 NativeMethods.HandleException(
                     NativeMethods.core_InputArray_new_byMat(mat.CvPtr, out ptr));
+            GC.KeepAlive(mat);
+            obj = mat;
+            handleKind = HandleKind.Mat;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="mat"></param>
+        // ReSharper disable once SuggestBaseTypeForParameter
+        internal InputArray(UMat? mat)
+        {
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            if (mat == null)
+                ptr = IntPtr.Zero;
+            else
+                NativeMethods.HandleException(
+                    NativeMethods.core_InputArray_new_byUMat(mat.CvPtr, out ptr));
             GC.KeepAlive(mat);
             obj = mat;
             handleKind = HandleKind.Mat;
@@ -285,7 +304,17 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static InputArray Create(Mat mat)
         {
-            return new InputArray(mat);
+            return new(mat);
+        }
+
+        /// <summary>
+        /// Creates a proxy class of the specified Mat
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <returns></returns>
+        public static InputArray Create(UMat mat)
+        {
+            return new(mat);
         }
 
         /// <summary>
@@ -295,7 +324,7 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static InputArray Create(MatExpr expr)
         {
-            return new InputArray(expr);
+            return new(expr);
         }
 
         /// <summary>
@@ -305,7 +334,7 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static InputArray Create(Scalar val)
         {
-            return new InputArray(val);
+            return new(val);
         }
 
         /// <summary>
@@ -315,7 +344,7 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static InputArray Create(double val)
         {
-            return new InputArray(val);
+            return new(val);
         }
 
 #if ENABLED_CUDA
@@ -337,7 +366,7 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static InputArray Create(IEnumerable<Mat> matVector)
         {
-            return new InputArray(matVector);
+            return new(matVector);
         }
 
         /// <summary>
@@ -445,6 +474,7 @@ namespace OpenCvSharp
 
             return vec switch
             {
+#pragma warning disable CA2000
                 Vec2b v => new InputArray(new[] { v.Item0, v.Item1 }),
                 Vec3b v => new InputArray(new[] { v.Item0, v.Item1, v.Item2 }),
                 Vec4b v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3 }),
@@ -469,6 +499,7 @@ namespace OpenCvSharp
                 Vec3d v => new InputArray(new[] { v.Item0, v.Item1, v.Item2}),
                 Vec4d v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3}),
                 Vec6d v => new InputArray(new[] { v.Item0, v.Item1, v.Item2, v.Item3, v.Item4, v.Item5}),
+#pragma warning restore CA2000
                 _ => throw new ArgumentException($"Not supported type: '{vec.GetType().Name}'", nameof(vec))
             };
         }
@@ -605,79 +636,51 @@ namespace OpenCvSharp
 
         #region Cast
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="mat"></param>
-        /// <returns></returns>
+#pragma warning disable 1591
+#pragma warning disable CA2225
+
         public static implicit operator InputArray(Mat mat)
         {
             return Create(mat);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="expr"></param>
-        /// <returns></returns>
+        
+        public static implicit operator InputArray(UMat mat)
+        {
+            return Create(mat);
+        }
+        
         public static implicit operator InputArray(MatExpr expr)
         {
             return Create(expr);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="val"></param>
-        /// <returns></returns>
+        
         public static implicit operator InputArray(Scalar val)
         {
             return Create(val);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="val"></param>
-        /// <returns></returns>
+        
         public static implicit operator InputArray(double val)
         {
             return Create(val);
         }
 
 #if ENABLED_CUDA
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="mat"></param>
-        /// <returns></returns>
         public static implicit operator InputArray(GpuMat mat)
         {
             return Create(mat);
         }
 #endif
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="mats"></param>
-        /// <returns></returns>
+        
         public static explicit operator InputArray(List<Mat> mats)
         {
             return Create(mats);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="mats"></param>
-        /// <returns></returns>
+        
         public static explicit operator InputArray(Mat[] mats)
         {
             return Create(mats);
         }
         
-#pragma warning disable 1591
         public static implicit operator InputArray(Vec2b vec) { return Create(vec); }
         public static implicit operator InputArray(Vec3b vec) { return Create(vec); }
         public static implicit operator InputArray(Vec4b vec) { return Create(vec); }
@@ -702,12 +705,13 @@ namespace OpenCvSharp
         public static implicit operator InputArray(Vec3d vec) { return Create(vec); }
         public static implicit operator InputArray(Vec4d vec) { return Create(vec); }
         public static implicit operator InputArray(Vec6d vec) { return Create(vec); }
+#pragma warning restore CA2225
 #pragma warning restore 1591
 
         #endregion
 
         #region Methods
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -734,6 +738,20 @@ namespace OpenCvSharp
                 NativeMethods.core_InputArray_getMatVector(ptr, vec.CvPtr));
             GC.KeepAlive(this);
             return vec.ToArray();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        public UMat GetUMat(int i = -1)
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.core_InputArray_getUMat(ptr, i, out var ret));
+            GC.KeepAlive(this);
+            return new UMat(ret);
         }
 
         /// <summary>

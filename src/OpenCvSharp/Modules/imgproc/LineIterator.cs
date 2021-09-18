@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using OpenCvSharp.Util;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp
 {
@@ -252,16 +252,7 @@ namespace OpenCvSharp
             /// <summary>
             /// 
             /// </summary>
-            public unsafe byte* ValuePointer
-            {
-                get
-                {
-                    unsafe
-                    {
-                        return (byte*)Value.ToPointer();
-                    }
-                }
-            }
+            public unsafe byte* ValuePointer => (byte*)Ptr.ToPointer();
 
             /// <summary>
             /// 
@@ -271,7 +262,7 @@ namespace OpenCvSharp
             /// <summary>
             /// 
             /// </summary>
-            public IntPtr Value { get; }
+            public IntPtr Ptr { get; }
 
             /// <summary>
             /// 
@@ -280,7 +271,7 @@ namespace OpenCvSharp
             /// <returns></returns>
             public T GetValue<T>() where T : struct
             {
-                return Marshal.PtrToStructure<T>(Value);
+                return Marshal.PtrToStructure<T>(Ptr);
             }
 
             /// <summary>
@@ -291,18 +282,18 @@ namespace OpenCvSharp
             /// <returns></returns>
             public void SetValue<T>(T value) where T : struct
             {
-                Marshal.StructureToPtr(value, Value, false);
+                Marshal.StructureToPtr(value, Ptr, false);
             }
 
             /// <summary>
             /// Constructor
             /// </summary>
             /// <param name="pos"></param>
-            /// <param name="value"></param>
-            internal unsafe Pixel(Point pos, IntPtr value)
+            /// <param name="ptr"></param>
+            internal Pixel(Point pos, IntPtr ptr)
             {
                 Pos = pos;
-                Value = value;
+                Ptr = ptr;
             }
         }
     }

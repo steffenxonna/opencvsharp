@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp
 {
@@ -39,8 +40,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static explicit operator byte(RNG self)
         {
-            if (self == null)
-                throw new ArgumentNullException(nameof(self));
             return self.ToByte();
         }
 
@@ -60,8 +59,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static explicit operator sbyte(RNG self)
         {
-            if (self == null)
-                throw new ArgumentNullException(nameof(self));
             return self.ToSByte();
         }
         
@@ -81,8 +78,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static explicit operator ushort(RNG self)
         {
-            if (self == null)
-                throw new ArgumentNullException(nameof(self));
             return self.ToUInt16();
         }
         
@@ -102,8 +97,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static explicit operator short(RNG self)
         {
-            if (self == null)
-                throw new ArgumentNullException(nameof(self));
             return self.ToInt16();
         }
         
@@ -123,8 +116,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static explicit operator uint(RNG self)
         {
-            if (self == null)
-                throw new ArgumentNullException(nameof(self));
             return self.Next();
         }
 
@@ -144,8 +135,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static explicit operator int(RNG self)
         {
-            if (self == null)
-                throw new ArgumentNullException(nameof(self));
             return self.ToInt32();
         }
 
@@ -165,8 +154,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static explicit operator float(RNG self)
         {
-            if (self == null)
-                throw new ArgumentNullException(nameof(self));
             return self.ToSingle(); 
         }
         
@@ -186,8 +173,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static explicit operator double(RNG self)
         {
-            if (self == null)
-                throw new ArgumentNullException(nameof(self));
             return self.ToDouble();
         }
 

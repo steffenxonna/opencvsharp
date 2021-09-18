@@ -1,18 +1,14 @@
 ﻿using System;
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Vectors;
 
 namespace OpenCvSharp
 {
-// ReSharper disable once InconsistentNaming
+    // ReSharper disable once InconsistentNaming
 
-#if LANG_JP
-    /// <summary>
-    /// MSER (Maximal Stable Extremal Regions) 抽出機
-    /// </summary>
-#else
     /// <summary>
     /// Maximal Stable Extremal Regions class
     /// </summary>
-#endif
     // ReSharper disable once InconsistentNaming
     public class MSER : Feature2D
     {

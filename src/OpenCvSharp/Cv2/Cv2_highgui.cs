@@ -1,4 +1,7 @@
 using System;
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Vectors;
+
 // ReSharper disable UnusedMember.Global
 
 namespace OpenCvSharp
@@ -13,7 +16,7 @@ namespace OpenCvSharp
         /// Flags of the window. Currently the only supported flag is CV WINDOW AUTOSIZE. If this is set, 
         /// the window size is automatically adjusted to fit the displayed image (see imshow ), and the user can not change the window size manually.
         /// </param>
-        public static void NamedWindow(string winName, WindowMode flags = WindowMode.Normal)
+        public static void NamedWindow(string winName, WindowFlags flags = WindowFlags.Normal)
         {
             if (string.IsNullOrEmpty(winName))
                 throw new ArgumentException("null or empty string.", nameof(winName));
@@ -144,7 +147,7 @@ namespace OpenCvSharp
         /// <param name="winName">Name of the window.</param>
         /// <param name="propId">Window property to retrieve.</param>
         /// <param name="propValue">New value of the window property.</param>
-        public static void SetWindowProperty(string winName, WindowProperty propId, double propValue)
+        public static void SetWindowProperty(string winName, WindowPropertyFlags propId, double propValue)
         {
             if (string.IsNullOrEmpty(winName))
                 throw new ArgumentException("null or empty string.", nameof(winName));
@@ -175,7 +178,7 @@ namespace OpenCvSharp
         /// <param name="winName">Name of the window.</param>
         /// <param name="propId">Window property to retrieve.</param>
         /// <returns></returns>
-        public static double GetWindowProperty(string winName, WindowProperty propId)
+        public static double GetWindowProperty(string winName, WindowPropertyFlags propId)
         {
             if (string.IsNullOrEmpty(winName))
                 throw new ArgumentException("null or empty string.", nameof(winName));
@@ -200,22 +203,13 @@ namespace OpenCvSharp
                 NativeMethods.highgui_getWindowImageRect(winName, out var ret));
             return ret;
         }
-
-#if LANG_JP
-    /// <summary>
-    /// 指定されたウィンドウ内で発生するマウスイベントに対するコールバック関数を設定する
-    /// </summary>
-    /// <param name="windowName">ウィンドウの名前</param>
-    /// <param name="onMouse">指定されたウィンドウ内でマウスイベントが発生するたびに呼ばれるデリゲート</param>
-    /// <param name="userData"></param>
-#else
+        
         /// <summary>
         /// Sets the callback function for mouse events occuring within the specified window.
         /// </summary>
         /// <param name="windowName">Name of the window. </param>
         /// <param name="onMouse">Reference to the function to be called every time mouse event occurs in the specified window. </param>
         /// <param name="userData"></param>
-#endif
         public static void SetMouseCallback(string windowName, MouseCallback onMouse, IntPtr userData = default)
         {
             if (string.IsNullOrEmpty(windowName))
@@ -241,7 +235,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="flags">The mouse callback flags parameter.</param>
         /// <returns></returns>
-        public static int GetMouseWheelDelta(MouseEventTypes flags)
+        public static int GetMouseWheelDelta(MouseEventFlags flags)
         {
             NativeMethods.HandleException(
                 NativeMethods.highgui_getMouseWheelDelta((int)flags, out var ret));
@@ -449,6 +443,20 @@ namespace OpenCvSharp
 
             NativeMethods.HandleException(
                 NativeMethods.highgui_setTrackbarMin(trackbarName, winName, minVal));
+        }
+
+        /// <summary>
+        /// get native window handle (HWND in case of Win32 and Widget in case of X Window) 
+        /// </summary>
+        /// <param name="windowName"></param>
+        public static IntPtr GetWindowHandle(string windowName)
+        {
+            if (windowName == null)
+                throw new ArgumentNullException(nameof(windowName));
+
+            NativeMethods.HandleException(
+                NativeMethods.highgui_cvGetWindowHandle(windowName, out var ret));
+            return ret;
         }
 
 #if WINRT

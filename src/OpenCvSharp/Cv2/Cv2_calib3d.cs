@@ -1,8 +1,10 @@
-using OpenCvSharp.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.InteropServices;
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Util;
+using OpenCvSharp.Internal.Vectors;
 
 namespace OpenCvSharp
 {
@@ -129,6 +131,7 @@ namespace OpenCvSharp
         /// <param name="ransacReprojThreshold">Maximum allowed reprojection error to treat a point pair as an inlier (used in the RANSAC method only)</param>
         /// <param name="mask"> Optional output mask set by a robust method ( CV_RANSAC or CV_LMEDS ). Note that the input mask values are ignored.</param>
         /// <returns></returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static Mat FindHomography(IEnumerable<Point2d> srcPoints, IEnumerable<Point2d> dstPoints,
             HomographyMethods method = HomographyMethods.None, double ransacReprojThreshold = 3,
             OutputArray? mask = null)
@@ -636,6 +639,7 @@ namespace OpenCvSharp
         /// <param name="aspectRatio">Optional “fixed aspect ratio” parameter. 
         /// If the parameter is not 0, the function assumes that the aspect ratio (fx/fy) 
         /// is fixed and correspondingly adjusts the jacobian matrix.</param>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static void ProjectPoints(
             IEnumerable<Point3f> objectPoints,
             double[] rvec, double[] tvec,
@@ -751,6 +755,7 @@ namespace OpenCvSharp
         /// <param name="useExtrinsicGuess">If true, the function uses the provided rvec and tvec values as initial approximations of 
         /// the rotation and translation vectors, respectively, and further optimizes them.</param>
         /// <param name="flags">Method for solving a PnP problem</param>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static void SolvePnP(
             IEnumerable<Point3f> objectPoints,
             IEnumerable<Point2f> imagePoints,
@@ -908,6 +913,7 @@ namespace OpenCvSharp
         /// <param name="confidence">The probability that the algorithm produces a useful result.</param>
         /// <param name="inliers">Output vector that contains indices of inliers in objectPoints and imagePoints .</param>
         /// <param name="flags">Method for solving a PnP problem</param>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static void SolvePnPRansac(
             IEnumerable<Point3f> objectPoints,
             IEnumerable<Point2f> imagePoints,
@@ -1221,6 +1227,7 @@ namespace OpenCvSharp
             GC.KeepAlive(corners);
             image.Fix();
         }
+
         /// <summary>
         /// Renders the detected chessboard corners.
         /// </summary>
@@ -1228,6 +1235,7 @@ namespace OpenCvSharp
         /// <param name="patternSize">Number of inner corners per a chessboard row and column (patternSize = cv::Size(points_per_row,points_per_column)).</param>
         /// <param name="corners">Array of detected corners, the output of findChessboardCorners.</param>
         /// <param name="patternWasFound">Parameter indicating whether the complete board was found or not. The return value of findChessboardCorners() should be passed here.</param>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static void DrawChessboardCorners(InputOutputArray image, Size patternSize,
             IEnumerable<Point2f> corners, bool patternWasFound)
         {
@@ -1401,7 +1409,7 @@ namespace OpenCvSharp
             distCoeffs.ThrowIfNotReady();
 
             var criteria0 = criteria.GetValueOrDefault(
-                new TermCriteria(CriteriaType.Count | CriteriaType.Eps, 30, Double.Epsilon));
+                new TermCriteria(CriteriaTypes.Count | CriteriaTypes.Eps, 30, Double.Epsilon));
 
             var objectPointsPtrs = objectPoints.Select(x => x.CvPtr).ToArray();
             var imagePointsPtrs = imagePoints.Select(x => x.CvPtr).ToArray();
@@ -1471,7 +1479,7 @@ namespace OpenCvSharp
                 throw new ArgumentNullException(nameof(distCoeffs));
 
             var criteria0 = criteria.GetValueOrDefault(
-                new TermCriteria(CriteriaType.Count | CriteriaType.Eps, 30, Double.Epsilon));
+                new TermCriteria(CriteriaTypes.Count | CriteriaTypes.Eps, 30, Double.Epsilon));
 
             using var op = new ArrayAddress2<Point3f>(objectPoints);
             using var ip = new ArrayAddress2<Point2f>(imagePoints);
@@ -1619,7 +1627,7 @@ namespace OpenCvSharp
             var ip2Ptrs = imagePoints2.Select(x => x.CvPtr).ToArray();
 
             var criteria0 = criteria.GetValueOrDefault(
-                new TermCriteria(CriteriaType.Count | CriteriaType.Eps, 30, 1e-6));
+                new TermCriteria(CriteriaTypes.Count | CriteriaTypes.Eps, 30, 1e-6));
 
             NativeMethods.HandleException(
                 NativeMethods.calib3d_stereoCalibrate_InputArray(
@@ -1645,10 +1653,10 @@ namespace OpenCvSharp
             distCoeffs1.Fix();
             cameraMatrix2.Fix();
             distCoeffs2.Fix();
-            R?.Fix();
-            T?.Fix();
-            E?.Fix();
-            F?.Fix();
+            R.Fix();
+            T.Fix();
+            E.Fix();
+            F.Fix();
 
             return ret;
         }
@@ -1699,7 +1707,7 @@ namespace OpenCvSharp
                 throw new ArgumentNullException(nameof(distCoeffs2));
 
             var criteria0 = criteria.GetValueOrDefault(
-                new TermCriteria(CriteriaType.Count | CriteriaType.Eps, 30, 1e-6));
+                new TermCriteria(CriteriaTypes.Count | CriteriaTypes.Eps, 30, 1e-6));
 
             using var op = new ArrayAddress2<Point3f>(objectPoints);
             using var ip1 = new ArrayAddress2<Point2f>(imagePoints1);
@@ -2055,6 +2063,7 @@ namespace OpenCvSharp
         /// with the epipolar geometry (that is, the points for which |points2[i]^T * F * points1[i]| > threshold ) 
         /// are rejected prior to computing the homographies. Otherwise, all the points are considered inliers.</param>
         /// <returns></returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static bool StereoRectifyUncalibrated(
             IEnumerable<Point2d> points1,
             IEnumerable<Point2d> points2,
@@ -2346,6 +2355,7 @@ namespace OpenCvSharp
         /// <param name="t_cam2gripper">Estimated translation part extracted from the homogeneous matrix that transforms a point
         /// expressed in the camera frame to the gripper frame.</param>
         /// <param name="method">One of the implemented Hand-Eye calibration method</param>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static void CalibrateHandEye(
             IEnumerable<Mat> R_gripper2base,
             IEnumerable<Mat> t_gripper2base,
@@ -2409,6 +2419,184 @@ namespace OpenCvSharp
         }
 
         /// <summary>
+        /// Computes Robot-World/Hand-Eye calibration.
+        /// The function performs the Robot-World/Hand-Eye calibration using various methods. One approach consists in estimating the
+        /// rotation then the translation(separable solutions):
+        /// - M.Shah, Solving the robot-world/hand-eye calibration problem using the kronecker product \cite Shah2013SolvingTR
+        /// </summary>
+        /// <param name="R_world2cam">[in] R_world2cam Rotation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the world frame to the camera frame. This is a vector of Mat that contains the rotation,
+        /// `(3x3)` rotation matrices or `(3x1)` rotation vectors,for all the transformations from world frame to the camera frame.</param>
+        /// <param name="t_world2cam">[in] Translation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the world frame to the camera frame. This is a vector (`vector&lt;Mat&gt;`) that contains the `(3x1)`
+        /// translation vectors for all the transformations from world frame to the camera frame.</param>
+        /// <param name="R_base2gripper">[in] Rotation part extracted from the homogeneous matrix that transforms a point expressed
+        /// in the robot base frame to the gripper frame. This is a vector (`vector&lt;Mat&gt;`) that contains the rotation,
+        /// `(3x3)` rotation matrices or `(3x1)` rotation vectors, for all the transformations from robot base frame to the gripper frame.</param>
+        /// <param name="t_base2gripper">[in] Rotation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the robot base frame to the gripper frame. This is a vector (`vector&lt;Mat&gt;`) that contains the
+        /// `(3x1)` translation vectors for all the transformations from robot base frame to the gripper frame.</param>
+        /// <param name="R_base2world">[out] R_base2world Estimated `(3x3)` rotation part extracted from the homogeneous matrix
+        /// that transforms a point expressed in the robot base frame to the world frame.</param>
+        /// <param name="t_base2world">[out] t_base2world Estimated `(3x1)` translation part extracted from the homogeneous matrix
+        /// that transforms a point expressed in the robot base frame to the world frame.</param>
+        /// <param name="R_gripper2cam">[out] R_gripper2cam Estimated `(3x3)` rotation part extracted from the homogeneous matrix
+        /// that transforms a point expressed in the gripper frame to the camera frame.</param>
+        /// <param name="t_gripper2cam">[out] Estimated `(3x1)` translation part extracted from the homogeneous matrix that
+        /// transforms a pointexpressed in the gripper frame to the camera frame.</param>
+        /// <param name="method">One of the implemented Robot-World/Hand-Eye calibration method</param>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
+        public static void CalibrateRobotWorldHandEye(
+            IEnumerable<Mat> R_world2cam,
+            IEnumerable<Mat> t_world2cam,
+            IEnumerable<Mat> R_base2gripper,
+            IEnumerable<Mat> t_base2gripper,
+            OutputArray R_base2world, 
+            OutputArray t_base2world,
+            OutputArray R_gripper2cam,
+            OutputArray t_gripper2cam,
+            RobotWorldHandEyeCalibrationMethod method = RobotWorldHandEyeCalibrationMethod.SHAH)
+        {
+            if (R_world2cam == null)
+                throw new ArgumentNullException(nameof(R_world2cam));
+            if (t_world2cam == null)
+                throw new ArgumentNullException(nameof(t_world2cam));
+            if (R_base2gripper == null)
+                throw new ArgumentNullException(nameof(R_base2gripper));
+            if (t_base2gripper == null)
+                throw new ArgumentNullException(nameof(t_base2gripper));
+            if (R_base2world == null)
+                throw new ArgumentNullException(nameof(R_base2world));
+            if (t_base2world == null)
+                throw new ArgumentNullException(nameof(t_base2world));
+            if (R_gripper2cam == null)
+                throw new ArgumentNullException(nameof(R_gripper2cam));
+            if (t_gripper2cam == null)
+                throw new ArgumentNullException(nameof(t_gripper2cam));
+            R_base2world.ThrowIfNotReady();
+            t_base2world.ThrowIfNotReady();
+            R_gripper2cam.ThrowIfNotReady();
+            t_gripper2cam.ThrowIfNotReady();
+            var R_world2camArray = R_world2cam as Mat[] ?? R_world2cam.ToArray();
+            var t_world2camArray = t_world2cam as Mat[] ?? t_world2cam.ToArray();
+            var R_base2gripperArray = R_base2gripper as Mat[] ?? R_base2gripper.ToArray();
+            var t_base2gripperArray = t_base2gripper as Mat[] ?? t_base2gripper.ToArray();
+            if (R_world2camArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(R_world2cam));
+            if (t_world2camArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(t_world2cam));
+            if (R_base2gripperArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(R_base2gripper));
+            if (t_base2gripperArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(t_base2gripper));
+
+            var R_base2worldPtrArray = R_world2camArray.Select(m => m.CvPtr).ToArray();
+            var t_world2camPtrArray = t_world2camArray.Select(m => m.CvPtr).ToArray();
+            var R_base2gripperPtrArray = R_base2gripperArray.Select(m => m.CvPtr).ToArray();
+            var t_base2gripperPtrArray = t_base2gripperArray.Select(m => m.CvPtr).ToArray();
+            NativeMethods.HandleException(
+                NativeMethods.calib3d_calibrateRobotWorldHandEye_OutputArray(
+                    R_base2worldPtrArray, R_base2worldPtrArray.Length,
+                    t_world2camPtrArray, t_world2camPtrArray.Length,
+                    R_base2gripperPtrArray, R_base2gripperPtrArray.Length,
+                    t_base2gripperPtrArray, t_base2gripperPtrArray.Length,
+                    R_base2world.CvPtr, t_base2world.CvPtr, R_gripper2cam.CvPtr, t_gripper2cam.CvPtr,
+                    (int)method));
+
+            R_base2world.Fix();
+            t_base2world.Fix();
+            R_gripper2cam.Fix();
+            t_gripper2cam.Fix();
+            foreach (var mat in R_world2camArray) GC.KeepAlive(mat);
+            foreach (var mat in t_world2camArray) GC.KeepAlive(mat);
+            foreach (var mat in R_base2gripperArray) GC.KeepAlive(mat);
+            foreach (var mat in t_base2gripperArray) GC.KeepAlive(mat);
+        }
+
+        /// <summary>
+        /// omputes Robot-World/Hand-Eye calibration.
+        /// The function performs the Robot-World/Hand-Eye calibration using various methods. One approach consists in estimating the
+        /// rotation then the translation(separable solutions):
+        /// - M.Shah, Solving the robot-world/hand-eye calibration problem using the kronecker product \cite Shah2013SolvingTR
+        /// </summary>
+        /// <param name="R_world2cam">[in] R_world2cam Rotation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the world frame to the camera frame. This is a vector of Mat that contains the rotation,
+        /// `(3x3)` rotation matrices or `(3x1)` rotation vectors,for all the transformations from world frame to the camera frame.</param>
+        /// <param name="t_world2cam">[in] Translation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the world frame to the camera frame. This is a vector (`vector&lt;Mat&gt;`) that contains the `(3x1)`
+        /// translation vectors for all the transformations from world frame to the camera frame.</param>
+        /// <param name="R_base2gripper">[in] Rotation part extracted from the homogeneous matrix that transforms a point expressed
+        /// in the robot base frame to the gripper frame. This is a vector (`vector&lt;Mat&gt;`) that contains the rotation,
+        /// `(3x3)` rotation matrices or `(3x1)` rotation vectors, for all the transformations from robot base frame to the gripper frame.</param>
+        /// <param name="t_base2gripper">[in] Rotation part extracted from the homogeneous matrix that transforms a point
+        /// expressed in the robot base frame to the gripper frame. This is a vector (`vector&lt;Mat&gt;`) that contains the
+        /// `(3x1)` translation vectors for all the transformations from robot base frame to the gripper frame.</param>
+        /// <param name="R_base2world">[out] R_base2world Estimated `(3x3)` rotation part extracted from the homogeneous matrix
+        /// that transforms a point expressed in the robot base frame to the world frame.</param>
+        /// <param name="t_base2world">[out] t_base2world Estimated `(3x1)` translation part extracted from the homogeneous matrix
+        /// that transforms a point expressed in the robot base frame to the world frame.</param>
+        /// <param name="R_gripper2cam">[out] R_gripper2cam Estimated `(3x3)` rotation part extracted from the homogeneous matrix
+        /// that transforms a point expressed in the gripper frame to the camera frame.</param>
+        /// <param name="t_gripper2cam">[out] Estimated `(3x1)` translation part extracted from the homogeneous matrix that
+        /// transforms a pointexpressed in the gripper frame to the camera frame.</param>
+        /// <param name="method">One of the implemented Robot-World/Hand-Eye calibration method</param>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
+        public static void CalibrateRobotWorldHandEye(
+            IEnumerable<Mat> R_world2cam,
+            IEnumerable<Mat> t_world2cam,
+            IEnumerable<Mat> R_base2gripper,
+            IEnumerable<Mat> t_base2gripper,
+            out double[,] R_base2world,
+            out double[] t_base2world,
+            out double[,] R_gripper2cam,
+            out double[] t_gripper2cam,
+            RobotWorldHandEyeCalibrationMethod method = RobotWorldHandEyeCalibrationMethod.SHAH)
+        {
+            if (R_world2cam == null)
+                throw new ArgumentNullException(nameof(R_world2cam));
+            if (t_world2cam == null)
+                throw new ArgumentNullException(nameof(t_world2cam));
+            if (R_base2gripper == null)
+                throw new ArgumentNullException(nameof(R_base2gripper));
+            if (t_base2gripper == null)
+                throw new ArgumentNullException(nameof(t_base2gripper));
+            var R_world2camArray = R_world2cam as Mat[] ?? R_world2cam.ToArray();
+            var t_world2camArray = t_world2cam as Mat[] ?? t_world2cam.ToArray();
+            var R_base2gripperArray = R_base2gripper as Mat[] ?? R_base2gripper.ToArray();
+            var t_base2gripperArray = t_base2gripper as Mat[] ?? t_base2gripper.ToArray();
+            if (R_world2camArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(R_world2cam));
+            if (t_world2camArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(t_world2cam));
+            if (R_base2gripperArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(R_base2gripper));
+            if (t_base2gripperArray.Length == 0)
+                throw new ArgumentException("Empty sequence", nameof(t_base2gripper));
+
+            var R_base2worldPtrArray = R_world2camArray.Select(m => m.CvPtr).ToArray();
+            var t_world2camPtrArray = t_world2camArray.Select(m => m.CvPtr).ToArray();
+            var R_base2gripperPtrArray = R_base2gripperArray.Select(m => m.CvPtr).ToArray();
+            var t_base2gripperPtrArray = t_base2gripperArray.Select(m => m.CvPtr).ToArray();
+            R_base2world = new double[3, 3];
+            t_base2world = new double[3];
+            R_gripper2cam = new double[3, 3];
+            t_gripper2cam = new double[3];
+            NativeMethods.HandleException(
+                NativeMethods.calib3d_calibrateRobotWorldHandEye_Pointer(
+                    R_base2worldPtrArray, R_base2worldPtrArray.Length,
+                    t_world2camPtrArray, t_world2camPtrArray.Length,
+                    R_base2gripperPtrArray, R_base2gripperPtrArray.Length,
+                    t_base2gripperPtrArray, t_base2gripperPtrArray.Length,
+                    R_base2world, t_base2world, R_gripper2cam, t_gripper2cam,
+                    (int) method));
+            
+            foreach (var mat in R_world2camArray) GC.KeepAlive(mat);
+            foreach (var mat in t_world2camArray) GC.KeepAlive(mat);
+            foreach (var mat in R_base2gripperArray) GC.KeepAlive(mat);
+            foreach (var mat in t_base2gripperArray) GC.KeepAlive(mat);
+        }
+
+        /// <summary>
         /// converts point coordinates from normal pixel coordinates to homogeneous coordinates ((x,y)->(x,y,1))
         /// </summary>
         /// <param name="src">Input vector of N-dimensional points.</param>
@@ -2435,6 +2623,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="src">Input vector of N-dimensional points.</param>
         /// <returns>Output vector of N+1-dimensional points.</returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static Vec3f[] ConvertPointsToHomogeneous(IEnumerable<Vec2f> src)
         {
             if (src == null)
@@ -2452,6 +2641,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="src">Input vector of N-dimensional points.</param>
         /// <returns>Output vector of N+1-dimensional points.</returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static Vec4f[] ConvertPointsToHomogeneous(IEnumerable<Vec3f> src)
         {
             if (src == null)
@@ -2488,6 +2678,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="src">Input vector of N-dimensional points.</param>
         /// <returns>Output vector of N-1-dimensional points.</returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static Vec2f[] ConvertPointsFromHomogeneous(IEnumerable<Vec3f> src)
         {
             if (src == null)
@@ -2505,6 +2696,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="src">Input vector of N-dimensional points.</param>
         /// <returns>Output vector of N-1-dimensional points.</returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static Vec3f[] ConvertPointsFromHomogeneous(IEnumerable<Vec4f> src)
         {
             if (src == null)
@@ -2554,7 +2746,7 @@ namespace OpenCvSharp
         /// <returns>fundamental matrix</returns>
         public static Mat FindFundamentalMat(
             InputArray points1, InputArray points2,
-            FundamentalMatMethod method = FundamentalMatMethod.Ransac,
+            FundamentalMatMethods method = FundamentalMatMethods.Ransac,
             double param1 = 3.0, double param2 = 0.99,
             OutputArray? mask = null)
         {
@@ -2591,10 +2783,11 @@ namespace OpenCvSharp
         /// <param name="mask">Output array of N elements, every element of which is set to 0 for outliers and 
         /// to 1 for the other points. The array is computed only in the RANSAC and LMedS methods. For other methods, it is set to all 1’s.</param>
         /// <returns>fundamental matrix</returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static Mat FindFundamentalMat(
             IEnumerable<Point2f> points1, 
             IEnumerable<Point2f> points2,
-            FundamentalMatMethod method = FundamentalMatMethod.Ransac,
+            FundamentalMatMethods method = FundamentalMatMethods.Ransac,
             double param1 = 3.0,
             double param2 = 0.99,
             OutputArray? mask = null)
@@ -2632,10 +2825,11 @@ namespace OpenCvSharp
         /// <param name="mask">Output array of N elements, every element of which is set to 0 for outliers and 
         /// to 1 for the other points. The array is computed only in the RANSAC and LMedS methods. For other methods, it is set to all 1’s.</param>
         /// <returns>fundamental matrix</returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static Mat FindFundamentalMat(
             IEnumerable<Point2d> points1, 
             IEnumerable<Point2d> points2,
-            FundamentalMatMethod method = FundamentalMatMethod.Ransac,
+            FundamentalMatMethods method = FundamentalMatMethods.Ransac,
             double param1 = 3.0,
             double param2 = 0.99,
             OutputArray? mask = null)
@@ -2697,6 +2891,7 @@ namespace OpenCvSharp
         /// <param name="F">Fundamental matrix that can be estimated using findFundamentalMat() or stereoRectify() .</param>
         /// <returns>Output vector of the epipolar lines corresponding to the points in the other image.
         ///  Each line ax + by + c=0 is encoded by 3 numbers (a, b, c) .</returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static Point3f[] ComputeCorrespondEpilines(IEnumerable<Point2d> points,
                                                      int whichImage, double[,] F)
         {
@@ -2731,6 +2926,7 @@ namespace OpenCvSharp
         /// <param name="F">Fundamental matrix that can be estimated using findFundamentalMat() or stereoRectify() .</param>
         /// <returns>Output vector of the epipolar lines corresponding to the points in the other image.
         ///  Each line ax + by + c=0 is encoded by 3 numbers (a, b, c) .</returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static Point3f[] ComputeCorrespondEpilines(IEnumerable<Point3d> points,
                                                      int whichImage, double[,] F)
         {
@@ -2800,6 +2996,8 @@ namespace OpenCvSharp
             GC.KeepAlive(projPoints2);
             points4D.Fix();
         }
+
+
         /// <summary>
         /// Reconstructs points by triangulation.
         /// </summary>
@@ -2810,19 +3008,20 @@ namespace OpenCvSharp
         /// <param name="projPoints2">2xN array of corresponding points in the second image. In case of c++ version 
         /// it can be also a vector of feature points or two-channel matrix of size 1xN or Nx1.</param>
         /// <returns>4xN array of reconstructed points in homogeneous coordinates.</returns>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static Vec4d[] TriangulatePoints(
             double[,] projMatr1, 
             double[,] projMatr2,
             IEnumerable<Point2d> projPoints1, 
             IEnumerable<Point2d> projPoints2)
         {
-            if (projMatr1 == null)
+            if (projMatr1 is null)
                 throw new ArgumentNullException(nameof(projMatr1));
-            if (projMatr2 == null)
+            if (projMatr2 is null)
                 throw new ArgumentNullException(nameof(projMatr2));
-            if (projPoints1 == null)
+            if (projPoints1 is null)
                 throw new ArgumentNullException(nameof(projPoints1));
-            if (projPoints2 == null)
+            if (projPoints2 is null)
                 throw new ArgumentNullException(nameof(projPoints2));
             if (projMatr1.GetLength(0) != 3 && projMatr1.GetLength(1) != 4)
                 throw new ArgumentException($"{nameof(projMatr1)} != double[3,4]");
@@ -2898,6 +3097,7 @@ namespace OpenCvSharp
         /// <param name="points2">1xN array containing the second set of points.</param>
         /// <param name="newPoints1">The optimized points1.</param>
         /// <param name="newPoints2">The optimized points2.</param>
+        [SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code")]
         public static void CorrectMatches(
             double[,] F,
             IEnumerable<Point2d> points1,
@@ -3813,7 +4013,9 @@ namespace OpenCvSharp
         /// <summary>
         /// The methods in this class use a so-called fisheye camera model.
         /// </summary>
+#pragma warning disable CA1034 // Nested types should not be visible
         public static class FishEye
+#pragma warning restore CA1034
         {
             /// <summary>
             /// Projects points using fisheye model.
@@ -4116,7 +4318,7 @@ namespace OpenCvSharp
                 d.ThrowIfDisposed();
 
                 var criteriaVal = criteria.GetValueOrDefault(
-                    new TermCriteria(CriteriaType.Count | CriteriaType.Eps, 100, double.Epsilon));
+                    new TermCriteria(CriteriaTypes.Count | CriteriaTypes.Eps, 100, double.Epsilon));
 
                 using var objectPointsVec = new VectorOfMat(objectPoints);
                 using var imagePointsVec = new VectorOfMat(imagePoints);
@@ -4275,7 +4477,7 @@ namespace OpenCvSharp
                 t.ThrowIfNotReady();
 
                 var criteriaVal = criteria.GetValueOrDefault(
-                    new TermCriteria(CriteriaType.Count | CriteriaType.Eps, 100, double.Epsilon));
+                    new TermCriteria(CriteriaTypes.Count | CriteriaTypes.Eps, 100, double.Epsilon));
 
                 using var objectPointsVec = new VectorOfMat(objectPoints);
                 using var imagePoints1Vec = new VectorOfMat(imagePoints1); 

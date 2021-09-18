@@ -1,6 +1,8 @@
 ﻿
 using System;
 using System.IO;
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Vectors;
 
 // ReSharper disable InconsistentNaming
 
@@ -100,7 +102,7 @@ namespace OpenCvSharp
             Mat image,
             double scaleFactor = 1.1,
             int minNeighbors = 3,
-            HaarDetectionType flags = 0,
+            HaarDetectionTypes flags = 0,
             Size? minSize = null,
             Size? maxSize = null)
         {
@@ -143,7 +145,7 @@ namespace OpenCvSharp
             out double[] levelWeights,
             double scaleFactor = 1.1,
             int minNeighbors = 3,
-            HaarDetectionType flags = 0,
+            HaarDetectionTypes flags = 0,
             Size? minSize = null,
             Size? maxSize = null,
             bool outputRejectLevels = false)

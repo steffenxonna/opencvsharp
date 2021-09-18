@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using OpenCvSharp.Util;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp
 {
@@ -79,17 +80,10 @@ namespace OpenCvSharp
             [typeof(DMatch)] = MatType.CV_32FC4,
         };
 
-#if LANG_JP
-        /// <summary>
-        /// OpenCVネイティブの cv::Mat* ポインタから初期化
-        /// </summary>
-        /// <param name="ptr"></param>
-#else
         /// <summary>
         /// Creates from native cv::Mat* pointer
         /// </summary>
         /// <param name="ptr"></param>
-#endif
         public Mat(IntPtr ptr)
         {
             if (ptr == IntPtr.Zero)
@@ -97,15 +91,9 @@ namespace OpenCvSharp
             this.ptr = ptr;
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 空の行列として初期化
-        /// </summary>
-#else
         /// <summary>
         /// Creates empty Mat
         /// </summary>
-#endif
         public Mat()
         {
             NativeMethods.HandleException(
@@ -128,19 +116,11 @@ namespace OpenCvSharp
                 throw new OpenCvSharpException("imread failed.");
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 画像ファイルから読み込んで初期化 (cv::imread)
-        /// </summary>
-        /// <param name="fileName">読み込まれる画像ファイル名</param>
-        /// <param name="flags">画像読み込みフラグ.</param>
-#else
         /// <summary>
         /// Loads an image from a file. (cv::imread)
         /// </summary>
         /// <param name="fileName">Name of file to be loaded.</param>
         /// <param name="flags">Specifies color type of the loaded image</param>
-#endif
         public Mat(string fileName, ImreadModes flags = ImreadModes.Color)
         {
             if (string.IsNullOrEmpty(fileName))
@@ -150,15 +130,6 @@ namespace OpenCvSharp
                 NativeMethods.imgcodecs_imread(fileName, (int) flags, out ptr));
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 指定したサイズ・型の2次元の行列として初期化
-        /// </summary>
-        /// <param name="rows">2次元配列における行数．</param>
-        /// <param name="cols">2次元配列における列数．</param>
-        /// <param name="type">配列の型．1-4 チャンネルの行列を作成するには MatType.CV_8UC1, ..., CV_64FC4 を，
-        /// マルチチャンネルの行列を作成するには，MatType.CV_8UC(n), ..., CV_64FC(n) を利用してください．</param>
-#else
         /// <summary>
         /// constructs 2D matrix of the specified size and type
         /// </summary>
@@ -166,21 +137,12 @@ namespace OpenCvSharp
         /// <param name="cols">Number of columns in a 2D array.</param>
         /// <param name="type">Array type. Use MatType.CV_8UC1, ..., CV_64FC4 to create 1-4 channel matrices, 
         /// or MatType. CV_8UC(n), ..., CV_64FC(n) to create multi-channel matrices.</param>
-#endif
         public Mat(int rows, int cols, MatType type)
         {
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_new2(rows, cols, type, out ptr));
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 指定したサイズ・型の2次元の行列として初期化
-        /// </summary>
-        /// <param name="size">2次元配列のサイズ： Size(cols, rows) ． Size コンストラクタでは，行数と列数が逆順になっていることに注意してください．</param>
-        /// <param name="type">配列の型．1-4 チャンネルの行列を作成するには MatType.CV_8UC1, ..., CV_64FC4 を，
-        /// マルチチャンネルの行列を作成するには，MatType.CV_8UC(n), ..., CV_64FC(n) を利用してください．</param>
-#else
         /// <summary>
         /// constructs 2D matrix of the specified size and type
         /// </summary>
@@ -188,24 +150,12 @@ namespace OpenCvSharp
         /// the number of rows and the number of columns go in the reverse order.</param>
         /// <param name="type">Array type. Use MatType.CV_8UC1, ..., CV_64FC4 to create 1-4 channel matrices, 
         /// or MatType.CV_8UC(n), ..., CV_64FC(n) to create multi-channel matrices.</param>
-#endif
         public Mat(Size size, MatType type)
         {
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_new2(size.Height, size.Width, type, out ptr));
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 指定したサイズ・型の2次元の行列で、要素をスカラー値で埋めて初期化
-        /// </summary>
-        /// <param name="rows">2次元配列における行数．</param>
-        /// <param name="cols">2次元配列における列数．</param>
-        /// <param name="type">配列の型．1-4 チャンネルの行列を作成するには MatType.CV_8UC1, ..., CV_64FC4 を，
-        /// マルチチャンネルの行列を作成するには，MatType.CV_8UC(n), ..., CV_64FC(n) を利用してください．</param>
-        /// <param name="s">各行列要素を初期化するオプション値．初期化の後ですべての行列要素を特定の値にセットするには，
-        /// コンストラクタの後で，SetTo(Scalar value) メソッドを利用してください．</param>
-#else
         /// <summary>
         /// constructs 2D matrix and fills it with the specified Scalar value.
         /// </summary>
@@ -215,23 +165,12 @@ namespace OpenCvSharp
         /// or MatType. CV_8UC(n), ..., CV_64FC(n) to create multi-channel matrices.</param>
         /// <param name="s">An optional value to initialize each matrix element with. 
         /// To set all the matrix elements to the particular value after the construction, use SetTo(Scalar s) method .</param>
-#endif
         public Mat(int rows, int cols, MatType type, Scalar s)
         {
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_new3(rows, cols, type, s, out ptr));
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 指定したサイズ・型の2次元の行列で、要素をスカラー値で埋めて初期化
-        /// </summary>
-        /// <param name="size"> 2 次元配列のサイズ： Size(cols, rows) ． Size() コンストラクタでは，行数と列数が逆順になっていることに注意してください．</param>
-        /// <param name="type">配列の型．1-4 チャンネルの行列を作成するには MatType.CV_8UC1, ..., CV_64FC4 を，
-        /// マルチチャンネルの行列を作成するには，MatType.CV_8UC(n), ..., CV_64FC(n) を利用してください．</param>
-        /// <param name="s">各行列要素を初期化するオプション値．初期化の後ですべての行列要素を特定の値にセットするには，
-        /// コンストラクタの後で，SetTo(Scalar value) メソッドを利用してください．</param>
-#else
         /// <summary>
         /// constructs 2D matrix and fills it with the specified Scalar value.
         /// </summary>
@@ -241,27 +180,12 @@ namespace OpenCvSharp
         /// or CV_8UC(n), ..., CV_64FC(n) to create multi-channel (up to CV_CN_MAX channels) matrices.</param>
         /// <param name="s">An optional value to initialize each matrix element with. 
         /// To set all the matrix elements to the particular value after the construction, use SetTo(Scalar s) method .</param>
-#endif
         public Mat(Size size, MatType type, Scalar s)
         {
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_new3(size.Height, size.Width, type, s, out ptr));
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 他の行列の部分行列として初期化
-        /// </summary>
-        /// <param name="m">作成された行列に（全体的，部分的に）割り当てられる配列．
-        /// これらのコンストラクタによってデータがコピーされる事はありません．
-        /// 代わりに，データ m ，またはその部分配列を指し示すヘッダが作成され，
-        /// 関連した参照カウンタがあれば，それがインクリメントされます．
-        /// つまり，新しく作成された配列の内容を変更することで， m の対応する要素も
-        /// 変更することになります．もし部分配列の独立したコピーが必要ならば，
-        /// Mat.Clone() を利用してください．</param>
-        /// <param name="rowRange">扱われる 行列の行の範囲．すべての行を扱う場合は，Range.All を利用してください．</param>
-        /// <param name="colRange">扱われる 行列の列の範囲．すべての列を扱う場合は，Range.All を利用してください．</param>
-#else
         /// <summary>
         /// creates a matrix header for a part of the bigger matrix
         /// </summary>
@@ -273,7 +197,6 @@ namespace OpenCvSharp
         /// <param name="rowRange">Range of the m rows to take. As usual, the range start is inclusive and the range end is exclusive. 
         /// Use Range.All to take all the rows.</param>
         /// <param name="colRange">Range of the m columns to take. Use Range.All to take all the columns.</param>
-#endif
         public Mat(Mat m, Range rowRange, Range? colRange = null)
         {
             if (m == null)
@@ -287,19 +210,6 @@ namespace OpenCvSharp
             GC.KeepAlive(m);
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 他の行列の部分行列として初期化
-        /// </summary>
-        /// <param name="m">作成された行列に（全体的，部分的に）割り当てられる配列．
-        /// これらのコンストラクタによってデータがコピーされる事はありません．
-        /// 代わりに，データ m ，またはその部分配列を指し示すヘッダが作成され，
-        /// 関連した参照カウンタがあれば，それがインクリメントされます．
-        /// つまり，新しく作成された配列の内容を変更することで， m の対応する要素も
-        /// 変更することになります．もし部分配列の独立したコピーが必要ならば，
-        /// Mat.Clone() を利用してください．</param>
-        /// <param name="ranges">多次元行列の各次元毎の選択範囲を表す配列．</param>
-#else
         /// <summary>
         /// creates a matrix header for a part of the bigger matrix
         /// </summary>
@@ -309,13 +219,10 @@ namespace OpenCvSharp
         /// So, when you modify the matrix formed using such a constructor, you also modify the corresponding elements of m . 
         /// If you want to have an independent copy of the sub-array, use Mat.Clone() .</param>
         /// <param name="ranges">Array of selected ranges of m along each dimensionality.</param>
-#endif
         public Mat(Mat m, params Range[] ranges)
         {
-            if (m == null)
+            if (m is null)
                 throw new ArgumentNullException(nameof(m));
-            if (ranges == null)
-                throw new ArgumentNullException(nameof(ranges));
             if (ranges.Length == 0)
                 throw new ArgumentException("empty ranges", nameof(ranges));
             m.ThrowIfDisposed();
@@ -325,19 +232,6 @@ namespace OpenCvSharp
             GC.KeepAlive(m);
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 他の行列の部分行列として初期化
-        /// </summary>
-        /// <param name="m">作成された行列に（全体的，部分的に）割り当てられる配列．
-        /// これらのコンストラクタによってデータがコピーされる事はありません．
-        /// 代わりに，データ m ，またはその部分配列を指し示すヘッダが作成され，
-        /// 関連した参照カウンタがあれば，それがインクリメントされます．
-        /// つまり，新しく作成された配列の内容を変更することで， m の対応する要素も
-        /// 変更することになります．もし部分配列の独立したコピーが必要ならば，
-        /// Mat.Clone() を利用してください．</param>
-        /// <param name="roi">元の行列からくりぬかれる範囲. ROI[Region of interest].</param>
-#else
         /// <summary>
         /// creates a matrix header for a part of the bigger matrix
         /// </summary>
@@ -347,7 +241,6 @@ namespace OpenCvSharp
         /// So, when you modify the matrix formed using such a constructor, you also modify the corresponding elements of m . 
         /// If you want to have an independent copy of the sub-array, use Mat.Clone() .</param>
         /// <param name="roi">Region of interest.</param>
-#endif
         public Mat(Mat m, Rect roi)
         {
             if (m == null)
@@ -359,24 +252,6 @@ namespace OpenCvSharp
             GC.KeepAlive(m);
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 利用者が別に確保したデータで初期化
-        /// </summary>
-        /// <param name="rows">2次元配列における行数．</param>
-        /// <param name="cols">2次元配列における列数．</param>
-        /// <param name="type">配列の型．1-4 チャンネルの行列を作成するには MatType.CV_8UC1, ..., CV_64FC4 を，
-        /// マルチチャンネルの行列を作成するには，MatType.CV_8UC(n), ..., CV_64FC(n) を利用してください．</param>
-        /// <param name="data">ユーザデータへのポインタ． data と step パラメータを引数にとる
-        /// 行列コンストラクタは，行列データ領域を確保しません．代わりに，指定のデータを指し示す
-        /// 行列ヘッダを初期化します．つまり，データのコピーは行われません．
-        /// この処理は，非常に効率的で，OpenCV の関数を利用して外部データを処理することができます．
-        /// 外部データが自動的に解放されることはありませんので，ユーザが解放する必要があります．</param>
-        /// <param name="step">行列の各行が占めるバイト数を指定できます．
-        /// この値は，各行の終端にパディングバイトが存在すれば，それも含みます．
-        /// このパラメータが指定されない場合，パディングは存在しないとみなされ，
-        /// 実際の step は cols*elemSize() として計算されます．</param>
-#else
         /// <summary>
         /// constructor for matrix headers pointing to user-allocated data
         /// </summary>
@@ -390,31 +265,12 @@ namespace OpenCvSharp
         /// The external data is not automatically de-allocated, so you should take care of it.</param>
         /// <param name="step">Number of bytes each matrix row occupies. The value should include the padding bytes at the end of each row, if any.
         /// If the parameter is missing (set to AUTO_STEP ), no padding is assumed and the actual step is calculated as cols*elemSize() .</param>
-#endif
         public Mat(int rows, int cols, MatType type, IntPtr data, long step = 0)
         {
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_new8(rows, cols, type, data, new IntPtr(step), out ptr));
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 利用者が別に確保したデータで初期化
-        /// </summary>
-        /// <param name="rows">2次元配列における行数．</param>
-        /// <param name="cols">2次元配列における列数．</param>
-        /// <param name="type">配列の型．1-4 チャンネルの行列を作成するには MatType.CV_8UC1, ..., CV_64FC4 を，
-        /// マルチチャンネルの行列を作成するには，MatType.CV_8UC(n), ..., CV_64FC(n) を利用してください．</param>
-        /// <param name="data">ユーザデータへのポインタ． data と step パラメータを引数にとる
-        /// 行列コンストラクタは，行列データ領域を確保しません．代わりに，指定のデータを指し示す
-        /// 行列ヘッダを初期化します．つまり，データのコピーは行われません．
-        /// この処理は，非常に効率的で，OpenCV の関数を利用して外部データを処理することができます．
-        /// 外部データが自動的に解放されることはありませんので，ユーザが解放する必要があります．</param>
-        /// <param name="step">行列の各行が占めるバイト数を指定できます．
-        /// この値は，各行の終端にパディングバイトが存在すれば，それも含みます．
-        /// このパラメータが指定されない場合，パディングは存在しないとみなされ，
-        /// 実際の step は cols*elemSize() として計算されます．</param>
-#else
         /// <summary>
         /// constructor for matrix headers pointing to user-allocated data
         /// </summary>
@@ -428,7 +284,6 @@ namespace OpenCvSharp
         /// The external data is not automatically de-allocated, so you should take care of it.</param>
         /// <param name="step">Number of bytes each matrix row occupies. The value should include the padding bytes at the end of each row, if any.
         /// If the parameter is missing (set to AUTO_STEP ), no padding is assumed and the actual step is calculated as cols*elemSize() .</param>
-#endif
         public Mat(int rows, int cols, MatType type, Array data, long step = 0)
         {
             var handle = AllocGCHandle(data);
@@ -437,22 +292,6 @@ namespace OpenCvSharp
                 handle.AddrOfPinnedObject(), new IntPtr(step), out ptr));
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 利用者が別に確保したデータで初期化
-        /// </summary>
-        /// <param name="sizes">Array of integers specifying an n-dimensional array shape.</param>
-        /// <param name="type">配列の型．1-4 チャンネルの行列を作成するには MatType.CV_8UC1, ..., CV_64FC4 を，
-        /// マルチチャンネルの行列を作成するには，MatType.CV_8UC(n), ..., CV_64FC(n) を利用してください．</param>
-        /// <param name="data">ユーザデータへのポインタ． data と step パラメータを引数にとる
-        /// 行列コンストラクタは，行列データ領域を確保しません．代わりに，指定のデータを指し示す
-        /// 行列ヘッダを初期化します．つまり，データのコピーは行われません．
-        /// この処理は，非常に効率的で，OpenCV の関数を利用して外部データを処理することができます．
-        /// 外部データが自動的に解放されることはありませんので，ユーザが解放する必要があります．</param>
-        /// <param name="steps">多次元配列における ndims-1 個のステップを表す配列
-        /// （最後のステップは常に要素サイズになります）．これが指定されないと，
-        /// 行列は連続したものとみなされます．</param>
-#else
         /// <summary>
         /// constructor for matrix headers pointing to user-allocated data
         /// </summary>
@@ -465,14 +304,15 @@ namespace OpenCvSharp
         /// The external data is not automatically de-allocated, so you should take care of it.</param>
         /// <param name="steps">Array of ndims-1 steps in case of a multi-dimensional array (the last step is always set to the element size). 
         /// If not specified, the matrix is assumed to be continuous.</param>
-#endif
         public Mat(IEnumerable<int> sizes, MatType type, IntPtr data, IEnumerable<long>? steps = null)
         {
             if (sizes == null)
                 throw new ArgumentNullException(nameof(sizes));
             if (data == IntPtr.Zero)
                 throw new ArgumentNullException(nameof(data));
-            var sizesArray = sizes.ToArray();
+#pragma warning disable CA1508
+            var sizesArray = sizes as int[] ?? sizes.ToArray();
+#pragma warning restore CA1508
             if (steps == null)
             {
                 NativeMethods.HandleException(
@@ -486,22 +326,6 @@ namespace OpenCvSharp
             }
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 利用者が別に確保したデータで初期化
-        /// </summary>
-        /// <param name="sizes">n-次元配列の形状を表す，整数型の配列．</param>
-        /// <param name="type">配列の型．1-4 チャンネルの行列を作成するには MatType.CV_8UC1, ..., CV_64FC4 を，
-        /// マルチチャンネルの行列を作成するには，MatType.CV_8UC(n), ..., CV_64FC(n) を利用してください．</param>
-        /// <param name="data">ユーザデータへのポインタ． data と step パラメータを引数にとる
-        /// 行列コンストラクタは，行列データ領域を確保しません．代わりに，指定のデータを指し示す
-        /// 行列ヘッダを初期化します．つまり，データのコピーは行われません．
-        /// この処理は，非常に効率的で，OpenCV の関数を利用して外部データを処理することができます．
-        /// 外部データが自動的に解放されることはありませんので，ユーザが解放する必要があります．</param>
-        /// <param name="steps">多次元配列における ndims-1 個のステップを表す配列
-        /// （最後のステップは常に要素サイズになります）．これが指定されないと，
-        /// 行列は連続したものとみなされます．</param>
-#else
         /// <summary>
         /// constructor for matrix headers pointing to user-allocated data
         /// </summary>
@@ -514,7 +338,6 @@ namespace OpenCvSharp
         /// The external data is not automatically de-allocated, so you should take care of it.</param>
         /// <param name="steps">Array of ndims-1 steps in case of a multi-dimensional array (the last step is always set to the element size). 
         /// If not specified, the matrix is assumed to be continuous.</param>
-#endif
         public Mat(IEnumerable<int> sizes, MatType type, Array data, IEnumerable<long>? steps = null)
         {
             if (sizes == null)
@@ -523,7 +346,9 @@ namespace OpenCvSharp
                 throw new ArgumentNullException(nameof(data));
 
             var handle = AllocGCHandle(data);
-            var sizesArray = sizes.ToArray();
+#pragma warning disable CA1508
+            var sizesArray = sizes as int[] ?? sizes.ToArray();
+#pragma warning restore CA1508
             if (steps == null)
             {
                 NativeMethods.HandleException(
@@ -539,41 +364,24 @@ namespace OpenCvSharp
             }
         }
 
-#if LANG_JP
-        /// <summary>
-        /// N次元行列として初期化
-        /// </summary>
-        /// <param name="sizes">n-次元配列の形状を表す，整数型の配列．</param>
-        /// <param name="type">配列の型．1-4 チャンネルの行列を作成するには MatType.CV_8UC1, ..., CV_64FC4 を，
-        /// マルチチャンネルの行列を作成するには，MatType.CV_8UC(n), ..., CV_64FC(n) を利用してください．</param>
-#else
         /// <summary>
         /// constructs n-dimensional matrix
         /// </summary>
         /// <param name="sizes">Array of integers specifying an n-dimensional array shape.</param>
         /// <param name="type">Array type. Use MatType.CV_8UC1, ..., CV_64FC4 to create 1-4 channel matrices, 
         /// or MatType. CV_8UC(n), ..., CV_64FC(n) to create multi-channel matrices.</param>
-#endif
         public Mat(IEnumerable<int> sizes, MatType type)
         {
             if (sizes == null)
                 throw new ArgumentNullException(nameof(sizes));
 
-            var sizesArray = sizes.ToArray();
+#pragma warning disable CA1508
+            var sizesArray = sizes as int[] ?? sizes.ToArray();
+#pragma warning restore CA1508
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_new10(sizesArray.Length, sizesArray, type, out ptr));
         }
 
-#if LANG_JP
-        /// <summary>
-        /// N次元行列として初期化
-        /// </summary>
-        /// <param name="sizes">n-次元配列の形状を表す，整数型の配列．</param>
-        /// <param name="type">配列の型．1-4 チャンネルの行列を作成するには MatType.CV_8UC1, ..., CV_64FC4 を，
-        /// マルチチャンネルの行列を作成するには，MatType.CV_8UC(n), ..., CV_64FC(n) を利用してください．</param>
-        /// <param name="s">各行列要素を初期化するオプション値．初期化の後ですべての行列要素を特定の値にセットするには，
-        /// コンストラクタの後で，SetTo(Scalar value) メソッドを利用してください．</param>
-#else
         /// <summary>
         /// constructs n-dimensional matrix
         /// </summary>
@@ -582,25 +390,20 @@ namespace OpenCvSharp
         /// or MatType. CV_8UC(n), ..., CV_64FC(n) to create multi-channel matrices.</param>
         /// <param name="s">An optional value to initialize each matrix element with. 
         /// To set all the matrix elements to the particular value after the construction, use SetTo(Scalar s) method .</param>
-#endif
         public Mat(IEnumerable<int> sizes, MatType type, Scalar s)
         {
             if (sizes == null)
                 throw new ArgumentNullException(nameof(sizes));
-            var sizesArray = sizes.ToArray();
+#pragma warning disable CA1508
+            var sizesArray = sizes as int[] ?? sizes.ToArray();
+#pragma warning restore CA1508
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_new11(sizesArray.Length, sizesArray, type, s, out ptr));
         }
 
-#if LANG_JP
-/// <summary>
-/// リソースの解放
-/// </summary>
-#else
         /// <summary>
         /// Releases the resources
         /// </summary>
-#endif
         public void Release()
         {
             Dispose();
@@ -620,21 +423,12 @@ namespace OpenCvSharp
 
         #region Static Initializers
 
-#if LANG_JP
-        /// <summary>
-        /// System.IO.StreamのインスタンスからMatを生成する
-        /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="mode"></param>
-        /// <returns></returns>
-#else
         /// <summary>
         /// Creates the Mat instance from System.IO.Stream
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-#endif
         public static Mat FromStream(Stream stream, ImreadModes mode)
         {
             if (stream == null)
@@ -648,21 +442,12 @@ namespace OpenCvSharp
             return FromImageData(memoryStream.ToArray(), mode);
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 画像データ(JPEG等の画像をメモリに展開したもの)からMatを生成する (cv::imdecode)
-        /// </summary>
-        /// <param name="imageBytes"></param>
-        /// <param name="mode"></param>
-        /// <returns></returns>
-#else
         /// <summary>
         /// Creates the Mat instance from image data (using cv::decode) 
         /// </summary>
         /// <param name="imageBytes"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-#endif
         public static Mat ImDecode(byte[] imageBytes, ImreadModes mode = ImreadModes.Color)
         {
             if (imageBytes == null)
@@ -681,21 +466,12 @@ namespace OpenCvSharp
             return Cv2.ImDecode(span, mode);
         }
 
-#if LANG_JP
-        /// <summary>
-        /// 画像データ(JPEG等の画像をメモリに展開したもの)からMatを生成する (cv::imdecode)
-        /// </summary>
-        /// <param name="imageBytes"></param>
-        /// <param name="mode"></param>
-        /// <returns></returns>
-#else
         /// <summary>
         /// Creates the Mat instance from image data (using cv::decode) 
         /// </summary>
         /// <param name="imageBytes"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-#endif
         public static Mat FromImageData(byte[] imageBytes, ImreadModes mode = ImreadModes.Color)
         {
             return ImDecode(imageBytes, mode);
@@ -769,9 +545,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static MatExpr Zeros(MatType type, params int[] sizes)
         {
-            if (sizes == null)
-                throw new ArgumentNullException(nameof(sizes));
-
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_zeros2(sizes.Length, sizes, type, out var ret));
             var retVal = new MatExpr(ret);
@@ -812,9 +585,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static MatExpr Ones(MatType type, params int[] sizes)
         {
-            if (sizes == null)
-                throw new ArgumentNullException(nameof(sizes));
-
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_ones2(sizes.Length, sizes, type, out var ret));
             var retVal = new MatExpr(ret);
@@ -849,22 +619,13 @@ namespace OpenCvSharp
 
         #region FromArray
 
-#if LANG_JP
-        /// <summary>
-        /// N x 1 の行列(ベクトル)として初期化し、指定した配列からデータをコピーする
-        /// </summary>
-        /// <param name="arr">この行列にコピーされるデータ</param>
-#else
         /// <summary>
         /// Initializes as N x 1 matrix and copies array data to this
         /// </summary>
         /// <param name="arr">Source array data to be copied to this</param>
-#endif
         public static Mat<TElem> FromArray<TElem>(params TElem[] arr)
             where TElem : unmanaged
         {
-            if (arr == null)
-                throw new ArgumentNullException(nameof(arr));
             if (arr.Length == 0)
                 throw new ArgumentException("arr.Length == 0");
 
@@ -875,17 +636,10 @@ namespace OpenCvSharp
             return mat;
         }
 
-#if LANG_JP
-        /// <summary>
-        /// M x N の行列として初期化し、指定した配列からデータをコピーする
-        /// </summary>
-        /// <param name="arr">この行列にコピーされるデータ</param>
-#else
         /// <summary>
         /// Initializes as M x N matrix and copies array data to this
         /// </summary>
         /// <param name="arr">Source array data to be copied to this</param>
-#endif
         public static Mat<TElem> FromArray<TElem>(TElem[,] arr)
             where TElem : unmanaged
         {
@@ -902,17 +656,10 @@ namespace OpenCvSharp
             return mat;
         }
 
-#if LANG_JP
-        /// <summary>
-        /// N x 1 の行列(ベクトル)として初期化し、指定した配列からデータをコピーする
-        /// </summary>
-        /// <param name="enumerable">この行列にコピーされるデータ</param>
-#else
         /// <summary>
         /// Initializes as N x 1 matrix and copies array data to this
         /// </summary>
         /// <param name="enumerable">Source array data to be copied to this</param>
-#endif
         public static Mat<TElem> FromArray<TElem>(IEnumerable<TElem> enumerable)
             where TElem : unmanaged
         {
@@ -925,11 +672,12 @@ namespace OpenCvSharp
 
         #region Operators
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="mat"></param>
-        /// <returns></returns>
+#pragma warning disable 1591
+
+        public static Mat operator +(Mat mat) => mat;
+
+        public MatExpr Plus() => this;
+
         public static MatExpr operator -(Mat mat)
         {
             if (mat is null)            
@@ -941,22 +689,8 @@ namespace OpenCvSharp
             return new MatExpr(ret);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="mat"></param>
-        /// <returns></returns>
-        public static Mat operator +(Mat mat)
-        {
-            return mat;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        public MatExpr Negate() => -this;
+        
         public static MatExpr operator +(Mat a, Mat b)
         {
             if (a == null)
@@ -972,13 +706,7 @@ namespace OpenCvSharp
             GC.KeepAlive(b);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="s"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator +(Mat a, Scalar s)
         {
             if (a == null)
@@ -990,13 +718,7 @@ namespace OpenCvSharp
             GC.KeepAlive(a);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="a"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator +(Scalar s, Mat a)
         {
             if (a == null)
@@ -1008,12 +730,9 @@ namespace OpenCvSharp
             return new MatExpr(ret);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        public MatExpr Add(Mat m) => this + m;
+        public MatExpr Add(Scalar s) => this + s;
+
         public static MatExpr operator -(Mat a, Mat b)
         {
             if (a == null)
@@ -1028,13 +747,7 @@ namespace OpenCvSharp
             GC.KeepAlive(b);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="s"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator -(Mat a, Scalar s)
         {
             if (a == null)
@@ -1045,13 +758,7 @@ namespace OpenCvSharp
             GC.KeepAlive(a);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="a"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator -(Scalar s, Mat a)
         {
             if (a == null)
@@ -1063,12 +770,9 @@ namespace OpenCvSharp
             return new MatExpr(ret);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        public MatExpr Subtract(Mat m) => this - m;
+        public MatExpr Subtract(Scalar s) => this - s;
+
         public static MatExpr operator *(Mat a, Mat b)
         {
             if (a == null)
@@ -1083,13 +787,7 @@ namespace OpenCvSharp
             GC.KeepAlive(b);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="s"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator *(Mat a, double s)
         {
             if (a == null)
@@ -1100,13 +798,7 @@ namespace OpenCvSharp
             GC.KeepAlive(a);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="a"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator *(double s, Mat a)
         {
             if (a == null)
@@ -1118,12 +810,9 @@ namespace OpenCvSharp
             return new MatExpr(ret);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        public MatExpr Multiply(Mat m) => this * m;
+        public MatExpr Multiply(double s) => this * s;
+
         public static MatExpr operator /(Mat a, Mat b)
         {
             if (a == null)
@@ -1138,13 +827,7 @@ namespace OpenCvSharp
             GC.KeepAlive(b);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="s"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator /(Mat a, double s)
         {
             if (a == null)
@@ -1155,13 +838,7 @@ namespace OpenCvSharp
             GC.KeepAlive(a);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="a"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator /(double s, Mat a)
         {
             if (a == null)
@@ -1173,12 +850,9 @@ namespace OpenCvSharp
             return new MatExpr(ret);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        public MatExpr Divide(Mat m) => this / m;
+        public MatExpr Divide(double s) => this / s;
+
         public static MatExpr operator &(Mat a, Mat b)
         {
             if (a == null)
@@ -1193,13 +867,7 @@ namespace OpenCvSharp
             GC.KeepAlive(b);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="s"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator &(Mat a, double s)
         {
             if (a == null)
@@ -1210,13 +878,7 @@ namespace OpenCvSharp
             GC.KeepAlive(a);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="a"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator &(double s, Mat a)
         {
             if (a == null)
@@ -1228,12 +890,9 @@ namespace OpenCvSharp
             return new MatExpr(ret);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        public MatExpr BitwiseAnd(Mat m) => this & m;
+        public MatExpr BitwiseAnd(double s) => this & s;
+
         public static MatExpr operator |(Mat a, Mat b)
         {
             if (a == null)
@@ -1248,13 +907,7 @@ namespace OpenCvSharp
             GC.KeepAlive(b);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="s"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator |(Mat a, double s)
         {
             if (a == null)
@@ -1265,13 +918,7 @@ namespace OpenCvSharp
             GC.KeepAlive(a);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="a"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator |(double s, Mat a)
         {
             if (a == null)
@@ -1283,12 +930,9 @@ namespace OpenCvSharp
             return new MatExpr(ret);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        public MatExpr BitwiseOr(Mat m) => this | m;
+        public MatExpr BitwiseOr(double s) => this | s;
+
         public static MatExpr operator ^(Mat a, Mat b)
         {
             if (a == null)
@@ -1303,13 +947,7 @@ namespace OpenCvSharp
             GC.KeepAlive(b);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="s"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator ^(Mat a, double s)
         {
             if (a == null)
@@ -1320,13 +958,7 @@ namespace OpenCvSharp
             GC.KeepAlive(a);
             return new MatExpr(ret);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="a"></param>
-        /// <returns></returns>
+        
         public static MatExpr operator ^(double s, Mat a)
         {
             if (a == null)
@@ -1338,11 +970,9 @@ namespace OpenCvSharp
             return new MatExpr(ret);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="m"></param>
-        /// <returns></returns>
+        public MatExpr Xor(Mat m) => this ^ m;
+        public MatExpr Xor(double s) => this ^ s;
+
         public static MatExpr operator ~(Mat m)
         {
             if (m == null)
@@ -1354,6 +984,9 @@ namespace OpenCvSharp
             return new MatExpr(ret);
         }
 
+        public MatExpr OnesComplement() => ~this;
+
+#pragma warning restore 1591
         #endregion
 
         #region Comparison
@@ -1565,7 +1198,7 @@ namespace OpenCvSharp
                 if (Dims != value.Dims)
                     throw new ArgumentException("Dimension mismatch");
 
-                var sub = SubMat(rowStart, rowEnd, colStart, colEnd);
+                using var sub = SubMat(rowStart, rowEnd, colStart, colEnd);
                 if (sub.Size() != value.Size())
                     throw new ArgumentException("Specified ROI != mat.Size()");
                 value.CopyTo(sub);
@@ -1594,7 +1227,7 @@ namespace OpenCvSharp
                 if (Dims != value.Dims)
                     throw new ArgumentException("Dimension mismatch");
 
-                var sub = SubMat(rowRange, colRange);
+                using var sub = SubMat(rowRange, colRange);
                 if (sub.Size() != value.Size())
                     throw new ArgumentException("Specified ROI != mat.Size()");
                 value.CopyTo(sub);
@@ -1623,7 +1256,7 @@ namespace OpenCvSharp
                 if (Dims != value.Dims)
                     throw new ArgumentException("Dimension mismatch");
 
-                var sub = SubMat(rowRange, colRange);
+                using var sub = SubMat(rowRange, colRange);
                 if (sub.Size() != value.Size())
                     throw new ArgumentException("Specified ROI != mat.Size()");
                 value.CopyTo(sub);
@@ -1635,6 +1268,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="roi">Extracted submatrix specified as a rectangle.</param>
         /// <returns></returns>
+        [SuppressMessage("Microsoft.Design", "CA1043: Use integral or string argument for indexers")]
         public Mat this[Rect roi]
         {
             get => SubMat(roi);
@@ -1650,7 +1284,7 @@ namespace OpenCvSharp
 
                 if (roi.Size != value.Size())
                     throw new ArgumentException("Specified ROI != mat.Size()");
-                var sub = SubMat(roi);
+                using var sub = SubMat(roi);
                 value.CopyTo(sub);
             }
         }
@@ -1660,6 +1294,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="ranges">Array of selected ranges along each array dimension.</param>
         /// <returns></returns>
+        [SuppressMessage("Microsoft.Design", "CA1043: Use integral or string argument for indexers")]
         public Mat this[params Range[] ranges]
         {
             get => SubMat(ranges);
@@ -1671,7 +1306,7 @@ namespace OpenCvSharp
                 //if (Type() != value.Type())
                 //    throw new ArgumentException("Mat type mismatch");
 
-                var sub = SubMat(ranges);
+                using var sub = SubMat(ranges);
 
                 var dims = Dims;
                 if (dims != value.Dims)
@@ -1687,7 +1322,21 @@ namespace OpenCvSharp
         }
 
         #endregion
-        
+
+        /// <summary>
+        /// Retrieve UMat from Mat
+        /// </summary>
+        /// <param name="accessFlags"></param>
+        /// <param name="usageFlags"></param>
+        /// <returns></returns>
+        public UMat GetUMat(AccessFlag accessFlags, UMatUsageFlags usageFlags)
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.core_Mat_getUMat(ptr, (int)accessFlags, (int)usageFlags, out var matPtr));
+            return new UMat(matPtr);
+        }
+
         /// <summary>
         /// Creates a matrix header for the specified matrix column.
         /// </summary>
@@ -1812,6 +1461,10 @@ namespace OpenCvSharp
         public Mat Clone()
         {
             ThrowIfDisposed();
+            
+            if (Empty())            
+                return new Mat(Size(), Type());     
+
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_clone(ptr, out var ret));
             GC.KeepAlive(this);
@@ -1999,8 +1652,6 @@ namespace OpenCvSharp
         public Mat Reshape(int cn, params int[] newDims)
         {
             ThrowIfDisposed();
-            if (newDims == null)
-                throw new ArgumentNullException(nameof(newDims));
 
             NativeMethods.HandleException(
                 NativeMethods.core_Mat_reshape2(ptr, cn, newDims.Length, newDims, out var ret));
@@ -2137,8 +1788,6 @@ namespace OpenCvSharp
         /// <param name="type">New matrix type.</param>
         public void Create(MatType type, params int[] sizes)
         {
-            if (sizes == null)
-                throw new ArgumentNullException(nameof(sizes));
             if (sizes.Length < 2)
                 throw new ArgumentException("sizes.Length < 2");
             NativeMethods.HandleException(
@@ -2216,479 +1865,6 @@ namespace OpenCvSharp
         
         #region PushBack
         
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(byte value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_uchar(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(sbyte value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_char(ptr, value));
-            GC.KeepAlive(this);
-        }
-
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(ushort value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_ushort(ptr, value));
-            GC.KeepAlive(this);
-        }
-
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(short value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_short(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(int value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_int(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(float value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_float(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(double value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_double(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec2b value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec2b(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec3b value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec3b(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec4b value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec4b(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec6b value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec6b(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec2w value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec2w(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec3w value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec3w(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec4w value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec4w(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec6w value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec6w(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec2s value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec2s(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec3s value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec3s(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec4s value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec4s(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec6s value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec6s(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec2i value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec2i(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec3i value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec3i(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec4i value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec4i(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec6i value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec6i(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec2f value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec2f(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec3f value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec3f(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec4f value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec4f(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec6f value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec6f(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec2d value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec2d(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec3d value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec3d(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec4d value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec4d(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Vec6d value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Vec6d(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Point value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Point(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Point2d value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Point2d(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Point2f value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Point2f(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Point3i value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Point3i(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Point3d value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Point3d(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Point3f value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Point3f(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Size value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Size(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Size2d value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Size2d(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Size2f value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Size2f(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Rect value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Rect(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Rect2d value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Rect2d(ptr, value));
-            GC.KeepAlive(this);
-        }
-        
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat::push_back)
-        /// </summary>
-        /// <param name="value">Added element</param>
-        public void Add(Rect2f value)
-        {
-            ThrowIfDisposed();
-            NativeMethods.HandleException(NativeMethods.core_Mat_push_back_Rect2f(ptr, value));
-            GC.KeepAlive(this);
-        }
-
         /// <summary>
         /// Adds elements to the bottom of the matrix. (Mat::push_back)
         /// </summary>
@@ -3166,7 +2342,7 @@ namespace OpenCvSharp
         /// Adds elements to the bottom of the matrix. (Mat.push_back)
         /// </summary>
         /// <param name="m">Added line(s)</param>
-        public void Add(Mat m)
+        public void PushBack(Mat m)
         {
             ThrowIfDisposed();
             if (m == null)
@@ -3177,16 +2353,7 @@ namespace OpenCvSharp
             GC.KeepAlive(this);
             GC.KeepAlive(m);
         }
-
-        /// <summary>
-        /// Adds elements to the bottom of the matrix. (Mat.push_back)
-        /// </summary>
-        /// <param name="m">Added line(s)</param>
-        public void PushBack(Mat m)
-        {
-            Add(m);
-        }
-
+        
         #endregion
 
         /// <summary>
@@ -3292,8 +2459,6 @@ namespace OpenCvSharp
         /// <returns></returns>
         public Mat SubMat(params Range[] ranges)
         {
-            if (ranges == null)
-                throw new ArgumentNullException(nameof(ranges));
             ThrowIfDisposed();
 
             NativeMethods.HandleException(
@@ -3748,6 +2913,9 @@ namespace OpenCvSharp
         /// <returns></returns>
         public override string ToString()
         {
+            if (IsDisposed)
+                return "Mat [disposed]";
+
             return "Mat [ " +
                    Rows + "*" + Cols + "*" + Type().ToString() +
                    ", IsContinuous=" + IsContinuous() + ", IsSubmatrix=" + IsSubmatrix() +
@@ -3766,7 +2934,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="format"></param>
         /// <returns></returns>
-        public string? Dump(FormatType format = FormatType.Default)
+        public string Dump(FormatType format = FormatType.Default)
         {
             ThrowIfDisposed();
             return Cv2.Format(this, format);
@@ -3776,20 +2944,13 @@ namespace OpenCvSharp
 
         #region EmptyClone
 
-#if LANG_JP
-        /// <summary>
-        /// このMatと同じサイズ・ビット深度・チャネル数を持つ
-        /// Matオブジェクトを新たに作成し、返す
-        /// </summary>
-        /// <returns>コピーされた画像</returns>
-#else
         /// <summary>
         /// Makes a Mat that have the same size, depth and channels as this image
         /// </summary>
         /// <returns></returns>
-#endif
         public Mat EmptyClone()
         {
+            ThrowIfDisposed();
             return new Mat(Size(), Type());
         }
 
@@ -4190,7 +3351,7 @@ namespace OpenCvSharp
         
         #region Get/SetArray
 
-        private static readonly Dictionary<Type, int> dataDimensionMap = new Dictionary<Type, int>
+        private static readonly IReadOnlyDictionary<Type, int> dataDimensionMap = new Dictionary<Type, int>
         {
             {typeof(byte), 1},
             {typeof(sbyte), 1},
@@ -4238,7 +3399,7 @@ namespace OpenCvSharp
             {typeof(Vec6d), 6},
         };
         
-        private static readonly Dictionary<Type, MatType[]> acceptableTypesMap = new Dictionary<Type, MatType[]>
+        private static readonly IReadOnlyDictionary<Type, MatType[]> acceptableTypesMap = new Dictionary<Type, MatType[]>
         {
             {typeof(byte), new[]{MatType.CV_8SC1, MatType.CV_8UC1}},
             {typeof(sbyte), new[]{MatType.CV_8SC1, MatType.CV_8UC1}},
@@ -4495,7 +3656,9 @@ namespace OpenCvSharp
         {
             var newCols = Cv2.AlignSize(Cols, n);
             using var pMat = new Mat(Rows, newCols, Type());
+#pragma warning disable CA2000
             var roiMat = new Mat(pMat, new Rect(0, 0, Cols, Rows));
+#pragma warning restore CA2000
             CopyTo(roiMat);
             return roiMat;
         }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp.ML
 {
@@ -153,6 +155,7 @@ namespace OpenCvSharp.ML
         /// Predict options
         /// </summary>
         [Flags]
+        [SuppressMessage("Microsoft.Design", "CA1069: Enums should not have duplicate values")]
         public enum Flags
         {
 #pragma warning disable 1591

@@ -1,17 +1,14 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OpenCvSharp
 {
-#if LANG_JP
-    /// <summary>
-    /// cv::sortで用いる、配列の並び順指定
-    /// </summary>
-#else
     /// <summary>
     /// Signals an error and raises the exception.
     /// </summary>
-#endif
     [Flags]
+    [SuppressMessage("Microsoft.Design", "CA1008: Enums should have zero value")]
+    [SuppressMessage("Microsoft.Design", "CA1069: Enums should not have duplicate values")]
     public enum SortFlags
     {
         /// <summary>

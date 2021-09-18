@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Vectors;
 
 namespace OpenCvSharp
 {
@@ -73,7 +75,7 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static bool ImWrite(string fileName, Mat img, params ImageEncodingParam[] prms)
         {
-            if (prms == null || prms.Length <= 0) 
+            if (prms.Length <= 0) 
                 return ImWrite(fileName, img);
 
             var p = new List<int>();
@@ -98,8 +100,7 @@ namespace OpenCvSharp
                 throw new ArgumentNullException(nameof(fileName));
             if (img == null)
                 throw new ArgumentNullException(nameof(img));
-            if (prms == null)
-                prms = Array.Empty<int>();
+            prms ??= Array.Empty<int>();
 
             using var imgVec = new VectorOfMat(img);
             NativeMethods.HandleException(
@@ -117,7 +118,7 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static bool ImWrite(string fileName, IEnumerable<Mat> img, params ImageEncodingParam[] prms)
         {
-            if (prms == null || prms.Length <= 0)
+            if (prms.Length <= 0)
                 return ImWrite(fileName, img);
 
             var p = new List<int>();
@@ -175,10 +176,9 @@ namespace OpenCvSharp
         {
             if (buf == null)
                 throw new ArgumentNullException(nameof(buf));
-
-            NativeMethods.HandleException(
-                NativeMethods.imgcodecs_imdecode_vector(buf, new IntPtr(buf.Length), (int) flags, out var ret));
-            return new Mat(ret);
+            var ret = ImDecode(new ReadOnlySpan<byte>(buf), flags);
+            GC.KeepAlive(buf);
+            return ret;
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace OpenCvSharp
                 fixed (byte* pBuf = span)
                 {
                     NativeMethods.HandleException(
-                        NativeMethods.imgcodecs_imdecode_vector(pBuf, new IntPtr(span.Length), (int) flags, out var ret));
+                        NativeMethods.imgcodecs_imdecode_vector(pBuf, span.Length, (int) flags, out var ret));
                     return new Mat(ret);
                 }
             }
@@ -214,9 +214,9 @@ namespace OpenCvSharp
         {
             if (string.IsNullOrEmpty(ext))
                 throw new ArgumentNullException(nameof(ext));
-            if (img == null)
+            if (img is null)
                 throw new ArgumentNullException(nameof(img));
-            if (prms == null)
+            if (prms is null)
                 prms = Array.Empty<int>();
             img.ThrowIfDisposed();
 
@@ -237,20 +237,13 @@ namespace OpenCvSharp
         /// <param name="prms">Format-specific parameters.</param>
         public static void ImEncode(string ext, InputArray img, out byte[] buf, params ImageEncodingParam[] prms)
         {
-            if (prms != null)
+            var p = new List<int>();
+            foreach (var item in prms)
             {
-                var p = new List<int>();
-                foreach (var item in prms)
-                {
-                    p.Add((int) item.EncodingId);
-                    p.Add(item.Value);
-                }
-                ImEncode(ext, img, out buf, p.ToArray());
+                p.Add((int)item.EncodingId);
+                p.Add(item.Value);
             }
-            else
-            {
-                ImEncode(ext, img, out buf);
-            }
+            ImEncode(ext, img, out buf, p.ToArray());
         }
 
         /// <summary>
@@ -260,7 +253,7 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static bool HaveImageReader(string fileName)
         {
-            if (fileName == null) 
+            if (fileName is null) 
                 throw new ArgumentNullException(nameof(fileName));
 
             NativeMethods.HandleException(

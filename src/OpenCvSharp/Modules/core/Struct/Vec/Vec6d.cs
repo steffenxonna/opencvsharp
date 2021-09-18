@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace OpenCvSharp
@@ -8,39 +9,39 @@ namespace OpenCvSharp
     /// </summary>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public readonly struct Vec6d : IVec<Vec6d, double>, IEquatable<Vec6d>
+    [SuppressMessage("Design", "CA1051: Do not declare visible instance fields")]
+    public struct Vec6d : IVec<Vec6d, double>, IEquatable<Vec6d>
     {
         /// <summary>
         /// The value of the first component of this object.
         /// </summary>
-        public readonly double Item0;
+        public double Item0;
 
         /// <summary>
         /// The value of the second component of this object.
         /// </summary>
-        public readonly double Item1;
+        public double Item1;
 
         /// <summary>
         /// The value of the third component of this object.
         /// </summary>
-        public readonly double Item2;
+        public double Item2;
 
         /// <summary>
         /// The value of the fourth component of this object.
         /// </summary>
-        public readonly double Item3;
+        public double Item3;
 
         /// <summary>
         /// The value of the fifth component of this object.
         /// </summary>
-        public readonly double Item4;
+        public double Item4;
 
         /// <summary>
         /// The value of the sixth component of this object.
         /// </summary>
-        public readonly double Item5;
+        public double Item5;
 
-#if !DOTNET_FRAMEWORK
         /// <summary>
         /// Deconstructing a Vector
         /// </summary>
@@ -50,9 +51,8 @@ namespace OpenCvSharp
         /// <param name="item3"></param>
         /// <param name="item4"></param>
         /// <param name="item5"></param>
-        public void Deconstruct(out double item0, out double item1, out double item2, out double item3, out double item4, out double item5) 
+        public readonly void Deconstruct(out double item0, out double item1, out double item2, out double item3, out double item4, out double item5) 
             => (item0, item1, item2, item3, item4, item5) = (Item0, Item1, Item2, Item3, Item4, Item5);
-#endif
 
         /// <summary>
         /// Initializer
@@ -80,7 +80,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Vec6d Add(Vec6d other) => new Vec6d(
+        public readonly Vec6d Add(Vec6d other) => new(
             Item0 + other.Item0,
             Item1 + other.Item1,
             Item2 + other.Item2,
@@ -93,7 +93,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Vec6d Subtract(Vec6d other) => new Vec6d(
+        public readonly Vec6d Subtract(Vec6d other) => new(
             Item0 - other.Item0,
             Item1 - other.Item1,
             Item2 - other.Item2,
@@ -106,7 +106,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="alpha"></param>
         /// <returns></returns>
-        public Vec6d Multiply(double alpha) => new Vec6d(
+        public readonly Vec6d Multiply(double alpha) => new(
             Item0 * alpha,
             Item1 * alpha,
             Item2 * alpha,
@@ -119,7 +119,7 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="alpha"></param>
         /// <returns></returns>
-        public Vec6d Divide(double alpha) => new Vec6d(
+        public readonly Vec6d Divide(double alpha) => new(
             Item0 / alpha,
             Item1 / alpha,
             Item2 / alpha,
@@ -128,8 +128,6 @@ namespace OpenCvSharp
             Item5 / alpha);
 
 #pragma warning disable 1591
-        public static Vec6d operator +(Vec6d self) => self;
-        public static Vec6d operator -(Vec6d self) => new Vec6d(-self.Item0, -self.Item1, -self.Item2, -self.Item3, -self.Item4, -self.Item5);
         public static Vec6d operator +(Vec6d a, Vec6d b) => a.Add(b);
         public static Vec6d operator -(Vec6d a, Vec6d b) => a.Subtract(b);
         public static Vec6d operator *(Vec6d a, double alpha) => a.Multiply(alpha);
@@ -143,7 +141,7 @@ namespace OpenCvSharp
         /// <returns></returns>
         public double this[int i]
         {
-            get
+            readonly get
             {
                 return i switch
                 {
@@ -156,12 +154,25 @@ namespace OpenCvSharp
                     _ => throw new ArgumentOutOfRangeException(nameof(i))
                 };
             }
+            set
+            {
+                switch (i)
+                {
+                    case 0: Item0 = value; break;
+                    case 1: Item1 = value; break;
+                    case 2: Item2 = value; break;
+                    case 3: Item3 = value; break;
+                    case 4: Item4 = value; break;
+                    case 5: Item5 = value; break;
+                    default: throw new ArgumentOutOfRangeException(nameof(i));
+                }
+            }
         }
 
         #endregion
-        
+
         /// <inheritdoc />
-        public bool Equals(Vec6d other)
+        public readonly bool Equals(Vec6d other)
         {
             return Item0.Equals(other.Item0) && 
                    Item1.Equals(other.Item1) &&
@@ -172,7 +183,7 @@ namespace OpenCvSharp
         }
 
         /// <inheritdoc />
-        public override bool Equals(object? obj)
+        public override readonly bool Equals(object? obj)
         {
             if (obj is null) return false;
             return obj is Vec6d v && Equals(v);
@@ -199,7 +210,7 @@ namespace OpenCvSharp
         }
 
         /// <inheritdoc />
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
 #if DOTNET_FRAMEWORK || NETSTANDARD2_0
             unchecked
@@ -218,9 +229,9 @@ namespace OpenCvSharp
         }
 
         /// <inheritdoc />
-        public override string ToString()
+        public override readonly string ToString()
         {
-            return $"{GetType().Name} ({Item0}, {Item1}, {Item2}, {Item3}, {Item4}, {Item5})";
+            return $"{nameof(Vec6d)} ({Item0}, {Item1}, {Item2}, {Item3}, {Item4}, {Item5})";
         }
     }
 }

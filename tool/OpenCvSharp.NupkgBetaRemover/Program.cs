@@ -4,27 +4,21 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace OpenCvSharp.NupkgBetaRemover
 {
     class Program
     {
-        [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            var nupkgFiles = SelectNupkgFiles();
-            if (nupkgFiles == null)
+            if (args.Length == 0)
                 return;
 
-            foreach (var nupkgFile in nupkgFiles)
-            {               
-                Match fileNameMatch;
-                if (nupkgFile.Contains("ubuntu"))
-                    //fileNameMatch = Regex.Match(nupkgFile, @"OpenCvSharp4\.runtime\.ubuntu\.(?<ubuntu_version>.*).(?<opencv_version>\d{1,2}\.\d{1,2}\.\d{1,2})\.(?<date>\d{8})\.s?nupkg");
+            foreach (var nupkgFile in args)
+            {
+                if (!nupkgFile.Contains("-beta"))
                     continue;
-                else
-                    fileNameMatch = Regex.Match(nupkgFile, @"OpenCvSharp4\..*(?<date>\d{8})(?<beta_version>-beta\d+)\.s?nupkg");
+                var fileNameMatch = Regex.Match(nupkgFile, @"OpenCvSharp4\..*(?<date>\d{8})(?<beta_version>-beta\d*)\.s?nupkg");
                 if (!fileNameMatch.Success)
                     throw new Exception($"Unexpected .nupkg/.snupkg file name ({nupkgFile})");
                 var dateString = fileNameMatch.Groups["date"].Value;
@@ -52,8 +46,8 @@ namespace OpenCvSharp.NupkgBetaRemover
                     }
                     else
                     {
-                        nuspecContent = Regex.Replace(nuspecContent, @"-beta-?\d+</version>", "</version>");
-                        nuspecContent = Regex.Replace(nuspecContent, @"(?<=<dependency.*version="")(?<version>\d{1,2}\.\d{1,2}\.\d{1,2}\.\d{8})(?<betaVersion>-beta-?\d+)", 
+                        nuspecContent = Regex.Replace(nuspecContent, @"-beta-?\d*</version>", "</version>");
+                        nuspecContent = Regex.Replace(nuspecContent, @"(?<=<dependency.*version="")(?<version>\d{1,2}\.\d{1,2}\.\d{1,2}\.\d{8})(?<betaVersion>-beta-?\d*)", 
                             match => match.Groups["version"].Value);                        
                     }
                     nuspecContent += new string(' ', 1000);
@@ -62,33 +56,11 @@ namespace OpenCvSharp.NupkgBetaRemover
                     using (var nuspecContentStreamWriter = new StreamWriter(nuspecContentStream, Encoding.UTF8))
                     {
                         nuspecContentStreamWriter.Write(nuspecContent);
-                        
                     }
                 }
 
-                string newFileName;
-                if (nupkgFile.Contains("ubuntu"))
-                    newFileName  = Regex.Replace(nupkgFile, @"-\d+.nupkg", $".{date:yyyyMMdd}.nupkg");
-                else
-                    newFileName  = Regex.Replace(nupkgFile, @"-beta-?\d+", "");
+                var newFileName = Regex.Replace(nupkgFile, @"-beta-?\d*", "");
                 File.Move(nupkgFile, newFileName);
-            }
-        }
-
-        static string[] SelectNupkgFiles()
-        {
-            using (var dialog = new OpenFileDialog {
-                CheckFileExists = true,
-                CheckPathExists = true,
-                Filter = "nupkg files(*.nupkg;*.snupkg)|*.nupkg;*.snupkg",
-                Multiselect = true,
-                RestoreDirectory = true,
-                Title = "Select .nupkg files"
-            })
-            {
-                if (dialog.ShowDialog() != DialogResult.OK)
-                    return null;
-                return dialog.FileNames;
             }
         }
     }

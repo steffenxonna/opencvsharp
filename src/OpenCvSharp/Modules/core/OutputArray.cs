@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-#if ENABLED_CUDA
-using OpenCvSharp.Cuda;
-#endif
+using System.Diagnostics.CodeAnalysis;
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Vectors;
+
+#pragma warning disable CA1002 // Do not expose generic lists
 
 namespace OpenCvSharp
 {
@@ -25,6 +27,20 @@ namespace OpenCvSharp
                 throw new ArgumentNullException(nameof(mat));
             NativeMethods.HandleException(
                 NativeMethods.core_OutputArray_new_byMat(mat.CvPtr, out ptr));
+            GC.KeepAlive(mat);
+            obj = mat;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="mat"></param>
+        internal OutputArray(UMat mat)
+        {
+            if (mat == null)
+                throw new ArgumentNullException(nameof(mat));
+            NativeMethods.HandleException(
+                NativeMethods.core_OutputArray_new_byUMat(mat.CvPtr, out ptr));
             GC.KeepAlive(mat);
             obj = mat;
         }
@@ -79,9 +95,21 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="mat"></param>
         /// <returns></returns>
+        [SuppressMessage("Microsoft.Design", "CA2225: Operator overloads have named alternates")]
         public static implicit operator OutputArray(Mat mat)
         {
-            return new OutputArray(mat);
+            return new(mat);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="umat"></param>
+        /// <returns></returns>
+        [SuppressMessage("Microsoft.Design", "CA2225: Operator overloads have named alternates")]
+        public static implicit operator OutputArray(UMat umat)
+        {
+            return new(umat);
         }
 
 #if ENABLED_CUDA
@@ -97,7 +125,7 @@ namespace OpenCvSharp
 #endif
 
         #endregion
-        
+
         #region Methods
 
         /// <summary>
@@ -107,6 +135,15 @@ namespace OpenCvSharp
         public bool IsMat()
         {
             return obj is Mat;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool IsUMat()
+        {
+            return obj is UMat;
         }
 
         /// <summary>
@@ -185,11 +222,10 @@ namespace OpenCvSharp
             return
                 ptr != IntPtr.Zero &&
                 !IsDisposed &&
-                obj != null &&
 #if ENABLED_CUDA
                 (IsMat() || IsGpuMat());
 #else
-                IsMat();
+                IsMat() || IsUMat();
 #endif
         }
         /// <summary>
@@ -209,7 +245,17 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static OutputArray Create(Mat mat)
         {
-            return new OutputArray(mat);
+            return new (mat);
+        }
+
+        /// <summary>
+        /// Creates a proxy class of the specified matrix
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <returns></returns>
+        public static OutputArray Create(UMat mat)
+        {
+            return new (mat);
         }
 
 #if ENABLED_CUDA
@@ -233,7 +279,7 @@ namespace OpenCvSharp
         public static OutputArrayOfStructList<T> Create<T>(List<T> list)
             where T : unmanaged
         {
-            if (list == null)
+            if (list is null)
                 throw new ArgumentNullException(nameof(list));
             return new OutputArrayOfStructList<T>(list);
         }
@@ -245,7 +291,7 @@ namespace OpenCvSharp
         /// <returns></returns>
         public static OutputArrayOfMatList Create(List<Mat> list)
         {
-            if (list == null)
+            if (list is null)
                 throw new ArgumentNullException(nameof(list));
             return new OutputArrayOfMatList(list);
         }

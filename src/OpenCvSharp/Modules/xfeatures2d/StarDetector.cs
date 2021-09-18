@@ -1,16 +1,11 @@
 ﻿using System;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp.XFeatures2D
 {
-#if LANG_JP
-    /// <summary>
-    /// Star Detector
-    /// </summary>
-#else
     /// <summary>
     /// The "Star" Detector
     /// </summary>
-#endif
     public class StarDetector : Feature2D
     {
         private Ptr? ptrObj;

@@ -12,8 +12,8 @@ namespace OpenCvSharp.Tests.ImgProc
         [Fact]
         public void MorphologyExDilate()
         {
-            using Mat src = new Mat(100, 100, MatType.CV_8UC1, 255);
-            using Mat dst = new Mat();
+            using var src = new Mat(100, 100, MatType.CV_8UC1, 255);
+            using var dst = new Mat();
             Cv2.Rectangle(src, new Rect(30, 30, 40, 40), Scalar.Black, 1);
             Cv2.MorphologyEx(src, dst, MorphTypes.Dilate, null);
 
@@ -25,8 +25,8 @@ namespace OpenCvSharp.Tests.ImgProc
         [Fact]
         public void MorphologyExErode()
         {
-            using Mat src = Mat.Zeros(100, 100, MatType.CV_8UC1);
-            using Mat dst = new Mat();
+            using var src = Mat.Zeros(100, 100, MatType.CV_8UC1);
+            using var dst = new Mat();
             Cv2.Rectangle(src, new Rect(30, 30, 40, 40), Scalar.White, 1);
             Cv2.MorphologyEx(src, dst, MorphTypes.Erode, null);
 
@@ -46,8 +46,8 @@ namespace OpenCvSharp.Tests.ImgProc
 
             using var dst = new Mat();
             Cv2.WarpAffine(src, dst, matrix, src.Size());
-        }        
-        
+        }
+
         // TODO
         [Fact(Skip = "fails with exception")]
         public void WarpAffineBigImage()
@@ -289,7 +289,7 @@ namespace OpenCvSharp.Tests.ImgProc
         }
 
         [Fact]
-        public void FitLine()
+        public void FitLineByPoint2f()
         {
             var contour = new[]
             {
@@ -303,6 +303,54 @@ namespace OpenCvSharp.Tests.ImgProc
             Assert.Equal(5.0, line.Y1, 3);
             Assert.Equal(Math.Sqrt(2) / 2, line.Vx, 3);
             Assert.Equal(Math.Sqrt(2) / 2, line.Vy, 3);
+        }
+
+        [Fact]
+        public void FitLineByPoints()
+        {
+            var contour = new[]
+            {
+                new Point(0, 0),
+                new Point(10, 10),
+                new Point(5, 5),
+            };
+            var line = Cv2.FitLine(contour, DistanceTypes.L2, 0, 0, 0.01);
+
+            Assert.Equal(5.0, line.X1, 3);
+            Assert.Equal(5.0, line.Y1, 3);
+            Assert.Equal(Math.Sqrt(2) / 2, line.Vx, 3);
+            Assert.Equal(Math.Sqrt(2) / 2, line.Vy, 3);
+        }
+
+        [Fact]
+        public void FitLineByMat()
+        {
+            var matTypes = new[]
+            {
+                (MatType.CV_32SC1, 2),
+                (MatType.CV_32SC2, 1)
+            };
+            foreach (var (matType, cols) in matTypes)
+            {
+                var contour = new[]
+                {
+                    new Point(0, 0),
+                    new Point(10, 10),
+                    new Point(5, 5),
+                };
+                using var src = new Mat(contour.Length, cols, matType, contour);
+                using var dst = new Mat();
+                Cv2.FitLine(src, dst, DistanceTypes.L2, 0, 0, 0.01);
+
+                Assert.False(dst.Empty());
+                Assert.Equal(MatType.CV_32FC1, dst.Type());
+                Assert.Equal(new Size(1, 4), dst.Size());
+
+                Assert.Equal(Math.Sqrt(2) / 2, dst.Get<float>(0), 3);
+                Assert.Equal(Math.Sqrt(2) / 2, dst.Get<float>(1), 3);
+                Assert.Equal(5, dst.Get<float>(2), 3);
+                Assert.Equal(5, dst.Get<float>(3), 3);
+            }
         }
 
         [Fact]
@@ -350,7 +398,7 @@ namespace OpenCvSharp.Tests.ImgProc
 
             if (Debugger.IsAttached)
             {
-                Point[] ToPoints(IEnumerable<Point2f> enumerable)
+                static Point[] ToPoints(IEnumerable<Point2f> enumerable)
                 {
                     return enumerable.Select(p => new Point(p.X, p.Y)).ToArray();
                 }
@@ -445,7 +493,7 @@ namespace OpenCvSharp.Tests.ImgProc
                 throw new ArgumentNullException(nameof(img));
             if (expected == null)
                 throw new ArgumentNullException(nameof(expected));
-            
+
             if (img.Type() != MatType.CV_8UC3)
                 throw new ArgumentException("Mat.Type() != 8UC3", nameof(img));
 
@@ -487,7 +535,7 @@ namespace OpenCvSharp.Tests.ImgProc
 
             ShowImagesWhenDebugMode(src, dst);
         }
-        
+
         [Fact]
         public void CornerHarris()
         {
@@ -526,9 +574,9 @@ namespace OpenCvSharp.Tests.ImgProc
             using var src = Image("markers_6x6_250.png", ImreadModes.Grayscale);
             Cv2.BitwiseNot(src, src);
             Cv2.FindContours(
-                src, 
+                src,
                 out var contours,
-                out var hierarchy, 
+                out var hierarchy,
                 RetrievalModes.External,
                 ContourApproximationModes.ApproxSimple);
 
@@ -546,6 +594,105 @@ namespace OpenCvSharp.Tests.ImgProc
                 Cv2.DrawContours(view, contours, -1, Scalar.Red);
                 Window.ShowImages(src, view);
             }
+        }
+
+        [Fact]
+        public void CalcHist()
+        {
+            using var src = new Mat(@"_data/image/mandrill.png", ImreadModes.Grayscale);
+
+            using var hist = new Mat();
+            Cv2.CalcHist(
+                images: new[] { src },
+                channels: new[] {0},
+                mask: null,
+                hist: hist,
+                dims: 1,
+                histSize: new[] {256},
+                ranges: new[] { new Rangef(0, 256) });
+
+            if (Debugger.IsAttached)
+            {
+                const int histW = 512;
+                const int histH = 400; 
+                var binW = Math.Round((double)histW / 256);
+                using var histImage = new Mat(histH, histW, MatType.CV_8UC3, Scalar.All(0));
+                Cv2.Normalize(hist, hist, 0, histImage.Rows, NormTypes.MinMax, -1);
+
+                for (int i = 0; i < 256; i++)
+                {
+                    var pt1 = new Point2d(binW * (i - 1), histH - Math.Round(hist.At<float>(i - 1)));
+                    var pt2 = new Point2d(binW * (i), histH - Math.Round(hist.At<float>(i)));
+                    Cv2.Line(
+                        histImage, (Point)pt1, (Point)pt2,
+                        Scalar.Red, 1, LineTypes.Link8);
+                }
+
+                Window.ShowImages(src, histImage);
+            }
+        }
+
+        [Fact]
+        public void MatchTemplate()
+        {
+            using var src = new Mat("_data/image/qr_multi.png", ImreadModes.Grayscale);
+            using var template = src[new Rect(33, 33, 235, 235)];
+
+            using var result = new Mat();
+            Cv2.MatchTemplate(src, template, result, TemplateMatchModes.CCoeffNormed);
+
+            Assert.False(result.Empty());
+            Assert.Equal(MatType.CV_32FC1, result.Type());
+            Assert.Equal(src.Rows - template.Rows + 1, result.Rows);
+            Assert.Equal(src.Cols - template.Cols + 1, result.Cols);
+
+            Cv2.MinMaxLoc(result, out _, out Point maxLoc);
+            Assert.Equal(new Point(33, 33), maxLoc);
+
+            if (Debugger.IsAttached)
+            {
+                using var view = new Mat();
+                Cv2.CvtColor(src, view, ColorConversionCodes.GRAY2BGR);
+                Cv2.Rectangle(view, new Rect(maxLoc, template.Size()), Scalar.Red, 2);
+                
+                Window.ShowImages(view, result);
+            }
+        }
+
+        [Fact]
+        public void HoughLinesP()
+        {
+            using var src = new Mat("_data/image/houghp.png", ImreadModes.Grayscale);
+
+            using var binary = new Mat();
+            Cv2.Threshold(src, binary, 0, 255, ThresholdTypes.Otsu);
+
+            var lines = Cv2.HoughLinesP(binary, 1, Cv2.PI / 180f, 50, 50, 10);
+            Assert.NotEmpty(lines);
+
+            if (Debugger.IsAttached)
+            {
+                using var view = new Mat();
+                Cv2.CvtColor(src, view, ColorConversionCodes.GRAY2BGR);
+                foreach (var line in lines)
+                {
+                    Cv2.Line(view, line.P1, line.P2, Scalar.Red);
+                }
+
+                Window.ShowImages(new[] {src, binary, view}, new[] {"src", "binary", "lines"});
+            }
+        }
+
+        [Fact]
+        public void Integral()
+        {
+            using var ones = Mat.Ones(3, 3, MatType.CV_8UC1);
+            using var sum = new Mat();
+
+            Cv2.Integral(ones, sum); 
+
+            Assert.Equal(9, sum.At<byte>(3, 3));
+            Assert.Equal(9, (int)Cv2.Sum(ones));
         }
     }
 }

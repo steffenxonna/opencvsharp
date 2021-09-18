@@ -1,4 +1,6 @@
 ﻿
+using System.Diagnostics.CodeAnalysis;
+
 namespace OpenCvSharp
 {
     /// <summary>
@@ -8,10 +10,19 @@ namespace OpenCvSharp
     public class InputOutputArray : OutputArray
     {
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         /// <param name="mat"></param>
         internal InputOutputArray(Mat mat)
+            : base(mat)
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="mat"></param>
+        internal InputOutputArray(UMat mat)
             : base(mat)
         {
         }
@@ -21,9 +32,29 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="mat"></param>
         /// <returns></returns>
-        public static new InputOutputArray Create(Mat mat)
+        public new static InputOutputArray Create(Mat mat)
         {
-            return new InputOutputArray(mat);
+            return new(mat);
+        }
+        
+        /// <summary>
+        /// Creates a proxy class of the specified UMat
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <returns></returns>
+        public new static InputOutputArray Create(UMat mat)
+        {
+            return new(mat);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mat"></param>
+        [SuppressMessage("Microsoft.Design", "CA2225: Operator overloads have named alternates")]
+        public static implicit operator InputOutputArray(Mat mat)
+        {
+            return new(mat);
         }
 
         /// <summary>
@@ -31,9 +62,10 @@ namespace OpenCvSharp
         /// </summary>
         /// <param name="mat"></param>
         /// <returns></returns>
-        public static implicit operator InputOutputArray(Mat mat)
+        [SuppressMessage("Microsoft.Design", "CA2225: Operator overloads have named alternates")]
+        public static implicit operator InputOutputArray(UMat mat)
         {
-            return new InputOutputArray(mat);
+            return new(mat);
         }
     }
 }

@@ -1,16 +1,12 @@
 ﻿using System;
 
+#pragma warning disable CA1008 // Enums should have zero value
+
 namespace OpenCvSharp
 {
-#if LANG_JP
-    /// <summary>
-    /// cv::kmeans の処理フラグ
-    /// </summary>
-#else
     /// <summary>
     /// Miscellaneous flags for cv::kmeans
     /// </summary>
-#endif
     [Flags]
     public enum KMeansFlags
     {

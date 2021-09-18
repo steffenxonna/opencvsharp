@@ -1,14 +1,22 @@
-#ifndef _CPP_CORE_INPUTARRAY_H_
-#define _CPP_CORE_INPUTARRAY_H_
+#pragma once
 
 #include "include_opencv.h"
 
+// ReSharper disable IdentifierTypo
+// ReSharper disable CppInconsistentNaming
 // ReSharper disable CppNonInlineFunctionDefinitionInHeaderFile
 
 CVAPI(ExceptionStatus) core_InputArray_new_byMat(cv::Mat *mat, cv::_InputArray **returnValue)
 {
     BEGIN_WRAP
     *returnValue = new cv::_InputArray(*mat);
+    END_WRAP
+}
+
+CVAPI(ExceptionStatus) core_InputArray_new_byUMat(cv::UMat* mat, cv::_InputArray** returnValue)
+{
+    BEGIN_WRAP
+        * returnValue = new cv::_InputArray(*mat);
     END_WRAP
 }
 
@@ -108,10 +116,15 @@ CVAPI(ExceptionStatus) core_InputArray_getMat(cv::_InputArray *ia, int idx, cv::
     *returnValue = new cv::Mat(ia->getMat_(idx));
     END_WRAP
 }*/
-/*CVAPI(cv::UMat*) core_InputArray_getUMat(cv::_InputArray *ia, int idx)
+
+CVAPI(ExceptionStatus) core_InputArray_getUMat(cv::_InputArray* ia, int idx, cv::UMat** returnValue)
 {
-    return new cv::UMat(ia->getUMat(idx));
-}*/
+    BEGIN_WRAP
+    * returnValue = new cv::UMat(ia->getUMat(idx));
+    END_WRAP
+    
+}
+
 CVAPI(ExceptionStatus) core_InputArray_getMatVector(cv::_InputArray *ia, std::vector<cv::Mat> *mv)
 {
     BEGIN_WRAP
@@ -301,5 +314,3 @@ CVAPI(ExceptionStatus) core_InputArray_isGpuMatVector(cv::_InputArray *ia, int *
     *returnValue = ia->isGpuMatVector() ? 1 : 0;
     END_WRAP
 }
-
-#endif

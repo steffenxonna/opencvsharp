@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using OpenCvSharp.Detail;
-using OpenCvSharp.Util;
+using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Util;
+using OpenCvSharp.Internal.Vectors;
 
 namespace OpenCvSharp
 {
@@ -22,11 +23,7 @@ namespace OpenCvSharp
         public class FeaturesFinder
         {
         }
-
-        public class FeaturesMatcher
-        {
-        }
-
+        
         public class BundleAdjusterBase
         {
         }
@@ -284,7 +281,8 @@ namespace OpenCvSharp
         }
         */
 
-        public int[] Component
+        // TODO this should be method?
+        public IReadOnlyList<int> Component
         {
             get
             {
