@@ -1,0 +1,6392 @@
+{
+  "homepages": [],
+  "source_base_path": "D:/a/opencvsharp/opencvsharp/docfx",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.AKAZE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.AKAZE.html",
+          "hash": "Vrb25fU7m299lrJTSRsuFQxMppt88kETL2oPsA0tlwY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.AKAZEDescriptorType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.AKAZEDescriptorType.html",
+          "hash": "kcfxx4RR8/bo59ZG1pRHwP0EuiGufHPUeLTc5HRVxzo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.AccessFlag.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.AccessFlag.html",
+          "hash": "FrMpLLA3ZY2N96SqH4mG5MoUp07BXjhV0pS6wCYJIDQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.AdaptiveThresholdTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.AdaptiveThresholdTypes.html",
+          "hash": "Ce2qxYtPhSVRLDkMtS+p5gMwobFA5m30KfWD/7X8kkY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.AgastFeatureDetector.DetectorType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.AgastFeatureDetector.DetectorType.html",
+          "hash": "oEp+IRxgwfANp+/CGbSJ3/4wOPdJZjl+4Y64m2xeoGI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.AgastFeatureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.AgastFeatureDetector.html",
+          "hash": "7Q7BKAMFYm8RVdYgWgRitBnuRZqSq/UjwRbBKPalkZE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Algorithm.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Algorithm.html",
+          "hash": "f2VUXwEo7G/105+C0+TaUcJjYLx+97K34Qcvqd9KJW8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.AlgorithmParamType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.AlgorithmParamType.html",
+          "hash": "c4O/iadkeza+fUViA4XZsWIInAthX6q0d7JeOVduEZQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Aruco.CornerRefineMethod.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Aruco.CornerRefineMethod.html",
+          "hash": "yIWQxyISp1iGr4dP4CO8gqvKnKoPoNzl0W44QSmVVKE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Aruco.CvAruco.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Aruco.CvAruco.html",
+          "hash": "9GZov+O0DuzeBxQJsU1otq7x5cWJfEAXESnwQOjwXNM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Aruco.DetectorParameters.NativeStruct.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Aruco.DetectorParameters.NativeStruct.html",
+          "hash": "VC5ORL6V6W5m2XJp/fuT3op7sWXPj/B/6RXqSuM8Fls="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Aruco.DetectorParameters.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Aruco.DetectorParameters.html",
+          "hash": "Nv8GBFWHj2ZLkGgVyzOMjY2I9UkOl0j6uUKrT3pGGJs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Aruco.Dictionary.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Aruco.Dictionary.html",
+          "hash": "GXfq0X7svwLx0HKavNIHVOmcv+5u25cbqi9lI683FjE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Aruco.PredefinedDictionaryName.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Aruco.PredefinedDictionaryName.html",
+          "hash": "oCPN72sk81Vad7nn0b04zVaMXvAOd7DUjGfaOd1sq3c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Aruco.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Aruco.html",
+          "hash": "ziep5Pqm63CQh1eHJFydM5WGWIhHokr3hJl9MzMH+BU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BFMatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BFMatcher.html",
+          "hash": "cN3GVr9pBcr87USmz+GJtPI91hFM7uuWozka3aki8VA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BOWImgDescriptorExtractor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BOWImgDescriptorExtractor.html",
+          "hash": "4Sk1H8qD0wTiwGuRNpDSqElq3YVIzHpH19Hb+xQZlg0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BOWKMeansTrainer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BOWKMeansTrainer.html",
+          "hash": "q/5h0dPCXzumoG+zlXQFWJGYtvSoEzKmbYBh2BOk/+s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BOWTrainer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BOWTrainer.html",
+          "hash": "Bph2jveQ9accJNw+R7kJzyt/NcYw0wWR8Kku7SzWagI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BRISK.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BRISK.html",
+          "hash": "K3g+eg7BqgYM5Ecm24Ofpd/qeoL7bTWRmMWynaOocNs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BackgroundSubtractor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BackgroundSubtractor.html",
+          "hash": "gt37tOBimZvRRMRZO2sMvgxNSLYIr699MnyK0/BCj5s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BackgroundSubtractorGMG.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BackgroundSubtractorGMG.html",
+          "hash": "D5voCkDeggSU+kQ4Zjt1U4cR8X8atv72PTAG+XTGYDw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BackgroundSubtractorKNN.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BackgroundSubtractorKNN.html",
+          "hash": "DS8Lmr8hAFftATrnYVHmS3KidjUoxzRC4KMPZ9fAMBU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BackgroundSubtractorMOG.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BackgroundSubtractorMOG.html",
+          "hash": "ft2vNPY1EL895xz58H2QpYziSY1NLEgxQp+NHReHU7E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BackgroundSubtractorMOG2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BackgroundSubtractorMOG2.html",
+          "hash": "mILf5Wols135g8mIPpn2orTdst2pn8uZWHjZyUscDsc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BorderTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BorderTypes.html",
+          "hash": "W9oRbM5xV+MJ2Y0cR1aAUU8WYJ59laEPLL9SRSIPax8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.BroxOpticalFlow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.BroxOpticalFlow.html",
+          "hash": "7OeaIxlKYlPiUvrgculsIOSI4EfLyl5PMH3f2nTFjiw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ButtonType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ButtonType.html",
+          "hash": "EStKAaSc2/LmhuROm1L/bXE+whqwBNBoo11hZBR55TY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CLAHE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CLAHE.html",
+          "hash": "W9Hk3edh0TqEuOnpK6n0Astu8l7LBdd2xgC/DhGMl5c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CalibrateCRF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CalibrateCRF.html",
+          "hash": "ExBmlGJ8jV2F4ELI0qJBxdU+TZa7iCCLCWWYbgwBnm4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CalibrateDebevec.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CalibrateDebevec.html",
+          "hash": "+mNdM2yfhBL0+oOO2QQOyuhmoGoFp9F7UG73yB9SGLI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CalibrateRobertson.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CalibrateRobertson.html",
+          "hash": "rdwNvlcdT3S6hQljPl1VQqqG66IOyyKZWZBWAHEb0g4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CalibrationFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CalibrationFlags.html",
+          "hash": "E0nlZdsSr7Msdv20VRObB0YpA+JTT4HwIddj+AiHlr0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CameraChannels.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CameraChannels.html",
+          "hash": "Y6ikWBwiPRrT8yNA7ocnvEuWuF2ks8Y6ZyW60WtraXU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CapturePosAviRatio.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CapturePosAviRatio.html",
+          "hash": "KdKIg03V8R8P1H+rfw6G0vkh64+iE4aLjhcDV/WbZmo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CaptureType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CaptureType.html",
+          "hash": "SMMglajmuaCnoSnRQZ2ILjdmQ0QLg/DYLZjvbjKgnwg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CascadeClassifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CascadeClassifier.html",
+          "hash": "Z2E3SkOtkU2e8hzn6DiZ0PN4tmQ8Y79spu+STnO+QEY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ChessboardFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ChessboardFlags.html",
+          "hash": "jnnaHIcIMNLJeafdikGiTDN5yEx26TMc1Px36pmtsTc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CircleSegment.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CircleSegment.html",
+          "hash": "dNF6g6WlCas0omMdcvTBLLa/M0EggGZ8oSEq1Hd/Pw4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CmpType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CmpType.html",
+          "hash": "pjntPefIJUy2jNMUp5Rszc28tPytDCSvMJQMDO8YjGQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ColorConversionCodes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ColorConversionCodes.html",
+          "hash": "Iob3yMaOcfEgFrWL6y8uwGAqm5M7w3/ibd4Pa+usOvk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ColormapTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ColormapTypes.html",
+          "hash": "aYrN1uB7RCYYcRLgITTC64hVDiRO+6QDzk9AyBxoRvU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ConnectedComponents.Blob.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ConnectedComponents.Blob.html",
+          "hash": "RN+YTp9Po1uMFZd1BK/BihnLW9Om/s76O1yTJfyIkP4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ConnectedComponents.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ConnectedComponents.html",
+          "hash": "7kG0e9fqhnSHMF/3d8sRsCuazaP/8KlDGCQXGRWLeKc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ConnectedComponentsAlgorithmsTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ConnectedComponentsAlgorithmsTypes.html",
+          "hash": "TXT3elE17ttNfYB/gs+T5pxXvq/s7ous+pog5wjFcAs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ConnectedComponentsTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ConnectedComponentsTypes.html",
+          "hash": "n8gDW1KedFpkRU4/xEq4zPM9K5jO8dfU7P2OtUXnxjI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ContourApproximationModes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ContourApproximationModes.html",
+          "hash": "vdKEL9g/s2DJs4jczbW8YUSIPKI31F4TjD/yP18IVj4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ConvertImageModes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ConvertImageModes.html",
+          "hash": "nlAce2601SvW5nLYCY1UPXWuqYyHmKjjH3h6DP30l40="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CovarFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CovarFlags.html",
+          "hash": "Yje1vWqcX26iIXcca+LYGtdNfdzumWuFvh8MUBli5Ro="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CpuFeatures.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CpuFeatures.html",
+          "hash": "7521N9KkhP0WBRFbLjZ7m/QZpaigmWBK1+uqDBvhlFk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CriteriaTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CriteriaTypes.html",
+          "hash": "Rdaj4/D+jsXRSxaJEBhWiBZsBv1YFOkZSaL5usncZac="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Cv2.FishEye.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Cv2.FishEye.html",
+          "hash": "4DDcAXEbmURvlfACToqOR1hg8jM34z7w57xZSL/ylPk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Cv2.PartitionPredicate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Cv2.PartitionPredicate-1.html",
+          "hash": "vWMd+4foG2C/SXPX5wzHWNAqRLdfpjzBgfO6A+l+HL8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Cv2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Cv2.html",
+          "hash": "DLFfCrZ1L0694AAJw03ekH5b8dzymEWe2Oyuieic2lI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CvErrorCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CvErrorCallback.html",
+          "hash": "LDDTHokQf42k+Mfp57JbbA+jRkhpmsXY32cueKlwZCU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CvObject.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CvObject.html",
+          "hash": "yEg3OlQjiFK/GYrxXNUaXlHFWJqXcO+WYY16zjkZY30="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.CvTrackbar.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.CvTrackbar.html",
+          "hash": "/BRPD9wx4Jx/rjNeu3YhLT2V1phsfM9CCJQc31hsMaA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DMatch.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DMatch.html",
+          "hash": "Dh+xNgB5slbS6EYGK0SP3FSkvrYDanpObdpQW2XQaIw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DctFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DctFlags.html",
+          "hash": "34mNUtLQ1+4Jd2cDZaN3m5Xci8oaJRSZtbqr698Lhsc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DecompTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DecompTypes.html",
+          "hash": "LlMmrNVt1gWAH45CWkbVvJwoqZZko584k62hmnLkz9Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DenseOpticalFlowExt.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DenseOpticalFlowExt.html",
+          "hash": "6rrTrVMgvZNwnodZsfYTNVc1ikWMc2Otr16R0SOdI64="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DescriptorMatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DescriptorMatcher.html",
+          "hash": "HvzcNMc9+2yHzwPpCAYYhUN/q04FXgJIwt0ivTXlFqo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.AffineBestOf2NearestMatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.AffineBestOf2NearestMatcher.html",
+          "hash": "qt37nsYmlF4KtpqYb69hL0JEyU1xlztDazom8E7h65o="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.BestOf2NearestMatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.BestOf2NearestMatcher.html",
+          "hash": "oLbhuXjFGJnYVTVyEkuf3XG+DtND1hdOHWGGiK7bk+M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.Blender.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.Blender.html",
+          "hash": "M0r3NtsWPu7rTLVMpfQtNHJBncHuuuwigtoqM2iAGjE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.BundleAdjusterBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.BundleAdjusterBase.html",
+          "hash": "3CiCv8KZ2LxQekYazyJcHaaWyKg8HVzFsfjupchCE4g="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.CameraParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.CameraParams.html",
+          "hash": "gzbfXBOej06MKj3fRpLxhp4kqm64xPjESU45YwZZ5Ik="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.CvDetail.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.CvDetail.html",
+          "hash": "ZLzXqYB/LlAXqqVNx187s0ZcHn2sBqL6qqbXuKSlIDg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.ExposureCompensator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.ExposureCompensator.html",
+          "hash": "480J8oTwVcwidMbVnMmtI0iBuOpQJsyVNyGwdQO8GT0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.FeaturesFinder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.FeaturesFinder.html",
+          "hash": "V6FnnD1+/rYVOwzouJ404Yitk3yQz4EYFo+zhedg7gs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.FeaturesMatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.FeaturesMatcher.html",
+          "hash": "dUjqyHMHd3zVXdHCgfd0HLEvKpFKLklLBhnOfGKLdJI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.ImageFeatures.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.ImageFeatures.html",
+          "hash": "1wovf/HXm70QHxa68ALSdRUedmKZlDGmOOwD5dPYZbE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.MatchesInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.MatchesInfo.html",
+          "hash": "DiQ080zZEkqINbOkFWTzJ89pddOmsxMmjc6NS1UoOfc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.SeamFinder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.SeamFinder.html",
+          "hash": "+6r79mfJJaVhSl6UAV7QotijGR5XL2EDwtEGkLw0+ME="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.WImageFeatures.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.WImageFeatures.html",
+          "hash": "WBNlkUbFaCxhD0X4t1VoFcQMKXqwxb0y+KkAqNk5wHE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.WarperCreator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.WarperCreator.html",
+          "hash": "1TTaTznxNk2RC9RMVW02tLK42cqRMNCS2J2YKlMpluc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.WaveCorrectKind.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.WaveCorrectKind.html",
+          "hash": "CcvXnmw5NgBP274iJzodlCuQHObXEVpXnz3HAOtqKRU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Detail.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Detail.html",
+          "hash": "OanSjEIksa+hluJL+0QxTrOz7x2HbqWku+s8nMztz0M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DetectionROI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DetectionROI.html",
+          "hash": "5htLSmV/dwv/6K63LUmWG67DgOv9F5ND270+2K3Iukw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DftFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DftFlags.html",
+          "hash": "rQg75K0imXYw6RDlF5Gej7FGDy4d3XcN5ssxsKJB1+g="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DisposableCvObject.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DisposableCvObject.html",
+          "hash": "zmhFAA12IFO0u0HPiQPD5+gPXi7r78iLsTkKl+Rf1jA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DisposableObject.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DisposableObject.html",
+          "hash": "atMjXvYv436e9neQxqSEtyK0QM+Hf/AdDgrl2wAG6Dw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DistanceTransformLabelTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DistanceTransformLabelTypes.html",
+          "hash": "ZG4GQuG2us6DU9kCt+7Bpi5Vf7gECfluh0KUb+KMILE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DistanceTransformMasks.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DistanceTransformMasks.html",
+          "hash": "6e85Af20iTagUkQCyhC2pcTW3c+lTNhjZxynnLthWKc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DistanceTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DistanceTypes.html",
+          "hash": "xopeVFIlztmsRXqFlJpJfrgNfeo1qVk6WkcbwSHLXtI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DistributionType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DistributionType.html",
+          "hash": "BgmyRP589OUFqR+Gk4OvL1Uq17zYw++FHmQI5BqRu50="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Dnn.Backend.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Dnn.Backend.html",
+          "hash": "gl2jeGi1404ymFNmAR8xrR4x8cfSb7+R4m8eyRbOhWU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Dnn.CvDnn.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Dnn.CvDnn.html",
+          "hash": "kWssD6IHdWTWQgC4a55B8O1etz6OjZYdLKOMKejfZWg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Dnn.Net.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Dnn.Net.html",
+          "hash": "O4zDrgUdBemsy82P+0nPFlEVXCtM0smRWzun1QTFVxU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Dnn.Target.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Dnn.Target.html",
+          "hash": "++vraCmIS9AL84bp+WwJ9HwR5IoU0Id+NczseSC3grg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Dnn.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Dnn.html",
+          "hash": "SKReaf90wdzo7vusKJjOBzKWS2tWJWxWFC/Z8Qx/RAc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DnnSuperres.DnnSuperResImpl.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DnnSuperres.DnnSuperResImpl.html",
+          "hash": "byMRhqtR+PlYWhQNAhNY7pLeVC32yu3Ynic9pFNyEi4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DnnSuperres.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DnnSuperres.html",
+          "hash": "JO+jhgSxIpZtXyWFwBAj8hwo7BIxJiJwzHP6LSH5nWc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DrawMatchesFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DrawMatchesFlags.html",
+          "hash": "B2Zd6A3iEp6iLOxPSB89GOfpK6cNtDcHye+TKhWIgGk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.DualTVL1OpticalFlow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.DualTVL1OpticalFlow.html",
+          "hash": "VAt0GJQyo3FnUN0e+S0RtAzsyS7RB1EsOtZo3Vjuoiw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.EM.StartStep.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.EM.StartStep.html",
+          "hash": "bUqbhnp6RrlXbvOZmkRC5net23009OanDCF5s7YQvfA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.EM.Types.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.EM.Types.html",
+          "hash": "sFUlr1uNk5WssjcJOqkWfDe/HzoKI3dwcOW78M4porA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.EM.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.EM.html",
+          "hash": "nqKQD4bYd5yzVxMre/efSzX6OZP8RcSvP6hHYt085iI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.EdgePreservingMethods.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.EdgePreservingMethods.html",
+          "hash": "NI59H15FfGfEQ+ZdWgK9syOBly3h2sDv54P69/deKEE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ErrorCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ErrorCode.html",
+          "hash": "j7oztxO6dNFcbZ7ZWOx7N2IPFK57hh3Dq11tW10/xdU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.EssentialMatMethod.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.EssentialMatMethod.html",
+          "hash": "fYSyAyms0KiibCprujhOCzkX/Tg/CzGSNmDVSfrggrY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Extensions.Binarizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Extensions.Binarizer.html",
+          "hash": "W1C4nCB+T0HB8VyUBa7q6Ea4nfPir2u8DuMW2z0WGeA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Extensions.BitmapConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Extensions.BitmapConverter.html",
+          "hash": "4WStfIEKWdp2oo3iSXck9/x0HdV7aNBA7Eiv0v3nDsc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Extensions.CvExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Extensions.CvExtensions.html",
+          "hash": "vvkoUaQiuwmOcu9XFfmxjn9zI5g8y2WACYZ2ABknAYY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Extensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Extensions.html",
+          "hash": "7gq6TRCNnQ8on+xPwgFQDnjQR2dAypFIsHQderi2yc0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FASTType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FASTType.html",
+          "hash": "b9M3Om5GyoxMMTHKI/cmpJ+CYQFKZUnoG5IfCKPlN2M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.BasicFaceRecognizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.BasicFaceRecognizer.html",
+          "hash": "hIpIM0yq2ipJNzdVSwdZ6nqpCyDhpak2bHOXV6avuhU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.EigenFaceRecognizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.EigenFaceRecognizer.html",
+          "hash": "TzlGoxWT9vF8JL+d8Yp4rDXkW6YqBt6ZyHDRx2Qqs1U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.FaceRecognizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.FaceRecognizer.html",
+          "hash": "8yLjU7C/e+slVEyR4yZmRbA9CTftnQlK1v0JP2CcE+U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.Facemark.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.Facemark.html",
+          "hash": "Wu9papsDXNfQ5270VoVcDEfSJEjIappvOnRMWCy33nA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.FacemarkAAM.Params.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.FacemarkAAM.Params.html",
+          "hash": "HzBKGRTZU1LgNNfgj52iVl+/5JBB7kFTIzh5MgSY2jI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.FacemarkAAM.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.FacemarkAAM.html",
+          "hash": "0E1T4f11WbrGnrc7/b0TT15StyPGgwSUrFjZ4J8+SIA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.FacemarkLBF.Params.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.FacemarkLBF.Params.html",
+          "hash": "zFnqpXRu9yrVIHLR2g65wcD6s+61mNAzNuNIxczQArI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.FacemarkLBF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.FacemarkLBF.html",
+          "hash": "JO5/y0jTjw5aI61/nOEc3/eGMNNsQkASvE2b/S8Dd2Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.FisherFaceRecognizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.FisherFaceRecognizer.html",
+          "hash": "CXZb/JyXr4cP2+VfvO0tCM7lD5L0L51EWHLrlzItUnk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.LBPHFaceRecognizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.LBPHFaceRecognizer.html",
+          "hash": "5soX90gWumOx680kVp4cLznJnAM0nWsCTOvLqi1ncFc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Face.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Face.html",
+          "hash": "pHZzzKilk9vATWuRTHMpEkJY55iAgQFj18pfwAkHTak="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FarnebackOpticalFlow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FarnebackOpticalFlow.html",
+          "hash": "uDd0CNPDa9oI9wNZFsOjUx9rM6rB7vU9xnl13S2klfk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FastFeatureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FastFeatureDetector.html",
+          "hash": "JMixFwo0Tn4uu/C4MBD5yRwHagAglILSnE6ICCnPWhw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Feature2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Feature2D.html",
+          "hash": "j2fJQBRnZEHZ91pZ/C9NJHtYGt/1PmtyMmfpZlQ5UT0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Features2D.SIFT.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Features2D.SIFT.html",
+          "hash": "N+oWpSIGfzHemWW8CWsR8E2InMq0X5IlS+6dPzpYO8E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Features2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Features2D.html",
+          "hash": "qZBVQBgZa7B83ohIfVtns+DtVhTBjO0EgB8BhOv87bY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FileNode.Types.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FileNode.Types.html",
+          "hash": "vdpBpIoTZSs86jMi0O5hRictW4EWoihYjRHfGkYvPHg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FileNode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FileNode.html",
+          "hash": "VZhnYGimu6IKNGFspJFYJHIjSHou82MoEemaF+QelkQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FileNodeIterator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FileNodeIterator.html",
+          "hash": "cjcyclJOQfW6AvenNtG2q0kJQnpvxiV2Vk45r1X5HAs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FileStorage.Modes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FileStorage.Modes.html",
+          "hash": "EIQs8B8SuWRZzBPXYhO9RvuvKQzl67trvWzewC0ztJA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FileStorage.States.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FileStorage.States.html",
+          "hash": "IsL6XSEOnfuDtUmxOYOy1jBhquNlaOKdfqUQQTU8Kz0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FileStorage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FileStorage.html",
+          "hash": "KMy+bdGhJ2WxTO6d1OYLH0kq5LfJDSwHfVztO83eJUM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FindCirclesGridFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FindCirclesGridFlags.html",
+          "hash": "wzy7BoUtCJRu6lag0PpeNa8yOQ/G5kElZFy+E05U+c0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FishEyeCalibrationFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FishEyeCalibrationFlags.html",
+          "hash": "LQG5Lsb+N2hac719GSxd/GKYsXqvaAA/RQ35l8NHpTk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.AutotunedIndexParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.AutotunedIndexParams.html",
+          "hash": "jm59VDfBZwhILLyQkyaRVW+vHMsys2fRtolfm5m9dXw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.CompositeIndexParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.CompositeIndexParams.html",
+          "hash": "43J/Be43XpjWyumcyvakMKhvGdA7MeWsjfMGR97UpIk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.FlannCentersInit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.FlannCentersInit.html",
+          "hash": "MOWMQz281cfOiioKxFv5CNaVJXhOtN6c0hzXUwi9Xro="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.FlannDistance.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.FlannDistance.html",
+          "hash": "Y6mvPXffBhhIDxHDaiWRfIIHbYsZDZYhW54UlRXuAZw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.Index.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.Index.html",
+          "hash": "Ui4qCC6B5Qs/ZPGCuNSiiGv9i1qPvLFN4hgv8Cl1LCA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.IndexParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.IndexParams.html",
+          "hash": "gVPxJWqGuHsxCkePEax62pdadOWuebBUrde0pzeUQGc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.KDTreeIndexParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.KDTreeIndexParams.html",
+          "hash": "v23VjH8rx4xtAEVeUQNwXmfKRyAvF43+bBQ1e/dXxl0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.KMeansIndexParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.KMeansIndexParams.html",
+          "hash": "Ra/RtPw9uPC96cC6hF7FR3SpI4eaWL6dGKQOCRCeJz0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.LinearIndexParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.LinearIndexParams.html",
+          "hash": "I13Du+SaEq1k/EEsx1V/205hmjzka1c43ixV66khujo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.LshIndexParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.LshIndexParams.html",
+          "hash": "QSFzKAjCL28rjUr6feOkHq8oOxOM7xa84edYmicT8sY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.SavedIndexParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.SavedIndexParams.html",
+          "hash": "DIVN4MPCuep0jbFuiNpNq2miBQ92sl7rXCpS3UzhNIs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.SearchParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.SearchParams.html",
+          "hash": "XONB6rELzBEhjBFdPjhT1fVv0UiPSn+pUVGWQaU6e4w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Flann.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Flann.html",
+          "hash": "ICSU6nzsXvuBPVJbVWjN9HMPEErELMc4wR11LsfaDYA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FlannBasedMatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FlannBasedMatcher.html",
+          "hash": "aCOjuc3gxZPOBQM2YnXXx43D32+hR2t80a9Cm5bOWDE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FlipMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FlipMode.html",
+          "hash": "Vl3QT8PvyEn0BrWdpDiqeTYva/RTBotivM4f4l/prxs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FloodFillFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FloodFillFlags.html",
+          "hash": "8RhSZoqhiNM/g4hUIhJaj+YsosiRIVI9WsyqlUs+FMQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FormatType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FormatType.html",
+          "hash": "khg0o5V/BbW3AJkRxfttjd6Lod4a1wC6eeDeu8P4mms="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FourCC.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FourCC.html",
+          "hash": "kuWNt/QSQ3ADtdp+zB9nqR3lHUCHtQ2VEbf4URrrOec="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FrameSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FrameSource.html",
+          "hash": "GqWJurLC+eB/srsicCDuJOLAai1eXk9ZQwQGF74pfbQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.FundamentalMatMethods.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.FundamentalMatMethods.html",
+          "hash": "Yzp8OSgrR9uGqC8Vs53fKtjJ6GbYilJvk3wzDhLyxr8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.GFTTDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.GFTTDetector.html",
+          "hash": "R0SBJdR1NeoZEvmPW2CAwAU6wOUbR7YKSKWmahPQ0LY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.GemmFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.GemmFlags.html",
+          "hash": "rT1svsMssS7fZQK2GllHAVCgkEVJ5iLnaxPSzBvkjqk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.GeneralizedHough.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.GeneralizedHough.html",
+          "hash": "UVB6H1oueN69LCAv6n+t5AGd9IlTfLZ1bUrDWrkZk/I="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.GeneralizedHoughBallard.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.GeneralizedHoughBallard.html",
+          "hash": "tEXKWpZ19qATZxxKAyjupGUg7dhowTuUjo/13eYV44Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.GeneralizedHoughGuil.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.GeneralizedHoughGuil.html",
+          "hash": "33AG10bB0LPxzdP+xT35uCTHnwAEUJgatNy871glp2M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.GrabCutClasses.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.GrabCutClasses.html",
+          "hash": "sxZ3N2YZz3fRrtZJYi3blAFSPygpxr/WpeB+RQ6RoCc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.GrabCutModes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.GrabCutModes.html",
+          "hash": "mWfXtUHJgtYxP3+Em84mSRPb38Rei4aeWwa+DqYy6qU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.HOGDescriptor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.HOGDescriptor.html",
+          "hash": "sqAXigpT51sueBenwh6e5x2U3hF+uLCMD4FKtJmjDks="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.HaarDetectionTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.HaarDetectionTypes.html",
+          "hash": "2eeZvhBKNbJYcd0dlQPeOiRRx9+97JpH20n32g3cO8c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.HandEyeCalibrationMethod.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.HandEyeCalibrationMethod.html",
+          "hash": "iz2/CO/A8EatoWW+hvVKSD4105hVr2bYm0TpjZ9qi48="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.HausdorffDistanceExtractor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.HausdorffDistanceExtractor.html",
+          "hash": "khY9S0iba/KX02iVSd28wE+IUDOK4U/iO+vvF1CmreA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.HersheyFonts.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.HersheyFonts.html",
+          "hash": "nUQVV1dFPblhauoaHsncaUjlrv6mKBccf//5LraKvPg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.HierarchyIndex.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.HierarchyIndex.html",
+          "hash": "VeBfT81+hORx/KOVHg76oDkppdWtjx39AR/F/W3688Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.HistCompMethods.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.HistCompMethods.html",
+          "hash": "hEToTknG7dQjxW6p4Lv/wIO8S2MslSVYBThB2yxxKJs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.HistogramNormType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.HistogramNormType.html",
+          "hash": "Sg2hyFA9+SHb0I7PJR4bHWvzL3136hOyv/dXR+iCY4w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.HomographyMethods.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.HomographyMethods.html",
+          "hash": "pmKK8QZZjAYaMukU9uto/goEcJubu3U21uP73vMTzmw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.HoughModes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.HoughModes.html",
+          "hash": "DxCem8hU8zgYNgn5CEu46i0AmeZLaJd3Cx5WhYpY8cg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ICvPtrHolder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ICvPtrHolder.html",
+          "hash": "iiUnSxx2BvlTBTMr9H12KoLLyNvy1rZN18mjZ/o72uA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.IVec-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.IVec-2.html",
+          "hash": "EDV2SQNwzT/nhu/iws3ds+xle15o6PWxcOoCwUk0424="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.IVec.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.IVec.html",
+          "hash": "O1tEloHF3VdgBMs4mdRm3f63494BVnU5VhkAfbCgo2o="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImageEncodingParam.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImageEncodingParam.html",
+          "hash": "T7ogILBMJXanoAFDfr281JYdrMyw0tVqp5vh6Dx1rGc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImgHash.AverageHash.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImgHash.AverageHash.html",
+          "hash": "o29repzKsVypUJ90pw3ZKIzHHmnODEkmdtBlYfZ2YZQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImgHash.BlockMeanHash.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImgHash.BlockMeanHash.html",
+          "hash": "ZsK7xWVYdID1Qd7kFDbTfTAXzYPV0V14/rbho5Z0g6s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImgHash.BlockMeanHashMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImgHash.BlockMeanHashMode.html",
+          "hash": "eanv2g9AtEAReGXCRXxUHtKQbj4OXkPYe2KNaXbGIOs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImgHash.ColorMomentHash.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImgHash.ColorMomentHash.html",
+          "hash": "vMpYNezhn+vfQF8CiJ2vchPvY7fDbtZVMKxWLGHHdB8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImgHash.ImgHashBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImgHash.ImgHashBase.html",
+          "hash": "cHuv3XGAvlsoqFcnA9m2AoicSeoRXi0drSX/GFtEEt8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImgHash.MarrHildrethHash.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImgHash.MarrHildrethHash.html",
+          "hash": "236/A8jXE4KtDx7bopz5b3SRCtXaaVhtaQ7DT15o7os="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImgHash.PHash.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImgHash.PHash.html",
+          "hash": "orSi66CsYWJzq01UryiPFxIacFffZT2CPfb115mlkHE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImgHash.RadialVarianceHash.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImgHash.RadialVarianceHash.html",
+          "hash": "udE2KtH+m6sf6ekzvd3Whuvvaj1DoHEr5MMY3QBuQ+E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImgHash.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImgHash.html",
+          "hash": "bT/uTu4pRwx/AIoIwhfWaBeIuJ1fyyRgheSxiYF/2vs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImreadModes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImreadModes.html",
+          "hash": "90oxTD5oom/sNCOMXu0oeH5stge5qMQe6xghF+pTXT8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImwriteEXRTypeFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImwriteEXRTypeFlags.html",
+          "hash": "ZXTJ1voZ17lT/z93hsIeAebe+1srQqxA/YXzRYPAWlo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImwriteFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImwriteFlags.html",
+          "hash": "sD9FgJbc91/VStRX6M6nq5Zr8OjSV3Wnom3OruM2jYg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImwritePAMFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImwritePAMFlags.html",
+          "hash": "Sj1oZQ/JhyIwx/58hAzzuLwVTBR20KgjNy1CgwmQQ8U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ImwritePNGFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ImwritePNGFlags.html",
+          "hash": "eceDH6ptJFq7U5/tw/kdNgMEQIJRcWKSsDRkLo7LI0A="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.InOutArrayKind.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.InOutArrayKind.html",
+          "hash": "F7sOSvea+61agiqaYS8xsh7wpwXp8ft9q9F+mOq/Xu8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.InpaintMethod.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.InpaintMethod.html",
+          "hash": "4QHpQTzI05e6O0O5fW0U9/XJz6wn/T5IXhjzHrXvNaA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.InputArray.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.InputArray.html",
+          "hash": "9fQR6DAlP2URNx4TfQEUjofi3RBvp0jfKP7Ej43SG50="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.InputOutputArray.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.InputOutputArray.html",
+          "hash": "hQiFFk7ZSd1oAYQD/qBTpZs9guJcibjxCP9pibgkABo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.ExceptionStatus.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.ExceptionStatus.html",
+          "hash": "gEwF7h8YAgpExMbmBOVYSh9K3RiLlDkW0El/X8WVxnM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.NativeMethods.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.NativeMethods.html",
+          "hash": "lV53xA7aGc9mdRQ+HmIaxDr8yy6zq3eiXebBfVFFqCM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.StdString.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.StdString.html",
+          "hash": "lD5pdOwXtEH0xg9F/MfNUXHXFxZigD64uAoGGE8Yjd4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Util.ArrayAddress1-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Util.ArrayAddress1-1.html",
+          "hash": "9FuycAc2iCOLLrmZ5OuKraVr2PyMRdGCKQxdnIVjIXM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Util.ArrayAddress2-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Util.ArrayAddress2-1.html",
+          "hash": "Dyl4n6ZnMdIKswWDAg/ILgIeRCjkQ4jmShUisZGJNBY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Util.PInvokeHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Util.PInvokeHelper.html",
+          "hash": "xNWGSGVFNoj8J2dkkcE+E3MvAIDO/X6tjw0cvsWOU2k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Util.ReadOnlyArray2D-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Util.ReadOnlyArray2D-1.html",
+          "hash": "A1T+cmnzGSgWmZyLZNtZ24OeUC8GVsmJY4yOlaKNu5Q="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Util.SaturateCast.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Util.SaturateCast.html",
+          "hash": "aFgAYSOqk2v0XymFW6lgqgzf8fO27HaIr4oMNYibLCk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Util.ScopedGCHandle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Util.ScopedGCHandle.html",
+          "hash": "R2iErR7ttWrXmQweu8rGVsYVypiZlPLQ7bbkXac20go="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Util.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Util.html",
+          "hash": "Zj9zEvXin6BETP45UQZ3qquIfI1xr/5oOPZYiF/b+GE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.IStdVector-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.IStdVector-1.html",
+          "hash": "5LssygEfbMihrhaihvwKL5z4+RkCOZiY+l3GTV/ptxA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfByte.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfByte.html",
+          "hash": "gBvrn0tpazEVaLJVr2eO028NQqvIZEkcpgoCnE97/WU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfDMatch.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfDMatch.html",
+          "hash": "QnEOP20Q5oJaRo/gkQDklPDwvKnNtnPWznhAMpiMbn0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfDTreesNode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfDTreesNode.html",
+          "hash": "vFILrQsOPLrjRomMF9orB7jUH/pREgTRY87BzqpMhUc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfDouble.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfDouble.html",
+          "hash": "F3yHbD3fWUNMvztFNtw1zkXp6A68CATCt4mg06cQTy4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfFloat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfFloat.html",
+          "hash": "HCh9a5SnJZjPtUlJcf+SwwGDa/WlxXPXm44/NLWaYcQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfImageFeatures.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfImageFeatures.html",
+          "hash": "9YgnFW+e6x5n7N/jPDwtZ72dDk16G9/OwzjgAgCNr70="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfInt32.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfInt32.html",
+          "hash": "kgFNk0E/MJ5CEp4saed1or272QryDo25iYpT1f8ipfI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfKeyPoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfKeyPoint.html",
+          "hash": "si5B4Fb9jMzKpj5dRjhAKcmFQ9T2UNXFq70y0Gj2/K4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfMat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfMat.html",
+          "hash": "dWQPXSOK8cnnDZTbOE/bE9WqvGs+CMRQ2cjT+Kz3Yic="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfPoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfPoint.html",
+          "hash": "87LxhHgY8oHsB2BHwC8jAUANnIYC8IR7zUNCZqj4XBQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfPoint2d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfPoint2d.html",
+          "hash": "l8OR2w6gCG+jJ0b8GvBbrIVSfKVK2ZSoH9a/gQDVvv8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfPoint2f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfPoint2f.html",
+          "hash": "20/G0VFUFmWdop4H65WSGU1Awfjahch64PWTOsaCkG8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfPoint3f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfPoint3f.html",
+          "hash": "NNMhiqv8Za0bLSDQJbHj0kvcia8xU5yovEazQx6W2ZE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfRect.html",
+          "hash": "2e2xrOqYmz2fWU1E+fQSTLsGHlDLeT9KmeT1196i7p0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfRect2d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfRect2d.html",
+          "hash": "UPQgomISJNC4/BfDoL+rER3mMbTp2owdBqYdAteaB28="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfRotatedRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfRotatedRect.html",
+          "hash": "iZn9snY0aK3c2KODX4peUQZoNnrKByVc8b0+5b/HVxU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfString.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfString.html",
+          "hash": "Rs9erQe4ipeffJp9xct4cy7dEeDCQkZl9YN6ERPoWpQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVec2f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVec2f.html",
+          "hash": "071/8vuf3usrza0MUiZtDJrGDTdQRe+DU5GRKAwijpw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVec3f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVec3f.html",
+          "hash": "SwrtDeYHQS5ll2ZjB99uM0GB2T6Dy6xbV9bTRIfzQ1c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVec4f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVec4f.html",
+          "hash": "ByBABYPYzwvQE6xutbqWieUqRqXKdAdxhZ4xE7esH0k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVec4i.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVec4i.html",
+          "hash": "2O7MStXjN+MTSP5vlaTutIUntkmpQWN/4XKX/GZWR7g="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorByte.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorByte.html",
+          "hash": "byl4d/PAgB7jog+RDOBns0g4HYCOc1PoDE5rE7QkGto="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorDMatch.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorDMatch.html",
+          "hash": "caF+5Mlu1hRUuY7cDfp6xjEdIiZ8ZXKciIW+phYvFuw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorDouble.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorDouble.html",
+          "hash": "lJVzT1Rd2GUxXitK2NYCq4cXZjcQCqeXsP70gcjE/vc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorInt32.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorInt32.html",
+          "hash": "PJAdbrdh0koE9jK7QDN+/bL4HJ6o09As38X5fgO7KA8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorKeyPoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorKeyPoint.html",
+          "hash": "xLDxAKPsvBDYXoWQznW5GUzk9kE1lICX/jjWDumg/yA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorPoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorPoint.html",
+          "hash": "QMz1swH8jWLfrvGxphpwJ3gY0f/7/NL4iM5CSf7AeVA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorPoint2f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.VectorOfVectorPoint2f.html",
+          "hash": "AZiLRIgdYECeay7N+8CEL75RrzQMJMNXHOsxQxQf4kg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Vectors.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Vectors.html",
+          "hash": "gZU7Fma/Xzyq4qY9KaK3k4tHnRAOIZ1G4RidFIl3fwc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.Win32Api.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.Win32Api.html",
+          "hash": "J3MwsVJ0vxVWZ8M8/818ADmVBvHy9p+tNxjGmI+tyNE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.WindowsLibraryLoader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.WindowsLibraryLoader.html",
+          "hash": "MCB1lzdNwkF1Hivh8c7BhBvBmifzDX/vZ/V4kB1d+6A="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Internal.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Internal.html",
+          "hash": "tP+HIjui2xCV70/KelTaJHQW2oV7o3vZtnnFU+HIB3c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.InterpolationFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.InterpolationFlags.html",
+          "hash": "GkyptO/YfVFJ2TK5NZXIC5kkSdNpBtwmBXk4MC7/g8o="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.KAZE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.KAZE.html",
+          "hash": "zMCVpsqKX9zatUW0QyyM0wnSQkz5n8NAXXCgUlZyfsI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.KAZEDiffusivityType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.KAZEDiffusivityType.html",
+          "hash": "fL7t/CbBZE+5lkfk0W6bF21apCUTc8rEfOEN97MWUq8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.KMeansFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.KMeansFlags.html",
+          "hash": "nEjIoFmK952IOvEg7r2tcYRcdlJ9/CBboVAWLbx0DIk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.KalmanFilter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.KalmanFilter.html",
+          "hash": "blgWArsDRgcwhiN9DgY+YBQMr5FZ3JIu0EVyi+Ko904="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.KeyPoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.KeyPoint.html",
+          "hash": "rt/Ou36UZXM6i0QYfvoAJKaR2eryCrQVg7diTapxHxc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.KeyPointsFilter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.KeyPointsFilter.html",
+          "hash": "Xo0Zy2VWXEjKbFRIlz/cSNUyZQ/j+mkFPi2sxYw9hr8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.LDA.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.LDA.html",
+          "hash": "YRSrIV4ab5VJSMULfd3xBFMqNJ4wVSWj11/TwlV9vYw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Line2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Line2D.html",
+          "hash": "VRbYGaNd+bPC2rKq0R023Vl9KdAWgihAvkTB3SkNyrc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Line3D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Line3D.html",
+          "hash": "Ydgtc72R1hCYccJfzyBpwVKPJwi6fiur7Wlnu8Fw3i8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.LineDescriptor.KeyLine.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.LineDescriptor.KeyLine.html",
+          "hash": "oORx+F4O08JDKqvTljKlc8XkreRfHKzd0cX6Euxe1wQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.LineDescriptor.LSDParam.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.LineDescriptor.LSDParam.html",
+          "hash": "4875DQjo0dhPI4ldQ2r8wMbsMkPT2pL/fuMAtAj5YkQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.LineDescriptor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.LineDescriptor.html",
+          "hash": "aOsbuW0O7hUIe7+7aMhA7H8Gs2Itm4Zmo7Ef/JZgxQ4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.LineIterator.Pixel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.LineIterator.Pixel.html",
+          "hash": "9M4sjfEHM5iKaOWfK4ArkGRPCiq/yaHkYUpM67zYmFI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.LineIterator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.LineIterator.html",
+          "hash": "/D70hrR96FnqD9sHs8WdIiQrog6obSUYwU8xSJzKsh8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.LineSegmentPoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.LineSegmentPoint.html",
+          "hash": "L9ZqEcBFrtADe65FYA+ni4nOHKl2TF9W86VAokEFm4M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.LineSegmentPolar.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.LineSegmentPolar.html",
+          "hash": "WZPDEmqltgbPefYg6z539YcgEnZFY2Wg4J13uYo2PR4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.LineTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.LineTypes.html",
+          "hash": "d5qNe45n7RWZ6ZTmBkUJ80QOiJCTN9H2ccvGOHuU5Mo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.ANN_MLP.ActivationFunctions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.ANN_MLP.ActivationFunctions.html",
+          "hash": "THE9xXEt6Ew0Yp8K6lonPh4me0SdcW8BM5I4zMNyHdc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.ANN_MLP.TrainFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.ANN_MLP.TrainFlags.html",
+          "hash": "bNgkgIsC12BYTNZ++PkHa9D4iTAmMRQXFE1U+s82WBY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.ANN_MLP.TrainingMethods.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.ANN_MLP.TrainingMethods.html",
+          "hash": "EzgwIPYSmPiPSr/+yzFdA+TpkRxlV3C5IiioTmFpVI8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.ANN_MLP.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.ANN_MLP.html",
+          "hash": "2XNDCTtz22uzlrGKo24ooIefFNIZj/muNXeJMkvsM+0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.Boost.Types.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.Boost.Types.html",
+          "hash": "WfWTGOIWWBgjH89g7JbX1AFbcnYNlekhKvq3QLhzJnk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.Boost.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.Boost.html",
+          "hash": "HQ67Z66Cfz6DaQ4+fCI+Rmi/T/xN3AJP0OKYgWXusq8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.DTrees.Node.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.DTrees.Node.html",
+          "hash": "MWTsXlddZwi0AWQIGSPXhi+0785UpTBOxul9Cq6wR0k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.DTrees.Split.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.DTrees.Split.html",
+          "hash": "33cPiOMQU2QrAfGUIb+ol77gUV1LpVm23Sv+E2BhHF4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.DTrees.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.DTrees.html",
+          "hash": "ooH+D/bWyV5j1+Z2bwgOv3Pt6OY5Hev7DyHX9FJlwyQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.KNearest.Types.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.KNearest.Types.html",
+          "hash": "F9G44GxwUKBnzuL8wNy3Pn/XrBSITXHLpcAkBMbgrFI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.KNearest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.KNearest.html",
+          "hash": "8yOgqKeaPWUsu9J9Gl2xkn+rW46oD6jQpuppHLXlP40="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.LogisticRegression.Methods.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.LogisticRegression.Methods.html",
+          "hash": "3gxvHxvE0miW1FRscASTkDr4DKGckhsJPNRJl0dUcDA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.LogisticRegression.RegKinds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.LogisticRegression.RegKinds.html",
+          "hash": "R3dkj2qfWoC5useLz1hxC/3xx8j8QY0yDNo+ucZLCn4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.LogisticRegression.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.LogisticRegression.html",
+          "hash": "k9JdWps24/8baRRqCJDk8dDMAuDtfEVJKQELNdkkFpE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.NormalBayesClassifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.NormalBayesClassifier.html",
+          "hash": "YMgfn/Lq94rkg/BKFhFIYMJJ8nZEqgDFUr0fwksV4CA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.ParamGrid.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.ParamGrid.html",
+          "hash": "Z2jl7l7mMnw4CX1xna7UM0tKxfLmZGQuECSmfPSHBfM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.RTrees.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.RTrees.html",
+          "hash": "+IIBIjv9iim1RcXxy3vs93L1OwFsSNhGsvXpspvxLTI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.SVM.KernelTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.SVM.KernelTypes.html",
+          "hash": "CdGysZzMldmYCOc8J/FKU9h38kwtnRYPwhBGwfynnn8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.SVM.ParamTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.SVM.ParamTypes.html",
+          "hash": "5YWnhO0mmJhwCxMPgLGyV30NM0Lb3k3pS1xAeuFIAO8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.SVM.Types.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.SVM.Types.html",
+          "hash": "mY26rHTKhGSB8JXI3hTzY/mXRzqOjYVyP9PA/of+d14="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.SVM.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.SVM.html",
+          "hash": "YWlEC8h1Lq9P8VAYMtW5Koo4+K0spqLZ4bcjfXXmgcc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.SampleTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.SampleTypes.html",
+          "hash": "39H7BgaT6AwiUsDquc1meWM29tmdICKp8CTcETn2YBs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.StatModel.Flags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.StatModel.Flags.html",
+          "hash": "B/tRyPccWjQ8FwGsR7Ppr7E8HaId6o/sBA/JS9c7uuE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.StatModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.StatModel.html",
+          "hash": "bvZySKffCB7NShgbNYWoHlCuYKzqSfwlvclCy6WNvzU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.TrainData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.TrainData.html",
+          "hash": "ywJ+NB6D52CZU2nQMPtEXNMm0fGAVN4kvtlq0zDQtp4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ML.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ML.html",
+          "hash": "eGKX23ugxfhi3n0DJcZ5o86D0dHsJSVeU0dOztbQOg0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MSER.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MSER.html",
+          "hash": "6hGskKY/Ze9NZKlMuISXN6XnNqlsI/rY4aY+C3gHSSY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MarkerTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MarkerTypes.html",
+          "hash": "5dg9cFZSn1yFnmsHjaw/BFSk5IQtcwXjUVLUIWCtO8c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Mat-1.Indexer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Mat-1.Indexer.html",
+          "hash": "0A2/wYuOYguiQ/338ByFNxxMOH8o+9rAgwUvI/kJwp4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Mat-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Mat-1.html",
+          "hash": "I+zQDRV/YYp1wui6avdempQd3amgQUFwfpd2jKebbuI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Mat.Indexer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Mat.Indexer-1.html",
+          "hash": "omfRxkKYY6LnEoMpZyhggug4hDrSHAavAnXzHRwLBt4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Mat.UnsafeIndexer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Mat.UnsafeIndexer-1.html",
+          "hash": "lB5OLilYH+OT9oy7fgBYmoD0eMPyVSu/vR0P5s73pmI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Mat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Mat.html",
+          "hash": "sxLMwSlAh8f5Kuf+OAE4OqK8Ur0oV1/tFajE9FDd5m4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatDiagType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatDiagType.html",
+          "hash": "JbdE2tQyKJQIyLUghPbw83ezVmJTawKJi71/suQd3DI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatExpr.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatExpr.html",
+          "hash": "zCkwunEfxnRB2LYtZSe0j+VCJPN6Zr54caXzHqqdzo0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatExprRowColIndexer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatExprRowColIndexer.html",
+          "hash": "HW81cbFy72X+tUzAgw91uC/RyWRSN05ln113lKckqok="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionByte.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionByte.html",
+          "hash": "E12u7LvgD7jPIKdJUXBn9VLbTN57/0YzDpW2OxsPqrY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionDouble.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionDouble.html",
+          "hash": "B+xzlRanxJFOQfL8bFjL6W6vGH8hXip3yzxAknXg+PQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionFloat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionFloat.html",
+          "hash": "lCKF4GW6kZfQSIs9fCIIPGD+y2SW8tAKJHVzc6eRSFs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionInt16.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionInt16.html",
+          "hash": "G/Eejk6JAsL/EXlkd0yraZd8hi32UAPqoaOfQmR5wsk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionInt32.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionInt32.html",
+          "hash": "/JPMTpwKcLOmHK8WD3Ywq0SnXoGl8sYz6RVTknzAHfA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec2b.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec2b.html",
+          "hash": "lMv5JpRASkkvW52Jg2bZDkCJJkpTOK5AVKnH5S9X6Rw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec2d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec2d.html",
+          "hash": "zxHIAlyY+/ciVuEyS2U/8WWPebyaNu+yxBB529uwy28="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec2f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec2f.html",
+          "hash": "9jjsRt9ntr7qVK9UJgXoDxrM421C1ktU0zhuyjrAGS4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec2i.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec2i.html",
+          "hash": "vdP69+WnlSQepmMzPxcAfVaKsf4oa3ILe5vo0ujOp4k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec2s.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec2s.html",
+          "hash": "52PJF3GDqqzXMmBQo3L8NAE0+Anux4RPw0NtNzowqq4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec3b.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec3b.html",
+          "hash": "9hfcwBqSsPG12xWjLA985wiOF7Y7CitPrutAY3oxi18="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec3d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec3d.html",
+          "hash": "nskUJ45aZutAoHkTXxdzs98ykG2Rzz+yInMxkyNwOx4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec3f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec3f.html",
+          "hash": "TvtTbZH+EvvZyY5K1Y11qx4j7bsZTmMQj8RMuk3Z0SA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec3i.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec3i.html",
+          "hash": "bfPkhB1MWoc4Mcy6BfXG9Ri3kGWmIALAKF4twUBeRf0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec3s.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec3s.html",
+          "hash": "4m28MROWg2CAUfBbI5glcPzypT5kznaTcRavhh5Bij0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec4b.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec4b.html",
+          "hash": "vDY0ZWuSqPCJbS2FKkSombrvd6/AmQfTtY9Opslzwa0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec4d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec4d.html",
+          "hash": "nSa9CStdWaQwA2LhfYpCQYAkrjLTwNI06z60llwQES4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec4f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec4f.html",
+          "hash": "VN4qcRzzW+mxfuR4jI2sq/1+WHQFz4WdAyQCA2uo5j0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec4i.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec4i.html",
+          "hash": "MxhtjqfTPVSlqaHGO7MGh0fNOzCTzCduFx9EafzghRA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec4s.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec4s.html",
+          "hash": "bJ8E6ExfvrXqtTfN62Yd+EAu2TDD7HYxleFrbZmpXfs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec6b.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec6b.html",
+          "hash": "uzNd8SYURDOVOYfcVuOcBDIO8XccBlkbawJhPAW/FaU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec6d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec6d.html",
+          "hash": "s6eoUiZoQsDSov26IVh/mhCetwph1y4Y1HF6N+jhVUQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec6f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec6f.html",
+          "hash": "TMDJRztbNpkj2r++dYbgSPtFH0PQZVl2FNjrFaL4GqE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec6i.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec6i.html",
+          "hash": "RPCTI3NWxNcmJRhWwOT8CTiXXntWft5Wzcki1XlVJn0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatForeachFunctionVec6s.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatForeachFunctionVec6s.html",
+          "hash": "wShJwqEutwHGTKLs2cpAjShepkdADrur5DhmrbPiliM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatIndexer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatIndexer-1.html",
+          "hash": "4d02NkYEpJHBZ3j602YmBaSzsF48sNbqzSjjNNYLskE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MatType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MatType.html",
+          "hash": "aDpnkzdrcZdX2n3Dfp/jZedbNMROmKhTr0yeWTqk2gQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MergeDebevec.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MergeDebevec.html",
+          "hash": "oxiZUFUstyYpQBCxysml3I4DH5p/4T4UqwcaYzZhSfs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MergeExposures.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MergeExposures.html",
+          "hash": "tGP9iAC9Yq+wH3yBJFlkx9yeZPGmbg2zAihLZWyegqg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MergeMertens.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MergeMertens.html",
+          "hash": "HAG4QATJwBO7XwlSq4WutjPULiykFyl2+OptKbOr5/g="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Moments.NativeStruct.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Moments.NativeStruct.html",
+          "hash": "ZrDYVJVhhnl4DBCOX8w9umFLWK45AmlmUm76igsuoUc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Moments.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Moments.html",
+          "hash": "CJXnoVoRjKZjoGOOz7DBgaamE4c8BGEh8cn6ZrtyDtw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MorphShapes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MorphShapes.html",
+          "hash": "xj8XXuajjAuirWKOiWd3fbpb/XRKHNgEnpa8BF3wOvM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MorphTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MorphTypes.html",
+          "hash": "3H0ep41VIMqjDroWj/fJVbJLG+8qMnBbEp+lONC3ZyE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MotionTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MotionTypes.html",
+          "hash": "G9qxWENbE54Pw9heLCF6q5rGatXROt3O0bdaXTS8JJ8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MouseCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MouseCallback.html",
+          "hash": "4ub3AUym2Fu6CMxHcV/bdM4jY5iwO8i7lPGNXKFc1kE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MouseEventFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MouseEventFlags.html",
+          "hash": "51skYocAETFPOGccyifi4wTvwbW7Ym4wkrJvzvenpjM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.MouseEventTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.MouseEventTypes.html",
+          "hash": "MzA571GWiJs15JEfNnNCJR8q0XApGdow4QRGa5p/sGg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.NextEdgeType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.NextEdgeType.html",
+          "hash": "4HEIL3Lp/hi4DsiaoeFLxGbEhhz6eFL9YN4aoqCyNrg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.NormTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.NormTypes.html",
+          "hash": "VvqZ7GnJdduv1ZrHcPwarJzoYl8rcT5QiXgrYqfGyxg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ORB.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ORB.html",
+          "hash": "NDMLFbE2azbFsq03JuRP9jQEocjBmpmYXDwCYysZS8Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ORBScoreType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ORBScoreType.html",
+          "hash": "kH+NVfwbC0F+tY8qh6wExiT58scmAB0ZaywQUhcDAkM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.OpenCVException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.OpenCVException.html",
+          "hash": "D7olwSZJOVwsznmhMF/5fLoEF1bdyrCk3hVPtSO86kc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.OpenCvSharpException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.OpenCvSharpException.html",
+          "hash": "u+GiiVySxxrLlOLbsl8tfQHRQjdrBrdkb13HohW7A7A="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.OptFlow.CvOptFlow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.OptFlow.CvOptFlow.html",
+          "hash": "KsCi+Egg+3sXREMWibkXzr5hVx7Ye4frGjcdXIWx2Eo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.OptFlow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.OptFlow.html",
+          "hash": "96S/ZOBKwoGFI0I/MfTkt+zylYQ8NWbdvhHdAfSlNfo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.OpticalFlowFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.OpticalFlowFlags.html",
+          "hash": "DMylcsld5tgiWW4uhDqBy7CcISZyAjWtKxSpOVHhrbQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.OutputArray.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.OutputArray.html",
+          "hash": "kZYJlMeGdd/hiPgC+Vl8a0ZtSTMRBZMAL51/e0W9sqI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.OutputArrayOfMatList.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.OutputArrayOfMatList.html",
+          "hash": "7foSNP1kR46ko6SL0wNBBDfN+510mLPweSxKZ7OB9Dc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.OutputArrayOfStructList-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.OutputArrayOfStructList-1.html",
+          "hash": "Xc/vUsULA4rs9sOmtB3ZKTOgEr1LM/3c7Gw/q0jGh04="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.PCA.Flags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.PCA.Flags.html",
+          "hash": "wV68eHuLSsB1Sej96DT4D1aahqN/jsOJNRck9IOMBbw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.PCA.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.PCA.html",
+          "hash": "N8rNw4I2OD8Ux+k7K6F0CW8K5phadPF0LFuVE6l1WNk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.PixelConnectivity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.PixelConnectivity.html",
+          "hash": "VLZPfIbwBlp0icjPzA7RnugaUG78Akv83CZXJY2ZzPQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Point.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Point.html",
+          "hash": "9CF1yJpW2DfGLxSK/r9gmMINO4/pw4fpxrYE5qIvrSs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Point2d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Point2d.html",
+          "hash": "58xRUOU54hLC8DFi7/lvyfoaRVjqteaek83v6O9LlFM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Point2f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Point2f.html",
+          "hash": "P1jMFAiC2VqKK+1cLVTGadr5SicDDVPcpBmtPrnjHPc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Point3d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Point3d.html",
+          "hash": "l12PlD20KtxUf9HFbtKc6S+xC1VLS2Kcq4BPl+w44UY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Point3f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Point3f.html",
+          "hash": "SMqtTBB+XeeSggnLhN/UNDdf80YaPFdzDZzQ9UEDdkM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Point3i.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Point3i.html",
+          "hash": "m6++A9egxAqS3/uJQCtuGK8J16E4rOIcdsyE5C0qBYs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ProjectionType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ProjectionType.html",
+          "hash": "85ld8PB+YGpwfSCnvwjDzspG5ADjXexEFMalWYdJ92s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Ptr.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Ptr.html",
+          "hash": "EoJNDtwVsnkYE9hl08qeuLtDh03hzPeDtVcNd35jHxw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.PyrLKOpticalFlow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.PyrLKOpticalFlow.html",
+          "hash": "NTmcrEd+ZNyxuDvLitbnv7bsv+pNjcz0SyPPr+KW8WA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.QRCodeDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.QRCodeDetector.html",
+          "hash": "W4Rgj/FNzKKVln+/ICSelo13uekmHwEnF15fqukKj7Q="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Quality.QualityBRISQUE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Quality.QualityBRISQUE.html",
+          "hash": "H6c/CtZmQl1ScV6pznhG3OBUkyWWZdvGvSG13fs0Pdw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Quality.QualityBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Quality.QualityBase.html",
+          "hash": "PgN1N4zMd/xxfkJPcdjI+hSGsFVXF7EKkSHFwuPcqEs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Quality.QualityGMSD.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Quality.QualityGMSD.html",
+          "hash": "iY0iNDK5kB7BhF83wZoGMrup+WeGJQH5qznjCyYbBaA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Quality.QualityMSE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Quality.QualityMSE.html",
+          "hash": "vauOD1moC25KOu5KecfHAWbDj7t7P/Ed+sHFsE4Zm5Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Quality.QualityPSNR.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Quality.QualityPSNR.html",
+          "hash": "wV2rY7krZtcIsNTpn94+8z5wC3uGnF9bC+I+cacjh28="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Quality.QualitySSIM.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Quality.QualitySSIM.html",
+          "hash": "3RxsJH+PfqtQ9iKHss3XjwK8sK5hOOeHepVbfBminJQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Quality.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Quality.html",
+          "hash": "fxhjxZSA7z5XhLWJxyG6mFKMUGC75Q7JaMsgfKTc5Ns="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.RNG.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.RNG.html",
+          "hash": "tUm1aQ6xEx+LUGEchkGsh+H3UvSyWmn5euvEIpwZgHw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.RNG_MT19937.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.RNG_MT19937.html",
+          "hash": "nLgnNVBz/0BICMwTOM356j+7CuwXy/gN49ac3A/Uid0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Range.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Range.html",
+          "hash": "D0c2uIPO58w1fRwjJspiLYg8jTVPn98Yzt8tBt7LiKA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Rangef.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Rangef.html",
+          "hash": "n+tdQDKjMYoim03ooARPlYFfSF/u10NkZuWqXQo1EYE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Rect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Rect.html",
+          "hash": "8hWIvcVOac0m9IQzOOGl3VNOdnz1Ahg11TjJVIxtmpA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Rect2d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Rect2d.html",
+          "hash": "YnRKsDg/E6LeoX7CuhmPvDAXTB3eOy5vPeRr94RMWVs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Rect2f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Rect2f.html",
+          "hash": "ywODWU9r2/toFc8dnK+HICICSCSeivdjeGKP6IRaqXA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.RectanglesIntersectTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.RectanglesIntersectTypes.html",
+          "hash": "0jqadWh9PsIFD9JWkvbOTZWS+KUIQ4yhKt8FJshXuUQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ReduceDimension.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ReduceDimension.html",
+          "hash": "D6S5ZjG3VHYg+7PwbjOTf8rwa4O0ticKOEhDj4yHaqI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ReduceTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ReduceTypes.html",
+          "hash": "nqPdj4A1L3bcTPQQylrHc3akv5xMeloD+3XFg5H29xU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ResourcesTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ResourcesTracker.html",
+          "hash": "Iy6JjTgVGZaFevMDVZjFnrF+ZgmNwGDm25vwyD+ZHJU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.RetrievalModes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.RetrievalModes.html",
+          "hash": "/B4zK/O9qslJg9PKq1blbwsFgiMW38UNZwGPXqPeDoY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.RidgeDetectionFilter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.RidgeDetectionFilter.html",
+          "hash": "JLTwOTWRIdUgh0dvhg8YDuTUiVAcixqT6p4Ta+bZzuI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.RobotWorldHandEyeCalibrationMethod.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.RobotWorldHandEyeCalibrationMethod.html",
+          "hash": "dq3dWVStqC+stxCUjZdr4j8NcCGbbrJYaebeXF8JEmg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.RobustEstimationAlgorithms.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.RobustEstimationAlgorithms.html",
+          "hash": "uGMzsRWOLFUQj5AXjSmQ0zeJ7FqhNfetAIquLK67S/Q="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.RotateFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.RotateFlags.html",
+          "hash": "/pNrMdRFvsKDN3gzRdH6g291fB+SMkkp2AFlVozpukA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.RotatedRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.RotatedRect.html",
+          "hash": "wWJfDfS3sbFZR7BIpSi99TG2g1UTsRzQ/P09geQvTio="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SVD.Flags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SVD.Flags.html",
+          "hash": "erpcJauswwv8i89OJ6Fx+HFgrhLpJd14N26Q5f7jZMo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SVD.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SVD.html",
+          "hash": "ISwuCS7pPoNIANtOS4KZt9ZyMzoHXBAcmK5SZGteyoE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Scalar.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Scalar.html",
+          "hash": "+xmejJosYjY+aqsdDIHiIY40O8Lx2VoX3odyN+Vk/48="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SeamlessCloneMethods.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SeamlessCloneMethods.html",
+          "hash": "czxkdJ0tgSjM5XqqGv336jl++UDhxnLejAOZ7QCEY1E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Segmentation.IntelligentScissorsMB.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Segmentation.IntelligentScissorsMB.html",
+          "hash": "IIEsOdG+pshNUyb/EzT9tjv0OZoZJj7+hg2+mSrW7NM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Segmentation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Segmentation.html",
+          "hash": "s7bmVhoAAARbWIhUFXDmdNVNStwrAuDHzwZSCDQ0Z5U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ShapeContextDistanceExtractor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ShapeContextDistanceExtractor.html",
+          "hash": "sU7WC7UIPaflIg6ciiT9gakbO+a385Aluahf3UArWSU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ShapeDistanceExtractor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ShapeDistanceExtractor.html",
+          "hash": "KFxUtiXlnQb2VH24owVe6sbttpEQddbKPWbadXAXLBw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ShapeMatchModes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ShapeMatchModes.html",
+          "hash": "vMn1HXO6uM0ucTj2LEQhl/AqFiG/1wriDhQNPvQWLrk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SimilarRects.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SimilarRects.html",
+          "hash": "XNag7J2VNjJpKM29x49/DqJ2Tlcyj9S/+wBHMkdYW18="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SimpleBlobDetector.Params.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SimpleBlobDetector.Params.html",
+          "hash": "iOEoa5jJEeWjd+Rp+x796NasEt3dy14L2CH/GK3IpJY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SimpleBlobDetector.WParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SimpleBlobDetector.WParams.html",
+          "hash": "/e2izjxQsEByFnupWG0C3T2WGG8LsVUHob660jpTrH0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SimpleBlobDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SimpleBlobDetector.html",
+          "hash": "6N8HzVt0cYqtkZS3JZASJ2+wbPjc8ocjwDdjr6YJUVM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Size.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Size.html",
+          "hash": "FAL0PtMI1vcfl1tXsmHQG5qTKCS5R7skdmJreoZW/e0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Size2d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Size2d.html",
+          "hash": "QBjvKyW2Hi7f+GettLikFXKqYBkapn0QCzgTOAh73No="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Size2f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Size2f.html",
+          "hash": "9i/hlXr7CFx8JFmrmHOkmaHoHIwlMSouHFjBGemxc0k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SolveLPResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SolveLPResult.html",
+          "hash": "TT1xD7NuiVMuM4hIhpDifRQleczgmsloGluHoa3xTpc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SolvePnPFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SolvePnPFlags.html",
+          "hash": "FjiqMO5VgxIL58fHzKPRuH6aSB/rs+wiDMtM6gndNLk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SortFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SortFlags.html",
+          "hash": "iHdPGCfnvir9NEC4WASEQAbe/XR5axyRYBaMLtxFfCw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SparseMat.Indexer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SparseMat.Indexer-1.html",
+          "hash": "a5Wc4/XGgTR94YrycR7EdpRS7jwPVHVSZQ14AsNmT6E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SparseMat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SparseMat.html",
+          "hash": "C3S+Bk5mCBuSKT9hxtjh4nxBDa64gNrrjQryqCEtDj0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SparseMatIndexer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SparseMatIndexer-1.html",
+          "hash": "uJn33vYXAlZ81E6Onl0MkpNgSneYcdRy0MRpRhZuWXY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.StereoBM.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.StereoBM.html",
+          "hash": "1j0LJQhhriBIWjOAG/sTv7FbtyUBpfd3JPlWdcWj2PI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.StereoMatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.StereoMatcher.html",
+          "hash": "Zeaw6a6vvOLVM72tFxox4zYMo4WH82JdfPdCM3xtFIg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.StereoRectificationFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.StereoRectificationFlags.html",
+          "hash": "vzms+rW5f3Pw/fJtGGis1rVgkLqaWt2M8Cf7WfR9Av4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.StereoSGBM.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.StereoSGBM.html",
+          "hash": "gcIgTk0AXI3h9WIxdZrzoKC965/eJ3jOJytWkK/jV4U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.StereoSGBMMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.StereoSGBMMode.html",
+          "hash": "oHjpXwgfNoyZJ7lnDE1aBBKx940D7cxg0IJNK+gWfLc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Stitcher.Mode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Stitcher.Mode.html",
+          "hash": "KG3UicfqLkO+wK7oz9SO3q4fWRu3mMkbs9avOOyrugg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Stitcher.Status.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Stitcher.Status.html",
+          "hash": "3pNPDx49qBoArBvnQ4UZrbe4D1a5tp0UfZWtVcE75+A="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Stitcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Stitcher.html",
+          "hash": "avFnwHJYndC/7lTxpsqMqfd5A5HR5ch6hfcz4Nt+j5c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Subdiv2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Subdiv2D.html",
+          "hash": "DM8DsG/KYNJ10FlYC1Ry3WMtQ2A0Fry8KtIzK8kdGEg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.SuperResolution.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.SuperResolution.html",
+          "hash": "b5oYIKCq+hIVLMwzvI4ZJgfb17M7VVKnASUS0XqkAZk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TemplateMatchModes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TemplateMatchModes.html",
+          "hash": "/fwZkDssQvXQpUA2RuSiuyKRGYwCnjiapLXJ4oxhnrQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TermCriteria.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TermCriteria.html",
+          "hash": "4PODaGJN9pxwv//byvgN7dYNz7I+hRCIPs5DOt8Sv4s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Text.BaseOCR.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Text.BaseOCR.html",
+          "hash": "Ma4FNdWHT+PWHCvn9xf/bBW1jkFa6Wb5ZClu9Sx8yjw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Text.ComponentLevels.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Text.ComponentLevels.html",
+          "hash": "iWOoceY+xOV243oVVcwM65ZWgNdAj9HaxWhDTEwyEoQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Text.CvText.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Text.CvText.html",
+          "hash": "zedIQot/Iv/qR1QOlZV9xqz72pdCIdX2Eo4ot8WoZZw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Text.OCRTesseract.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Text.OCRTesseract.html",
+          "hash": "S6RM6w2/VGrW40hlSeSkyktB0GZHigs9YUKBT6Yq8Zw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Text.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Text.html",
+          "hash": "AzZ045EwdWL0vr2mV8INnUp9fx/GEiys9FTKK2X6+bw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TextDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TextDetector.html",
+          "hash": "8Fv/nfFqkB6AK5nmGR+0FGAwrhqkl91D+HO6Ukppnr8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TextDetectorCNN.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TextDetectorCNN.html",
+          "hash": "iXejakGku9RznZ6UbThBvlJ7dMuTm4wAtG7tsY8/LTY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.ThresholdTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.ThresholdTypes.html",
+          "hash": "zbJ56HwT4HOp7VfAnXgaDfwYXg31NDtO7Z+L0o2+ahI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Tonemap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Tonemap.html",
+          "hash": "wHpuvuovSjXAXHg08CiwWioYxxIx2Vv17IuYi8ITTes="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TonemapDrago.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TonemapDrago.html",
+          "hash": "DqK5R3bVV3XpNp73ighYf473VWl9SqTJa3WXy8v66ss="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TonemapMantiuk.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TonemapMantiuk.html",
+          "hash": "JaZuHlXgsA/OaZru614YzCjF/C8zh0R5sSvrs0nwLJ8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TonemapReinhard.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TonemapReinhard.html",
+          "hash": "Ncb8pYHf0+09BKys+17/XB8WonBdNxC3H3FbE9aiRYA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TrackbarCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TrackbarCallback.html",
+          "hash": "bShNhOxWChjzQdYz7W+MMfNhF8Diek2qDJDJLHaGv9w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TrackbarCallbackNative.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TrackbarCallbackNative.html",
+          "hash": "bXCGQqX+YPNF0PRykglBOiWcm/Tjp4JTcyrjKJmOjHc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Tracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Tracker.html",
+          "hash": "nGM1QTR+/os6cznkVcP7vWuaEO4U0nCvGMbIhUX/9ew="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TrackerGOTURN.Params.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TrackerGOTURN.Params.html",
+          "hash": "blBFIYa9lsOtJhMazvWyQ9x+6RZ7mFubhtmS8RkKReQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TrackerGOTURN.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TrackerGOTURN.html",
+          "hash": "7+VtEm+sIAAfFAr/qtGM0YQLxbAt4iA2bszCY4ZHTcU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TrackerMIL.Params.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TrackerMIL.Params.html",
+          "hash": "h65j4d/rJZcSCkokh0N8tOxqObzbQWfClVJcyZvJwS0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.TrackerMIL.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.TrackerMIL.html",
+          "hash": "k+K11zdgMQIMFcd3qofvQMcD9iQG6Mf9lTjhWqa+u7U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Tracking.TrackerCSRT.Params.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Tracking.TrackerCSRT.Params.html",
+          "hash": "PG1f+NDH2B6LrD30b7PG6o073HSI3jEVUDwUHyUU368="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Tracking.TrackerCSRT.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Tracking.TrackerCSRT.html",
+          "hash": "fSVAci+XtNTGvFW0BrDL1znTk1qUIDLqtyLvNkbBZu4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Tracking.TrackerKCF.Params.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Tracking.TrackerKCF.Params.html",
+          "hash": "aW6f+bw9i2crnr9qh8as/ZpX854ePIQ9CXBSlANVeSg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Tracking.TrackerKCF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Tracking.TrackerKCF.html",
+          "hash": "97ioefAxB6yxS9PCNs/MlVJcgZoGPBK0ufziHj3/GPU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Tracking.TrackerTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Tracking.TrackerTypes.html",
+          "hash": "HiDcfw5+YSe496rVKJ5+zv4Moh5PiiKeFox/w6HxEv4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Tracking.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Tracking.html",
+          "hash": "+Kx441nDVc0vYPitcQ7DxE7vRkGzUjs2VmdYJzt+hzM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.UMat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.UMat.html",
+          "hash": "AE8LzaBzFdkOpIWvMRNTsJCw9mFHMn9zxpOgkHoJX1Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.UMatUsageFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.UMatUsageFlags.html",
+          "hash": "XCImMhpM/ucsPbSbt1GhXKKWC2azj+JYmERs9GyjUb4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec2b.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec2b.html",
+          "hash": "uufolcPkLsOsS98yS+zKABwspqAVOvdcG9tSs2mWRf8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec2d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec2d.html",
+          "hash": "kORzIbVZRfCHQAUXLLmA7IPPjp+77IkvNKw7SIrXLXc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec2f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec2f.html",
+          "hash": "5zWHfjXIcw4RtmL6MYPxg3JQ0bZgmLEkuQG15+KHDW0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec2i.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec2i.html",
+          "hash": "FPpaT8O2YCvySUD0JVAiKTQTuYYpT4WtFC4EcPCcwc8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec2s.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec2s.html",
+          "hash": "ipCelzHitwyRY+WUxYTPgy0WY7mc6VmrAF1YMAeD9iA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec2w.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec2w.html",
+          "hash": "eY/jhLYqR1Bv4omXuku6n1Dc/OETHAK6jwiHjrSt0w8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec3b.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec3b.html",
+          "hash": "rDfwukMwIBw9qd1DUvDZ8D2fSNUmfrafjm6PHONNXD0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec3d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec3d.html",
+          "hash": "20dQcFBbL49VXsxf0bY9z37w4MQPQpettZLDwPWK3cQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec3f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec3f.html",
+          "hash": "m131zTTQ7qnavg2DM5zJNxUUV4OD5vCfgkOQEGb9Syg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec3i.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec3i.html",
+          "hash": "/CW5obc8JbFniaEuMDnz9oFxMiE76Y111BYSMiEh3p8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec3s.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec3s.html",
+          "hash": "siPNLEygm7sOnlFk5UJa+4f9kqCGUfnXTI2aB6JVFUM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec3w.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec3w.html",
+          "hash": "6y6dYTPeklpolKmzYOq2/kJTEdF5fNvHTmDsO48Pmlo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec4b.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec4b.html",
+          "hash": "eZnvXkhfeC3T7LoztRbSYCu0iXwBHJZMnwIgfdXeiec="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec4d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec4d.html",
+          "hash": "Db1ZHIQ8hPu0qs3tbGLGZLZfdJcO35h0OuFOV5fg0bo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec4f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec4f.html",
+          "hash": "pYA+3Yyf6bF2Q9J0SkOjzA5YQjWl11+qKBl5vN0Ek9M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec4i.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec4i.html",
+          "hash": "Jw6vx8/nyOL9R4cLzGBWsRSQPH71iW5906A/RKGkOYo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec4s.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec4s.html",
+          "hash": "t/FmlYXCQON8GngUrTVkU6RU/YR++LwA5vZt9XyLz2Q="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec4w.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec4w.html",
+          "hash": "bZpVdmjullFwOlJg7c4SCPJrnGRsZ9bIcui0Z3PwTm4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec6b.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec6b.html",
+          "hash": "gHJKLOf2uE5HZwPNSbhxZ8oYIgC9YDvlAC2DqyiI5bo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec6d.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec6d.html",
+          "hash": "zN9+k5HoYnkA/2vaIDEbGq8frt6HMfQEe3nQVaa7ipY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec6f.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec6f.html",
+          "hash": "vCwvTrVmbuM4NzS/uBruFPo0i31gjWIoXxTTy5Sc0ZY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec6i.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec6i.html",
+          "hash": "I71FyfMwGiYskzSnfPpGWErRxRYx90r+qpaJf6R/BBk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec6s.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec6s.html",
+          "hash": "BOFpuuXne/xV3fKm8kXhcdB2ilQAw98q9RSShT1soAg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Vec6w.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Vec6w.html",
+          "hash": "/OCEAJmopLazxrGeUOtjXyahyMR6XU7qHTlJBziswmQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.VideoAccelerationType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.VideoAccelerationType.html",
+          "hash": "FeHq8wgfTLOyz2LrnISOa8jtymyTuXo4g4WIybi5NEI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.VideoCapture.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.VideoCapture.html",
+          "hash": "woP6XILMK5+03/eULrp+OEyKxW71hQwMVoiianbC2BQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.VideoCaptureAPIs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.VideoCaptureAPIs.html",
+          "hash": "oIyfN7AKRtA1C+NaJpdZuzKitDiacXMcqhDSQlbEkfE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.VideoCapturePara.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.VideoCapturePara.html",
+          "hash": "3fOYGoTrUfY0cN0m4jlvv+tvlFCBDthpjemvi+xEbx8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.VideoCaptureProperties.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.VideoCaptureProperties.html",
+          "hash": "E4ahQ7QKrhYMj7my20kKtFstC8VCpDRPa5DcpxSs/NM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.VideoWriter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.VideoWriter.html",
+          "hash": "o71v3xiFm2+m94jiLcP3mhoqk+HwqmxixDDkr+WF0xg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.VideoWriterPara.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.VideoWriterPara.html",
+          "hash": "ZK0CPrSRssp/F76BKkjjHjldgiFiLM3a7fZXKE+LYvE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.VideoWriterProperties.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.VideoWriterProperties.html",
+          "hash": "nGBt+Ky+CiOsNG+qvb4fhfZ+Z09AQtksQweVc2+zoDE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.WarpPolarMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.WarpPolarMode.html",
+          "hash": "Y9ZIPbHFZo21xV4li7wg7R3VDOyQ1kw+h+Pe/BQ3Zq4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.Window.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.Window.html",
+          "hash": "aAvXvztIJxc/R/VFt4OYNoeOvbA0g3+UO/srX/xP0NE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.WindowFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.WindowFlags.html",
+          "hash": "kmQtAXsR5hn1hW1x1/mOt5fLp186HxAlI6oMLy70EUs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.WindowPropertyFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.WindowPropertyFlags.html",
+          "hash": "KZp1jVk+Q7ozZ96KAjBtQRbZRTiiRH6lFZR2iD6Ga0E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XFeatures2D.BriefDescriptorExtractor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XFeatures2D.BriefDescriptorExtractor.html",
+          "hash": "yJx4+0V7B0229pss33+uJnKuiXLU8iLEIebeVGYIcYU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XFeatures2D.FREAK.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XFeatures2D.FREAK.html",
+          "hash": "OjEepAzylRJLa9FFNRKQMIuJ6ZaK1Zz4rTOQoiTXl8A="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XFeatures2D.LATCH.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XFeatures2D.LATCH.html",
+          "hash": "1LZhaMa4SRjAlWsgszWlZgbWeFdn5TIN+dGhJfARxd0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XFeatures2D.LUCID.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XFeatures2D.LUCID.html",
+          "hash": "VzGL1TvhlgFob4UCPgXeTINYyI+iTP23Zj+mg3JWySg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XFeatures2D.SURF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XFeatures2D.SURF.html",
+          "hash": "50NYLAkgkTuCkxP7F29A8ik3W2k2QKNHCM1G6ucf1ZA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XFeatures2D.StarDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XFeatures2D.StarDetector.html",
+          "hash": "/repOIXG+9vyITrkJQ6efgqvHxvioakff71b6UCXLRo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XFeatures2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XFeatures2D.html",
+          "hash": "x3ZFUzbzyHIJMIG88rLAJInPE5KgrMuHxI70zIz0m98="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.AdaptiveManifoldFilter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.AdaptiveManifoldFilter.html",
+          "hash": "Y7i/CJxFu9SK3S9hiKhBCWFNMErA20GoVY1qpqHyY5c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.AngleRangeOption.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.AngleRangeOption.html",
+          "hash": "R0QC5YnBIu8cc9X+NCqTWws3/dq8MAX6WF0iRXyqDns="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.CvXImgProc.RL.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.CvXImgProc.RL.html",
+          "hash": "ERWy2gARGG7Mdi7dJdOSRAIbRIAFH93+QUlfILDC+cc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.CvXImgProc.Segmentation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.CvXImgProc.Segmentation.html",
+          "hash": "SO8Brl2F5o5WXNjhO0Fs+2NkYG899xH2an9SNC2iEDE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.CvXImgProc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.CvXImgProc.html",
+          "hash": "8nmu8ZzZ3hJvQdloPhMQREGT++KMVrz8ll3aCA9oTxw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.DTFilter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.DTFilter.html",
+          "hash": "staT2dx4NSV5HxR3n1znbOcAcobuVjE5j8FbVbdRs0A="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.EdgeAwareFiltersList.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.EdgeAwareFiltersList.html",
+          "hash": "eH3VRDkRMBRjTz7cWc3oYHlDFGuZKV6pK4diQUZGT6I="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.EdgeBoxes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.EdgeBoxes.html",
+          "hash": "SJyvRnV8zfK2aKWit90RViMsgdQio2bkGxQ9yz5hw+s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.FastBilateralSolverFilter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.FastBilateralSolverFilter.html",
+          "hash": "Dq/7Nza9qNu2/6/Oz7IWqIoDsx7ypwVWBmFCUACbZUs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.FastGlobalSmootherFilter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.FastGlobalSmootherFilter.html",
+          "hash": "NAfMEPBtf9lI/JszuNAK+G50ChGlWQNNMkR5UNhToZw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.FastLineDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.FastLineDetector.html",
+          "hash": "ZpfUW3gVCdjkT/CqaNcZaHME2x+IJuJMOu6vtxgZxvk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.GuidedFilter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.GuidedFilter.html",
+          "hash": "KbhWXu1e9+9VdLzCA/kIxVLuZ9SBO/bDwLIyBaORxAc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.HoughDeskewOption.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.HoughDeskewOption.html",
+          "hash": "7roC4ZiqoblbiP5KWIZFA7hn/2idCMxBngZko3W60Jw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.HoughOP.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.HoughOP.html",
+          "hash": "sB9+qR5Cb4GMtc+txrduP0QLqA/Cy9sSbMg0gHWNsyg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.LocalBinarizationMethods.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.LocalBinarizationMethods.html",
+          "hash": "LTKDePGI83099xlWGka58O6Pb6Bqxjq5bimN1byxzRE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.RFFeatureGetter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.RFFeatureGetter.html",
+          "hash": "+h+7eP+f+x4XW7Af1Qm02YiEHKETBJC5Goq2MR9Q5h8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.RulesOption.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.RulesOption.html",
+          "hash": "VLI/QJW93n+uS0DbXJX1y3epX/ePhoIaI2KhB+iXf0w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.SLICType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.SLICType.html",
+          "hash": "M+wpZXganDlNQU15shtVzk8LIjEAvnfe3Yf/6dRYDCk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.Segmentation.GraphSegmentation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.Segmentation.GraphSegmentation.html",
+          "hash": "nEqSlyU1AuZM4qUDYQRDzo7zn3jnDK/Ikgf1sqhX0/4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentation.html",
+          "hash": "m2PoNP/1Dgj8cY7JoewHtnj7WEDvvbbocW/0SzP+y5A="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategy.html",
+          "hash": "q7w5e6o04ewfuu8CZZZqpU20aPyB7eMLrzj52sRL91w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategyColor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategyColor.html",
+          "hash": "RMwROTV1ojpLpdk3rGoeSZcU1+3j9r3WLo+8BU5uqCI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategyFill.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategyFill.html",
+          "hash": "jKOvopSSx7dQiQmYY8H0sL6wXtBaat6stI4X9xVVrAM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategyMultiple.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategyMultiple.html",
+          "hash": "4v7bGueBP6GcJHaH1xUFUjb5aOrCcCYQjqtp6LZiIiY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategySize.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategySize.html",
+          "hash": "pHxteap2tEY2bECZ2+b2ViKoK7p8IjGkBAelu8kp6l0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategyTexture.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.Segmentation.SelectiveSearchSegmentationStrategyTexture.html",
+          "hash": "3bg8aKxSVpq/s+zxzF+dX05keQLn0vp5Zm7byLReyaY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.Segmentation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.Segmentation.html",
+          "hash": "9Exh/r8L0sCncUQp0Be3B9LyN+WjIBb1NPjtbRwdA7s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.StructuredEdgeDetection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.StructuredEdgeDetection.html",
+          "hash": "YiHtBtI+jK3Vud08zLchD2sQPUZbPvu56LJYwYNrAgo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.SuperpixelLSC.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.SuperpixelLSC.html",
+          "hash": "BOD8PmaheVzN430w/6TKzdZuodzxIUEUXCnC7szbqII="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.SuperpixelSEEDS.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.SuperpixelSEEDS.html",
+          "hash": "ZFwdFAMxgH3nL2sELBTBQRe4hsk6KczW9UgI3KD7x+g="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.SuperpixelSLIC.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.SuperpixelSLIC.html",
+          "hash": "Fsr0dyRGPfKWCc7OWEYK/DGFcbvLAL/D39n28C2WZLQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.ThinningTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.ThinningTypes.html",
+          "hash": "/GTZG2+IUPbQAdSYZ/WdV0NEL/MXpHXwTeM/IoUWxVs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.WMFWeightType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.WMFWeightType.html",
+          "hash": "GM/sUVzSGFz86XaZQCZwXo0TLp7C2NPpn6ElMPD0wJA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XImgProc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XImgProc.html",
+          "hash": "c7TcBgueyIo78sIXb/jvG7Z0Hv8eYQRj2c0q9u+akS0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XPhoto.Bm3dSteps.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XPhoto.Bm3dSteps.html",
+          "hash": "5ySpvRZTN4jEw6Pp1ihTIUk7Uxh0pzAJAfvJrv1rDYA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XPhoto.CvXPhoto.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XPhoto.CvXPhoto.html",
+          "hash": "xITHYDYtWzH9mnVXEUcyOIt4x3SBT8q6/be4VLd3KCc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XPhoto.GrayworldWB.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XPhoto.GrayworldWB.html",
+          "hash": "NkT7TKYrHTlg8izGc1NWBRmTtl1DTG0p6728NM4WiDo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XPhoto.InpaintTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XPhoto.InpaintTypes.html",
+          "hash": "DQnY/oKWWTtzBZhhHABsiarkZ7KbA99vHIFxUd9uQY8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XPhoto.LearningBasedWB.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XPhoto.LearningBasedWB.html",
+          "hash": "mgVBIoGl+mOBR//0Pmw4uIZ5DSmHH1X4dWvaP/uElho="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XPhoto.SimpleWB.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XPhoto.SimpleWB.html",
+          "hash": "d7YxXlW4YNGPFQBuGooi3flq5ePsiUUtDTYpx6zNMYM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XPhoto.TonemapDurand.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XPhoto.TonemapDurand.html",
+          "hash": "CjN3wm2lOdY6t/KaO7EPV6qTDI/twNiUGMFBDgBLEnQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XPhoto.TransformTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XPhoto.TransformTypes.html",
+          "hash": "3pENSa8tEyeHv6BEXEFmQBin3OOFaF2gKTJZmpZUBXc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XPhoto.WhiteBalancer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XPhoto.WhiteBalancer.html",
+          "hash": "lOt8YFr7S0sP4q+CXXGvDQpa6LRk3MmLjvEF2qpd2fQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.XPhoto.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.XPhoto.html",
+          "hash": "6UuN4Rih09YV7pdyaOwLb9qCEvfbMNwD7bBcvugB44M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OpenCvSharp.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OpenCvSharp.html",
+          "hash": "N+mM7EeZ6fY8nG3EiSlAg+jA/rS9GLDS3gILBRJKLfM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "V9WgyLIOb8yhvc2XpluEnIPkzVnUPvKxoSkPbVcmIGM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "GWwV616FIWqBqN9VR9Sy2mv7W1mVRhbvi13/rzUXY3k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/intro.html",
+          "hash": "vIIJHKnYlYBv9ZbexpRZcwP9qmRMbLcGnYILjftv1Y8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "BlPxk5mtl2kgfcZUgkEguqiSAR/EUyUTT4EdebwkQvs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "mo066TYMsrgMApgzLc9oa6d04QhWjmdp3XKHKgzMx6I="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "h44BL+k3mfHlQoPzLfIcTO2dwgypIc0r7JF1Qi53MZc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot build incrementally because last build info is missing.",
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0,
+        "full_build_reason_code": "NoAvailableBuildCache"
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 3,
+          "skipped_file_count": 0
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 522,
+          "skipped_file_count": 0
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: last post processor info is null.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
