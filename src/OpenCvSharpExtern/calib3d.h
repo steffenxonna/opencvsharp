@@ -6,6 +6,21 @@
 
 #include "include_opencv.h"
 
+struct CV_EXPORTS_W_SIMPLE MyUsacParams
+{
+    double confidence;
+    int isParallel;
+    int loIterations;
+    cv::LocalOptimMethod loMethod;
+    int loSampleSize;
+    int maxIterations;
+    cv::NeighborSearchMethod neighborsSearch;
+    int randomGeneratorState;
+    cv::SamplingMethod sampler;
+    cv::ScoreMethod score;
+    double threshold;
+};
+
 CVAPI(ExceptionStatus) calib3d_Rodrigues(cv::_InputArray *src, cv::_OutputArray *dst, cv::_OutputArray *jacobian)
 {
     BEGIN_WRAP
@@ -16,24 +31,47 @@ CVAPI(ExceptionStatus) calib3d_Rodrigues(cv::_InputArray *src, cv::_OutputArray 
 CVAPI(ExceptionStatus) calib3d_findHomography_InputArray(
     cv::_InputArray *srcPoints, cv::_InputArray *dstPoints,
     int method, double ransacReprojThreshold, cv::_OutputArray *mask,
+    int maxIters, double confidence,
     cv::Mat** returnValue)
 {
     BEGIN_WRAP
-    const auto ret = cv::findHomography(*srcPoints, *dstPoints, method, ransacReprojThreshold, entity(mask));
+    const auto ret = cv::findHomography(*srcPoints, *dstPoints, method, ransacReprojThreshold, entity(mask), maxIters, confidence);
     *returnValue = new cv::Mat(ret);
     END_WRAP
 }
 CVAPI(ExceptionStatus) calib3d_findHomography_vector(
     cv::Point2d *srcPoints, int srcPointsLength,
     cv::Point2d *dstPoints, int dstPointsLength,
-    int method, double ransacReprojThreshold, cv::_OutputArray *mask, 
+    int method, double ransacReprojThreshold, cv::_OutputArray *mask,
+    int maxIters, double confidence,
     cv::Mat **returnValue)
 {
     BEGIN_WRAP
     const cv::Mat srcPointsMat(srcPointsLength, 1, CV_64FC2, srcPoints);
     const cv::Mat dstPointsMat(dstPointsLength, 1, CV_64FC2, dstPoints);
 
-    const auto ret = cv::findHomography(srcPointsMat, dstPointsMat, method, ransacReprojThreshold, entity(mask));
+    const auto ret = cv::findHomography(srcPointsMat, dstPointsMat, method, ransacReprojThreshold, entity(mask), maxIters, confidence);
+    *returnValue = new cv::Mat(ret);
+    END_WRAP
+}
+CVAPI(ExceptionStatus) calib3d_findHomography_UsacParams(
+    cv::_InputArray* srcPoints, cv::_InputArray* dstPoints, cv::_OutputArray* mask, MyUsacParams *params,
+    cv::Mat** returnValue)
+{
+    BEGIN_WRAP
+    cv::UsacParams p;
+    p.confidence = params->confidence;
+    p.isParallel = params->isParallel != 0;
+    p.loIterations = params->loIterations;
+    p.loMethod = params->loMethod;
+    p.loSampleSize = params->loSampleSize;
+    p.maxIterations = params->maxIterations;
+    p.neighborsSearch = params->neighborsSearch;
+    p.randomGeneratorState = params->randomGeneratorState;
+    p.sampler = params->sampler;
+    p.score = params->score;
+    p.threshold = params->threshold;
+    const auto ret = cv::findHomography(*srcPoints, *dstPoints, entity(mask), p);
     *returnValue = new cv::Mat(ret);
     END_WRAP
 }
@@ -166,7 +204,7 @@ CVAPI(ExceptionStatus) calib3d_solvePnP_vector(cv::Point3f *objectPoints, int ob
         distCoeffsMat = cv::Mat(distCoeffsLength, 1, CV_64FC1, distCoeffs);
 
     const cv::Matx<double, 3, 3> cameraMatrixMat(cameraMatrix);
-    cv::Matx<double, 3, 1> rvecMat, tvecMat;
+    cv::Matx<double, 3, 1> rvecMat(rvec), tvecMat(tvec);
     cv::solvePnP(objectPointsMat, imagePointsMat, cameraMatrixMat, distCoeffsMat, rvecMat, tvecMat, useExtrinsicGuess != 0, flags);
     memcpy(rvec, rvecMat.val, sizeof(double) * 3);
     memcpy(tvec, tvecMat.val, sizeof(double) * 3);

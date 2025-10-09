@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 [assembly: CollectionBehavior(/*MaxParallelThreads = 2, */DisableTestParallelization = true)]
@@ -13,150 +7,75 @@ using Xunit;
 #pragma warning disable CA1810 // Initialize reference type static fields inline
 #pragma warning disable CA5359 
 
-namespace OpenCvSharp.Tests
-{
-    public abstract class TestBase
-    {
-        private static readonly HttpClient httpClient;
-        
-        static TestBase()
-        {
-            ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+namespace OpenCvSharp.Tests;
 
+public abstract class TestBase
+{
+    static TestBase()
+    {
 #pragma warning disable CA5364
 #pragma warning disable CA5386
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+        ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 #pragma warning restore CA5364
 #pragma warning restore CA5386
+    }
 
-#pragma warning disable CA2000 
-            var handler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = delegate { return true; }
-            };
-#pragma warning restore CA2000
-            httpClient = new HttpClient(handler)
-            {
-                Timeout = TimeSpan.FromMinutes(5)
-            };
-        }
+    protected static Mat LoadImage(string fileName, ImreadModes modes = ImreadModes.Color) 
+        => new(Path.Combine("_data", "image", fileName), modes);
 
-        protected static Mat Image(string fileName, ImreadModes modes = ImreadModes.Color)
-        {
-            return new Mat(Path.Combine("_data", "image", fileName), modes);
-        }
-
-        protected static void ImageEquals(Mat img1, Mat img2)
-        {
-            if (img1 == null && img2 == null)
-                return;
-            Assert.NotNull(img1);
-            Assert.NotNull(img2);
+    protected static void ImageEquals(Mat img1, Mat img2)
+    {
+        if (img1 is null && img2 is null)
+            return;
+        Assert.NotNull(img1);
+        Assert.NotNull(img2);
 #pragma warning disable CS8602
 #pragma warning disable CA1062
-            Assert.Equal(img1.Type(), img2.Type());
+        Assert.Equal(img1.Type(), img2.Type());
 #pragma warning restore CS8602 
 #pragma warning restore CA1062 
 
-            using var comparison = new Mat();
-            Cv2.Compare(img1, img2, comparison, CmpType.NE);
+        using var comparison = new Mat();
+        Cv2.Compare(img1, img2, comparison, CmpType.NE);
 
-            if (img1.Channels() == 1)
+        if (img1.Channels() == 1)
+        {
+            Assert.Equal(0, Cv2.CountNonZero(comparison));
+        }
+        else
+        {
+            var channels = Cv2.Split(comparison);
+            try
             {
-                Assert.Equal(0, Cv2.CountNonZero(comparison));
-            }
-            else
-            {
-                var channels = Cv2.Split(comparison);
-                try
+                foreach (var channel in channels)
                 {
-                    foreach (var channel in channels)
-                    {
-                        Assert.Equal(0, Cv2.CountNonZero(channel));
-                    }
-                }
-                finally
-                {
-                    foreach (var channel in channels)
-                    {
-                        channel.Dispose();
-                    }
+                    Assert.Equal(0, Cv2.CountNonZero(channel));
                 }
             }
-        }
-
-        protected static void ShowImagesWhenDebugMode(params Mat[] mats)
-        {
-            if (Debugger.IsAttached)
+            finally
             {
-                Window.ShowImages(mats);
+                foreach (var channel in channels)
+                {
+                    channel.Dispose();
+                }
             }
         }
+    }
 
-        protected static void ShowImagesWhenDebugMode(IEnumerable<Mat> mats, IEnumerable<string> names)
+    protected static void ShowImagesWhenDebugMode(params Mat[] mats)
+    {
+        if (Debugger.IsAttached)
         {
-            if (Debugger.IsAttached)
-            {
-                Window.ShowImages(mats, names);
-            }
+            Window.ShowImages(mats);
         }
+    }
 
-        protected static void Pause(string message = "Press any key to exit")
+    protected static void ShowImagesWhenDebugMode(IEnumerable<Mat> mats, IEnumerable<string> names)
+    {
+        if (Debugger.IsAttached)
         {
-            if (Debugger.IsAttached)
-            {
-                Console.WriteLine();
-                Console.WriteLine(message);
-                Console.Read();
-            }
-        }
-
-        protected static byte[] DownloadBytes(
-            Uri uri, 
-            Action<(long BytesReceived, long TotalBytesToReceive, int ProgressPercentage)>? downloadProgressChangedEvent = null)
-        {
-            using var client = new MyWebClient();
-            if (downloadProgressChangedEvent == null)
-            {
-                return client.DownloadData(uri);
-            }
-
-            var task = client.DownloadDataTaskAsync(
-                uri,
-                new Progress<(long BytesReceived, long TotalBytesToReceive, int ProgressPercentage)>(downloadProgressChangedEvent));
-            return task.Result;
-            //var response = (httpClient.GetAsync(uri).Result).EnsureSuccessStatusCode();
-            //return response.Content.ReadAsByteArrayAsync().Result;
-        }
-
-        protected static async Task<byte[]> DownloadBytesAsync(Uri uri, CancellationToken token = default)
-        {
-            var response = await httpClient.GetAsync(uri, token).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-#if NET48
-            return await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-#else
-            return await response.Content.ReadAsByteArrayAsync(token).ConfigureAwait(false);
-#endif
-        }
-
-        protected static async Task<Stream> DownloadStreamAsync(Uri uri, CancellationToken token = default)
-        {
-            var response = await httpClient.GetAsync(uri, token).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-#if NET48
-            return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#else
-            return await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
-#endif
-        }
-
-        protected static string DownloadString(Uri uri)
-        {
-            using var client = new MyWebClient();
-            return client.DownloadString(uri);
-            //var response = (await httpClient.GetAsync(url)).EnsureSuccessStatusCode();
-            //return await response.Content.ReadAsStringAsync();
+            Window.ShowImages(mats, names);
         }
     }
 }

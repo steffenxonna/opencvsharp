@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using OpenCvSharp.Detail;
+﻿using OpenCvSharp.Detail;
 using OpenCvSharp.Internal;
 using OpenCvSharp.Internal.Util;
 using OpenCvSharp.Internal.Vectors;
@@ -20,33 +17,19 @@ namespace OpenCvSharp
             Vertical
         }
         
-        public class FeaturesFinder
-        {
-        }
+        public class FeaturesFinder;
         
-        public class BundleAdjusterBase
-        {
-        }
+        public class BundleAdjusterBase;
 
-        public class WarperCreator
-        {
-        }
+        public class WarperCreator;
 
-        public class ExposureCompensator
-        {
-        }
+        public class ExposureCompensator;
 
-        public class SeamFinder
-        {
-        }
+        public class SeamFinder;
 
-        public class Blender
-        {
-        }
+        public class Blender;
 
-        public class CameraParams
-        {
-        }
+        public class CameraParams;
     }
 
     /// <summary>
@@ -313,7 +296,7 @@ namespace OpenCvSharp
 
         public Status EstimateTransform(InputArray images)
         {
-            if (images == null)
+            if (images is null)
                 throw new ArgumentNullException(nameof(images));
             images.ThrowIfDisposed();
 
@@ -328,9 +311,9 @@ namespace OpenCvSharp
 
         public Status EstimateTransform(InputArray images, Rect[][] rois)
         {
-            if (images == null)
+            if (images is null)
                 throw new ArgumentNullException(nameof(images));
-            if (rois == null)
+            if (rois is null)
                 throw new ArgumentNullException(nameof(rois));
             images.ThrowIfDisposed();
 
@@ -348,7 +331,7 @@ namespace OpenCvSharp
 
         public Status EstimateTransform(IEnumerable<Mat> images)
         {
-            if (images == null)
+            if (images is null)
                 throw new ArgumentNullException(nameof(images));
 
             var imagesPtrs = images.Select(x => x.CvPtr).ToArray();
@@ -364,9 +347,9 @@ namespace OpenCvSharp
 
         public Status EstimateTransform(IEnumerable<Mat> images, Rect[][] rois)
         {
-            if (images == null)
+            if (images is null)
                 throw new ArgumentNullException(nameof(images));
-            if (rois == null)
+            if (rois is null)
                 throw new ArgumentNullException(nameof(rois));
 
             var imagesPtrs = images.Select(x => x.CvPtr).ToArray();
@@ -384,7 +367,7 @@ namespace OpenCvSharp
 
         public Status ComposePanorama(OutputArray pano)
         {
-            if (pano == null)
+            if (pano is null)
                 throw new ArgumentNullException(nameof(pano));
             pano.ThrowIfNotReady();
 
@@ -400,9 +383,9 @@ namespace OpenCvSharp
 
         public Status ComposePanorama(InputArray images, OutputArray pano)
         {
-            if (images == null)
+            if (images is null)
                 throw new ArgumentNullException(nameof(images));
-            if (pano == null)
+            if (pano is null)
                 throw new ArgumentNullException(nameof(pano));
             images.ThrowIfDisposed();
             pano.ThrowIfNotReady();
@@ -420,9 +403,9 @@ namespace OpenCvSharp
 
         public Status ComposePanorama(IEnumerable<Mat> images, OutputArray pano)
         {
-            if (images == null)
+            if (images is null)
                 throw new ArgumentNullException(nameof(images));
-            if (pano == null)
+            if (pano is null)
                 throw new ArgumentNullException(nameof(pano));
             pano.ThrowIfNotReady();
 
@@ -446,9 +429,9 @@ namespace OpenCvSharp
         /// <returns>Status code.</returns>
         public Status Stitch(InputArray images, OutputArray pano)
         {
-            if (images == null)
+            if (images is null)
                 throw new ArgumentNullException(nameof(images));
-            if (pano == null)
+            if (pano is null)
                 throw new ArgumentNullException(nameof(pano));
             images.ThrowIfDisposed();
             pano.ThrowIfNotReady();
@@ -473,9 +456,9 @@ namespace OpenCvSharp
         /// <returns>Status code.</returns>
         public Status Stitch(IEnumerable<Mat> images, OutputArray pano)
         {
-            if (images == null)
+            if (images is null)
                 throw new ArgumentNullException(nameof(images));
-            if (pano == null)
+            if (pano is null)
                 throw new ArgumentNullException(nameof(pano));
             pano.ThrowIfNotReady();
 
@@ -502,11 +485,11 @@ namespace OpenCvSharp
         /// <returns>Status code.</returns>
         public Status Stitch(InputArray images, Rect[][] rois, OutputArray pano)
         {
-            if (images == null)
+            if (images is null)
                 throw new ArgumentNullException(nameof(images));
-            if (rois == null)
+            if (rois is null)
                 throw new ArgumentNullException(nameof(rois));
-            if (pano == null)
+            if (pano is null)
                 throw new ArgumentNullException(nameof(pano));
             images.ThrowIfDisposed();
             pano.ThrowIfNotReady();
@@ -534,11 +517,11 @@ namespace OpenCvSharp
         /// <returns>Status code.</returns>
         public Status Stitch(IEnumerable<Mat> images, Rect[][] rois, OutputArray pano)
         {
-            if (images == null)
+            if (images is null)
                 throw new ArgumentNullException(nameof(images));
-            if (rois == null)
+            if (rois is null)
                 throw new ArgumentNullException(nameof(rois));
-            if (pano == null)
+            if (pano is null)
                 throw new ArgumentNullException(nameof(pano));
             pano.ThrowIfNotReady();
 
@@ -560,12 +543,8 @@ namespace OpenCvSharp
 
         #endregion
 
-        internal class Ptr : OpenCvSharp.Ptr
+        internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
         {
-            public Ptr(IntPtr ptr) : base(ptr)
-            {
-            }
-
             public override IntPtr Get()
             {
                 NativeMethods.HandleException(

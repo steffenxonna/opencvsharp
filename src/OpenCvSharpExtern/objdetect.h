@@ -6,6 +6,8 @@
 
 #include "include_opencv.h"
 
+#ifndef _WINRT_DLL
+
 #pragma region CascadeClassifier
 
 CVAPI(ExceptionStatus) objdetect_CascadeClassifier_new(cv::CascadeClassifier **returnValue)
@@ -38,6 +40,14 @@ CVAPI(ExceptionStatus) objdetect_CascadeClassifier_load(
 {
     BEGIN_WRAP
     *returnValue = obj->load(fileName) ? 1 : 0;
+    END_WRAP
+}
+
+CVAPI(ExceptionStatus) objdetect_CascadeClassifier_read(
+    cv::CascadeClassifier* obj, cv::FileNode* fn, int* returnValue)
+{
+    BEGIN_WRAP
+        * returnValue = obj->read(*fn) ? 1 : 0;
     END_WRAP
 }
 
@@ -124,3 +134,5 @@ CVAPI(ExceptionStatus) objdetect_groupRectangles_meanshift(
     cv::groupRectangles_meanshift(*rectList, *foundWeights, *foundScales, detectThreshold, cpp(winDetSize));
     END_WRAP
 }
+
+#endif
