@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 using OpenCvSharp.Internal.Vectors;
 
 namespace OpenCvSharp;
@@ -9,19 +9,11 @@ namespace OpenCvSharp;
 public class LineSegmentDetector : Algorithm
 {
     /// <summary>
-    /// cv::Ptr&lt;LineSegmentDetector&gt;
-    /// </summary>
-    private readonly Ptr ptrObj;
-
-    /// <summary>
     /// 
     /// </summary>
-    protected LineSegmentDetector(IntPtr p)
-    {
-        ptrObj = new Ptr(p);
-        ptr = ptrObj.Get();
-    }
-
+    private LineSegmentDetector(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.imgproc_Ptr_LineSegmentDetector_delete(p)))
+    { }
     /// <summary>
     /// Creates a smart pointer to a LineSegmentDetector object and initializes it.
     /// </summary>
@@ -40,18 +32,19 @@ public class LineSegmentDetector : Algorithm
         double scale = 0.8, double sigmaScale = 0.6, double quant = 2.0, double angTh = 22.5,
         double logEps = 0, double densityTh = 0.7, int nBins = 1024)
     {
-        IntPtr ptr = NativeMethods.imgproc_createLineSegmentDetector(
-            (int)refine, scale, sigmaScale, quant, angTh, logEps, densityTh, nBins);
-        return new LineSegmentDetector(ptr);
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        ptrObj.Dispose();
-        base.DisposeManaged();
+        NativeMethods.HandleException(
+            NativeMethods.imgproc_createLineSegmentDetector(
+                (int)refine, scale, sigmaScale, quant, angTh, logEps, densityTh, nBins, out var smartPtr));
+        try
+        {
+            NativeMethods.HandleException(NativeMethods.imgproc_Ptr_LineSegmentDetector_get(smartPtr, out var rawPtr));
+            return new LineSegmentDetector(smartPtr, rawPtr);
+        }
+        catch
+        {
+            _ = NativeMethods.imgproc_Ptr_LineSegmentDetector_delete(smartPtr);
+            throw;
+        }
     }
 
     /// <summary>
@@ -66,30 +59,16 @@ public class LineSegmentDetector : Algorithm
     /// <param name="nfa">Vector containing number of false alarms in the line region, 
     /// with precision of 10%. The bigger the value, logarithmically better the detection.</param>
     public virtual void Detect(InputArray image, OutputArray lines,
-        OutputArray? width = null, OutputArray? prec = null, OutputArray? nfa = null)
+        OutputArray width = default, OutputArray prec = default, OutputArray nfa = default)
     {
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
-        if (lines is null)
-            throw new ArgumentNullException(nameof(lines));
-        image.ThrowIfDisposed();
-        lines.ThrowIfNotReady();
-        width?.ThrowIfNotReady();
-        prec?.ThrowIfNotReady();
-        nfa?.ThrowIfNotReady();
-
-        NativeMethods.imgproc_LineSegmentDetector_detect_OutputArray(ptr, image.CvPtr, lines.CvPtr,
-            Cv2.ToPtr(width), Cv2.ToPtr(prec), Cv2.ToPtr(nfa));
-        GC.KeepAlive(this);
-        GC.KeepAlive(image);
-        GC.KeepAlive(lines);
-        GC.KeepAlive(width);
-        GC.KeepAlive(prec);
-        GC.KeepAlive(nfa);
-        lines.Fix();
-        width?.Fix();
-        prec?.Fix();
-        nfa?.Fix();
+        NativeMethods.HandleException(
+            NativeMethods.imgproc_LineSegmentDetector_detect_OutputArray(Handle, image.Proxy, lines.Proxy,
+                width.Proxy, prec.Proxy, nfa.Proxy));
+        GC.KeepAlive(image.Source);
+        GC.KeepAlive(lines.Source);
+        GC.KeepAlive(width.Source);
+        GC.KeepAlive(prec.Source);
+        GC.KeepAlive(nfa.Source);
     }
 
     /// <summary>
@@ -106,25 +85,21 @@ public class LineSegmentDetector : Algorithm
     public virtual void Detect(InputArray image, out Vec4f[] lines,
         out double[] width, out double[] prec, out double[] nfa)
     {
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
-        image.ThrowIfDisposed();
-
-        using (var linesVec = new VectorOfVec4f())
-        using (var widthVec = new VectorOfDouble())
-        using (var precVec = new VectorOfDouble())
-        using (var nfaVec = new VectorOfDouble())
+        using (var linesVec = new StdVector<Vec4f>())
+        using (var widthVec = new StdVector<double>())
+        using (var precVec = new StdVector<double>())
+        using (var nfaVec = new StdVector<double>())
         {
-            NativeMethods.imgproc_LineSegmentDetector_detect_vector(ptr, image.CvPtr,
-                linesVec.CvPtr, widthVec.CvPtr, precVec.CvPtr, nfaVec.CvPtr);
+            NativeMethods.HandleException(
+                NativeMethods.imgproc_LineSegmentDetector_detect_vector(Handle, image.Proxy,
+                    linesVec.CvPtr, widthVec.CvPtr, precVec.CvPtr, nfaVec.CvPtr));
 
             lines = linesVec.ToArray();
             width = widthVec.ToArray();
             prec = precVec.ToArray();
             nfa = nfaVec.ToArray();
         }
-        GC.KeepAlive(this);
-        GC.KeepAlive(image);
+        GC.KeepAlive(image.Source);
     }
 
     /// <summary>
@@ -135,18 +110,10 @@ public class LineSegmentDetector : Algorithm
     /// <param name="lines">A vector of the lines that needed to be drawn.</param>
     public virtual void DrawSegments(InputOutputArray image, InputArray lines)
     {
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
-        if (lines is null)
-            throw new ArgumentNullException(nameof(lines));
-        image.ThrowIfNotReady();
-        lines.ThrowIfDisposed();
-
-        NativeMethods.imgproc_LineSegmentDetector_drawSegments(ptr, image.CvPtr, lines.CvPtr);
-        GC.KeepAlive(this);
-        GC.KeepAlive(image);
-        image.Fix();
-        GC.KeepAlive(lines);
+        NativeMethods.HandleException(
+            NativeMethods.imgproc_LineSegmentDetector_drawSegments(Handle, image.Proxy, lines.Proxy));
+        GC.KeepAlive(image.Source);
+        GC.KeepAlive(lines.Source);
     }
 
     /// <summary>
@@ -160,39 +127,15 @@ public class LineSegmentDetector : Algorithm
     /// in the above mentioned colors.</param>
     /// <returns></returns>
     public virtual int CompareSegments(
-        Size size, InputArray lines1, InputArray lines2, InputOutputArray? image = null)
+        Size size, InputArray lines1, InputArray lines2, InputOutputArray image = default)
     {
-        if (lines1 is null)
-            throw new ArgumentNullException(nameof(lines1));
-        if (lines2 is null)
-            throw new ArgumentNullException(nameof(lines2));
-        lines1.ThrowIfDisposed();
-        lines2.ThrowIfDisposed();
-        image?.ThrowIfNotReady();
-
-        var ret = NativeMethods.imgproc_LineSegmentDetector_compareSegments(
-            ptr, size, lines1.CvPtr, lines2.CvPtr, Cv2.ToPtr(image));
-        GC.KeepAlive(this);
-        GC.KeepAlive(lines1);
-        GC.KeepAlive(lines2);
-        GC.KeepAlive(image);
-        image?.Fix();
+        NativeMethods.HandleException(
+            NativeMethods.imgproc_LineSegmentDetector_compareSegments(
+                Handle, size, lines1.Proxy, lines2.Proxy, image.Proxy, out var ret));
+        GC.KeepAlive(lines1.Source);
+        GC.KeepAlive(lines2.Source);
+        GC.KeepAlive(image.Source);
 
         return ret;
     }
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            var res = NativeMethods.imgproc_Ptr_LineSegmentDetector_get(ptr);
-            GC.KeepAlive(this);
-            return res;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.imgproc_Ptr_LineSegmentDetector_delete(ptr);
-            base.DisposeUnmanaged();
-        }
     }
-}

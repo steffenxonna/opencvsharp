@@ -1,5 +1,6 @@
-﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using OpenCvSharp.Face;
 
 #pragma warning disable 1591
 #pragma warning disable CA1401 // P/Invokes should not be visible
@@ -12,146 +13,113 @@ namespace OpenCvSharp.Internal;
 // ReSharper disable InconsistentNaming
 static partial class NativeMethods
 {
+    #region Utilities
+
+    [LibraryImport(DllExtern, StringMarshalling = StringMarshalling.Utf8), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_getFacesHAAR(
+        in InputArrayProxy image, in OutputArrayProxy faces, string cascadeName, out int returnValue);
+
+    [LibraryImport(DllExtern, StringMarshalling = StringMarshalling.Utf8), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_loadDatasetList(
+        string imageList, string annotationList, IntPtr images, IntPtr annotations, out int returnValue);
+
+    [LibraryImport(DllExtern, StringMarshalling = StringMarshalling.Utf8), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_loadTrainingData1(
+        string filename, IntPtr images, IntPtr facePoints, byte delim, float offset, out int returnValue);
+
+    [LibraryImport(DllExtern, StringMarshalling = StringMarshalling.Utf8), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_loadTrainingData2(
+        string imageList, string groundTruth, IntPtr images, IntPtr facePoints, float offset, out int returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_loadTrainingData3(
+        IntPtr filenames, IntPtr landmarks, IntPtr images, out int returnValue);
+
+    [LibraryImport(DllExtern, StringMarshalling = StringMarshalling.Utf8), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_loadFacePoints(
+        string filename, IntPtr points, float offset, out int returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_drawFacemarks(
+        in InputOutputArrayProxy image, in InputArrayProxy points, Scalar color);
+
+    #endregion
+
     #region Facemark
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_Facemark_loadModel(
-        IntPtr obj, [MarshalAs(UnmanagedType.LPStr)] string model);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_Facemark_loadModel(
+        OpenCvSafeHandle obj, [MarshalAs(UnmanagedType.LPStr)] string model);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_Facemark_fit(
-        IntPtr obj, IntPtr image, IntPtr faces, IntPtr landmarks, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_Facemark_fit(
+        OpenCvSafeHandle obj, in InputArrayProxy image, in InputArrayProxy faces, IntPtr landmarks, out int returnValue);
+
+    #endregion
+
+    #region FacemarkTrain
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkTrain_addTrainingSample(
+        OpenCvSafeHandle obj, in InputArrayProxy image, in InputArrayProxy landmarks, out int returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkTrain_training(OpenCvSafeHandle obj);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkTrain_getFaces(
+        OpenCvSafeHandle obj, in InputArrayProxy image, IntPtr faces, out int returnValue);
+
+    // callback is a function pointer to a static, [UnmanagedCallersOnly] trampoline (see
+    // FacemarkFaceDetectorBridge); userData is a GCHandle to the context rooting the real managed
+    // detector, round-tripped opaquely through callbackData/face_Facemark_faceDetectorThunk.
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkTrain_setFaceDetector(
+        OpenCvSafeHandle obj, IntPtr callback, IntPtr userData,
+        out IntPtr callbackData, out int returnValue);
 
     #endregion
 
     #region FacemarkLBF
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_create(IntPtr @params, out IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkLBF_create(IntPtr @params, out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_Ptr_FacemarkLBF_get(IntPtr obj, out IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_Ptr_FacemarkLBF_get(IntPtr obj, out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_Ptr_FacemarkLBF_delete(IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_Ptr_FacemarkLBF_delete(IntPtr obj);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkLBF_write(OpenCvSafeHandle obj, IntPtr fs);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkLBF_read(OpenCvSafeHandle obj, IntPtr fn);
 
     #region Params
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_new(out IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkLBF_Params_new(out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_delete(IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkLBF_Params_delete(IntPtr obj);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_shape_offset_get(IntPtr obj, out double returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkLBF_Params_getAll(
+        IntPtr obj, out FacemarkLBFParamsData data, IntPtr cascadeFace, IntPtr modelFilename,
+        IntPtr featsM, IntPtr radiusM, IntPtr pupils0, IntPtr pupils1);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_shape_offset_set(IntPtr obj, double val);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkLBF_Params_setAll(
+        IntPtr obj, FacemarkLBFParamsData data, [MarshalAs(UnmanagedType.LPStr)] string cascadeFace,
+        [MarshalAs(UnmanagedType.LPStr)] string modelFilename, IntPtr featsM, IntPtr radiusM, IntPtr pupils0, IntPtr pupils1);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_cascade_face_get(IntPtr obj, IntPtr s);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkLBF_Params_read(IntPtr obj, IntPtr fn);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_cascade_face_set(
-        IntPtr obj, [MarshalAs(UnmanagedType.LPStr)] string s);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_verbose_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_verbose_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_n_landmarks_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_n_landmarks_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_initShape_n_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_initShape_n_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_stages_n_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_stages_n_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_tree_n_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_tree_n_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_tree_depth_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_tree_depth_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_bagging_overlap_get(IntPtr obj, out double returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_bagging_overlap_set(IntPtr obj, double val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_model_filename_get(IntPtr obj, IntPtr s);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_model_filename_set(
-        IntPtr obj, [MarshalAs(UnmanagedType.LPStr)] string s);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_save_model_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_save_model_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_seed_get(IntPtr obj, out uint returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_seed_set(IntPtr obj, uint val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_feats_m_get(IntPtr obj, IntPtr v);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_feats_m_set(IntPtr obj, IntPtr v);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_radius_m_get(IntPtr obj, IntPtr v);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_radius_m_set(IntPtr obj, IntPtr v);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_pupils0_get(IntPtr obj, IntPtr v);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_pupils0_set(IntPtr obj, IntPtr v);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_pupils1_get(IntPtr obj, IntPtr v);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_pupils1_set(IntPtr obj, IntPtr v);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_detectROI_get(IntPtr obj, out Rect returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_detectROI_set(IntPtr obj, Rect val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_read(IntPtr obj, IntPtr fn);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkLBF_Params_write(IntPtr obj, IntPtr fs);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkLBF_Params_write(IntPtr obj, IntPtr fs);
 
     #endregion
 
@@ -159,91 +127,124 @@ static partial class NativeMethods
 
     #region FacemarkAAM
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_create(IntPtr @params, out IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkAAM_create(IntPtr @params, out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_Ptr_FacemarkAAM_get(IntPtr obj, out IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_Ptr_FacemarkAAM_get(IntPtr obj, out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_Ptr_FacemarkAAM_delete(IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_Ptr_FacemarkAAM_delete(IntPtr obj);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkAAM_write(OpenCvSafeHandle obj, IntPtr fs);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkAAM_read(OpenCvSafeHandle obj, IntPtr fn);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkAAM_fitConfig(
+        OpenCvSafeHandle obj,
+        in InputArrayProxy image,
+        in InputArrayProxy roi,
+        IntPtr landmarks,
+        IntPtr[] rotations,
+        Point2f[] translations,
+        float[] scales,
+        int[] modelScaleIndexes,
+        int configLength,
+        out int returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkAAM_getData(
+        OpenCvSafeHandle obj, IntPtr s0, out int returnValue);
 
     #region Params
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_new(out IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkAAM_Params_new(out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_delete(IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkAAM_Params_delete(IntPtr obj);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_model_filename_get(IntPtr obj, IntPtr s);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkAAM_Params_getAll(
+        IntPtr obj, out FacemarkAAMParamsData data, IntPtr modelFilename, IntPtr scales);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_model_filename_set(
-        IntPtr obj, [MarshalAs(UnmanagedType.LPStr)] string s);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkAAM_Params_setAll(
+        IntPtr obj, FacemarkAAMParamsData data, [MarshalAs(UnmanagedType.LPStr)] string modelFilename, IntPtr scales);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_m_get(IntPtr obj, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkAAM_Params_read(IntPtr obj, IntPtr fn);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_m_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_n_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_n_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_n_iter_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_n_iter_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_verbose_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_verbose_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_save_model_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_save_model_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_max_m_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_max_m_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_max_n_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_max_n_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_texture_max_m_get(IntPtr obj, out int returnValue);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_texture_max_m_set(IntPtr obj, int val);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_scales_get(IntPtr obj, IntPtr v);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_scales_set(IntPtr obj, IntPtr v);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_read(IntPtr obj, IntPtr fn);
-
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus face_FacemarkAAM_Params_write(IntPtr obj, IntPtr fs);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus face_FacemarkAAM_Params_write(IntPtr obj, IntPtr fs);
 
     #endregion
+
+    #endregion
+
+    #region FacemarkKazemi
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkKazemi_create(
+        IntPtr parameters, out IntPtr returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_Ptr_FacemarkKazemi_get(
+        IntPtr obj, out IntPtr returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_Ptr_FacemarkKazemi_delete(IntPtr obj);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkKazemi_write(OpenCvSafeHandle obj, IntPtr fs);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkKazemi_read(OpenCvSafeHandle obj, IntPtr fn);
+
+    [LibraryImport(DllExtern, StringMarshalling = StringMarshalling.Utf8), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkKazemi_training(
+        OpenCvSafeHandle obj,
+        IntPtr[] images,
+        int imagesLength,
+        IntPtr[] landmarks,
+        int[] landmarkSizes,
+        int landmarksLength,
+        string configFile,
+        Size scale,
+        string modelFilename,
+        out int returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkKazemi_getFaces(
+        OpenCvSafeHandle obj, in InputArrayProxy image, IntPtr faces, out int returnValue);
+
+    // callback is a function pointer to a static, [UnmanagedCallersOnly] trampoline (see
+    // FacemarkFaceDetectorBridge); userData is a GCHandle to the context rooting the real managed
+    // detector, round-tripped opaquely through callbackData/face_Facemark_faceDetectorThunk.
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkKazemi_setFaceDetector(
+        OpenCvSafeHandle obj, IntPtr callback, IntPtr userData,
+        out IntPtr callbackData, out int returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkFaceDetectorCallbackData_delete(IntPtr callbackData);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkKazemi_Params_new(out IntPtr returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkKazemi_Params_delete(IntPtr obj);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkKazemi_Params_getAll(
+        IntPtr obj, out FacemarkKazemiParamsData data, IntPtr configFile);
+
+    [LibraryImport(DllExtern, StringMarshalling = StringMarshalling.Utf8), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus face_FacemarkKazemi_Params_setAll(
+        IntPtr obj, FacemarkKazemiParamsData data, string configFile);
 
     #endregion
 }

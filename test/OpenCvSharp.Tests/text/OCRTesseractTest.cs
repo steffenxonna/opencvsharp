@@ -1,6 +1,5 @@
-﻿using OpenCvSharp.Text;
+using OpenCvSharp.Text;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace OpenCvSharp.Tests.Text;
 

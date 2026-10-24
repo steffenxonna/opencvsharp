@@ -1,11 +1,11 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp;
 
 /// <summary>
 /// Principal Component Analysis
 /// </summary>
-public class PCA : DisposableCvObject
+public class PCA : CvObject
 {
 
     /// <summary>
@@ -17,7 +17,8 @@ public class PCA : DisposableCvObject
     public PCA()
     {
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_new1(out ptr));
+            NativeMethods.core_PCA_new1(out var p));
+        InitSafeHandle(p);
     }
 
     /// <summary>
@@ -29,16 +30,11 @@ public class PCA : DisposableCvObject
     /// <param name="maxComponents">maximum number of components that PCA should retain; by default, all the components are retained.</param>
     public PCA(InputArray data, InputArray mean, Flags flags, int maxComponents = 0)
     {
-        if (data is null)
-            throw new ArgumentNullException(nameof(data));
-        if (mean is null)
-            throw new ArgumentNullException(nameof(mean));
-        data.ThrowIfDisposed();
-        mean.ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_new2(data.CvPtr, mean.CvPtr, (int)flags, maxComponents, out ptr));
-        GC.KeepAlive(data);
-        GC.KeepAlive(mean);
+            NativeMethods.core_PCA_new2(data.Proxy, mean.Proxy, (int)flags, maxComponents, out var p));
+        GC.KeepAlive(data.Source);
+        GC.KeepAlive(mean.Source);
+        InitSafeHandle(p);
     }
 
     /// <summary>
@@ -51,26 +47,21 @@ public class PCA : DisposableCvObject
     /// Using this parameter will let the PCA decided how many components to retain but it will always keep at least 2.</param>
     public PCA(InputArray data, InputArray mean, Flags flags, double retainedVariance)
     {
-        if (data is null)
-            throw new ArgumentNullException(nameof(data));
-        if (mean is null)
-            throw new ArgumentNullException(nameof(mean));
-        data.ThrowIfDisposed();
-        mean.ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_new3(data.CvPtr, mean.CvPtr, (int)flags, retainedVariance, out ptr));
-        GC.KeepAlive(data);
-        GC.KeepAlive(mean);
+            NativeMethods.core_PCA_new3(data.Proxy, mean.Proxy, (int)flags, retainedVariance, out var p));
+        GC.KeepAlive(data.Source);
+        GC.KeepAlive(mean.Source);
+        InitSafeHandle(p);
     }
 
     /// <summary>
     /// Releases unmanaged resources
     /// </summary>
-    protected override void DisposeUnmanaged()
+
+    private void InitSafeHandle(IntPtr p, bool ownsHandle = true)
     {
-        NativeMethods.HandleException(
-            NativeMethods.core_PCA_delete(ptr));
-        base.DisposeUnmanaged();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle,
+            static h => NativeMethods.HandleException(NativeMethods.core_PCA_delete(h))));
     }
         
     /// <summary>
@@ -82,8 +73,7 @@ public class PCA : DisposableCvObject
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.core_PCA_eigenvectors(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_PCA_eigenvectors(Handle, out var ret));
             return Mat.FromNativePointer(ret);
         }
     }
@@ -97,8 +87,7 @@ public class PCA : DisposableCvObject
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.core_PCA_eigenvalues(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_PCA_eigenvalues(Handle, out var ret));
             return Mat.FromNativePointer(ret);
         }
     }
@@ -112,8 +101,7 @@ public class PCA : DisposableCvObject
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.core_PCA_mean(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_PCA_mean(Handle, out var ret));
             return Mat.FromNativePointer(ret);
         }
     }
@@ -139,16 +127,10 @@ public class PCA : DisposableCvObject
     public PCA Compute(InputArray data, InputArray mean, Flags flags, int maxComponents = 0)
     {
         ThrowIfDisposed();
-        if (data is null)
-            throw new ArgumentNullException(nameof(data));
-        if (mean is null)
-            throw new ArgumentNullException(nameof(mean));
-        data.ThrowIfDisposed();
-        mean.ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_operatorThis(ptr, data.CvPtr, mean.CvPtr, (int)flags, maxComponents));
-        GC.KeepAlive(data);
-        GC.KeepAlive(mean);
+            NativeMethods.core_PCA_operatorThis(Handle, data.Proxy, mean.Proxy, (int)flags, maxComponents));
+        GC.KeepAlive(data.Source);
+        GC.KeepAlive(mean.Source);
         return this;
     }
 
@@ -176,16 +158,10 @@ public class PCA : DisposableCvObject
     public PCA ComputeVar(InputArray data, InputArray mean, Flags flags, double retainedVariance)
     {
         ThrowIfDisposed();
-        if (data is null)
-            throw new ArgumentNullException(nameof(data));
-        if (mean is null)
-            throw new ArgumentNullException(nameof(mean));
-        data.ThrowIfDisposed();
-        mean.ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_computeVar(ptr, data.CvPtr, mean.CvPtr, (int)flags, retainedVariance));
-        GC.KeepAlive(data);
-        GC.KeepAlive(mean);
+            NativeMethods.core_PCA_computeVar(Handle, data.Proxy, mean.Proxy, (int)flags, retainedVariance));
+        GC.KeepAlive(data.Source);
+        GC.KeepAlive(mean.Source);
         return this;
     }
 
@@ -208,13 +184,9 @@ public class PCA : DisposableCvObject
     public Mat Project(InputArray vec)
     {
         ThrowIfDisposed();
-        if (vec is null)
-            throw new ArgumentNullException(nameof(vec));
-        vec.ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_project1(ptr, vec.CvPtr, out var ret));
-        GC.KeepAlive(this);
-        GC.KeepAlive(vec);
+            NativeMethods.core_PCA_project1(Handle, vec.Proxy, out var ret));
+        GC.KeepAlive(vec.Source);
         return Mat.FromNativePointer(ret);
     }
 
@@ -233,18 +205,10 @@ public class PCA : DisposableCvObject
     public void Project(InputArray vec, OutputArray result)
     {
         ThrowIfDisposed();
-        if (vec is null)
-            throw new ArgumentNullException(nameof(vec));
-        if (result is null)
-            throw new ArgumentNullException(nameof(result));
-        vec.ThrowIfDisposed();
-        result.ThrowIfNotReady();
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_project2(ptr, vec.CvPtr, result.CvPtr));
-        result.Fix();
-        GC.KeepAlive(this);
-        GC.KeepAlive(vec);
-        GC.KeepAlive(result);
+            NativeMethods.core_PCA_project2(Handle, vec.Proxy, result.Proxy));
+        GC.KeepAlive(vec.Source);
+        GC.KeepAlive(result.Source);
     }
 
     /// <summary>
@@ -263,13 +227,9 @@ public class PCA : DisposableCvObject
     public Mat BackProject(InputArray vec)
     {
         ThrowIfDisposed();
-        if (vec is null)
-            throw new ArgumentNullException(nameof(vec));
-        vec.ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_backProject1(ptr, vec.CvPtr, out var ret));
-        GC.KeepAlive(this);
-        GC.KeepAlive(vec);
+            NativeMethods.core_PCA_backProject1(Handle, vec.Proxy, out var ret));
+        GC.KeepAlive(vec.Source);
         return new Mat(ret);
     }
 
@@ -290,18 +250,10 @@ public class PCA : DisposableCvObject
     public void BackProject(InputArray vec, OutputArray result)
     {
         ThrowIfDisposed();
-        if (vec is null)
-            throw new ArgumentNullException(nameof(vec));
-        if (result is null)
-            throw new ArgumentNullException(nameof(result));
-        vec.ThrowIfDisposed();
-        result.ThrowIfNotReady();
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_backProject2(ptr, vec.CvPtr, result.CvPtr));
-        result.Fix();
-        GC.KeepAlive(this);
-        GC.KeepAlive(vec);
-        GC.KeepAlive(result);
+            NativeMethods.core_PCA_backProject2(Handle, vec.Proxy, result.Proxy));
+        GC.KeepAlive(vec.Source);
+        GC.KeepAlive(result.Source);
     }
 
     /// <summary>
@@ -311,14 +263,12 @@ public class PCA : DisposableCvObject
     /// <param name="fs"></param>
     public void Write(FileStorage fs)
     {
-        if (fs is null) 
-            throw new ArgumentNullException(nameof(fs));
+        ArgumentNullException.ThrowIfNull(fs);
         fs.ThrowIfDisposed();
             
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_write(ptr, fs.CvPtr));
+            NativeMethods.core_PCA_write(Handle, fs.CvPtr));
 
-        GC.KeepAlive(this);
         GC.KeepAlive(fs);
     }
 
@@ -329,14 +279,12 @@ public class PCA : DisposableCvObject
     /// <param name="fn"></param>
     public void Read(FileNode fn)
     {
-        if (fn is null) 
-            throw new ArgumentNullException(nameof(fn));
+        ArgumentNullException.ThrowIfNull(fn);
         fn.ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.core_PCA_read(ptr, fn.CvPtr));
+            NativeMethods.core_PCA_read(Handle, fn.CvPtr));
 
-        GC.KeepAlive(this);
         GC.KeepAlive(fn);
     }
 

@@ -12,17 +12,12 @@ public class BlockMeanHash : ImgHashBase
     /// <summary>
     /// cv::Ptr&lt;T&gt;
     /// </summary>
-    private Ptr? ptrObj;
-
     /// <summary>
     /// 
     /// </summary>
-    protected BlockMeanHash(IntPtr p)
-    {
-        ptrObj = new Ptr(p);
-        ptr = ptrObj.Get();
-    }
-
+    private BlockMeanHash(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.img_hash_Ptr_BlockMeanHash_delete(p)))
+    { }
     /// <summary>
     /// Create BlockMeanHash object
     /// </summary>
@@ -31,19 +26,9 @@ public class BlockMeanHash : ImgHashBase
     public static BlockMeanHash Create(BlockMeanHashMode mode = BlockMeanHashMode.Mode0)
     {
         NativeMethods.HandleException(
-            NativeMethods.img_hash_BlockMeanHash_create((int)mode, out var p));
-        return new BlockMeanHash(p);
-    }
-        
-    /// <inheritdoc />
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
+            NativeMethods.img_hash_BlockMeanHash_create((int)mode, out var smartPtr));
+        NativeMethods.HandleException(NativeMethods.img_hash_Ptr_BlockMeanHash_get(smartPtr, out var rawPtr));
+        return new BlockMeanHash(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -54,8 +39,7 @@ public class BlockMeanHash : ImgHashBase
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.img_hash_BlockMeanHash_setMode(ptr, (int)mode));
-        GC.KeepAlive(this);
+            NativeMethods.img_hash_BlockMeanHash_setMode(Handle, (int)mode));
     }
 
     /// <summary>
@@ -65,10 +49,9 @@ public class BlockMeanHash : ImgHashBase
     public double[] GetMean()
     {
         ThrowIfDisposed();
-        using var meanVec = new VectorOfDouble();
+        using var meanVec = new StdVector<double>();
         NativeMethods.HandleException(
-            NativeMethods.img_hash_BlockMeanHash_getMean(ptr, meanVec.CvPtr));
-        GC.KeepAlive(this);
+            NativeMethods.img_hash_BlockMeanHash_getMean(Handle, meanVec.CvPtr));
         return meanVec.ToArray();
     }
         
@@ -84,22 +67,4 @@ public class BlockMeanHash : ImgHashBase
     {
         base.Compute(inputArr, outputArr);
     }*/
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.img_hash_Ptr_BlockMeanHash_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.img_hash_Ptr_BlockMeanHash_delete(ptr));
-            base.DisposeUnmanaged();
-        }
-    }
 }

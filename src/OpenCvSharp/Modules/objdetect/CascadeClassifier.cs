@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 using OpenCvSharp.Internal.Vectors;
 
 // ReSharper disable InconsistentNaming
@@ -8,7 +8,7 @@ namespace OpenCvSharp;
 /// <summary>
 /// Cascade classifier class for object detection.
 /// </summary>
-public class CascadeClassifier : DisposableCvObject
+public class CascadeClassifier : CvObject
 {
     #region Init and Disposal
 
@@ -18,7 +18,8 @@ public class CascadeClassifier : DisposableCvObject
     public CascadeClassifier()
     {
         NativeMethods.HandleException(
-            NativeMethods.objdetect_CascadeClassifier_new(out ptr));
+            NativeMethods.objdetect_CascadeClassifier_new(out var p));
+        InitSafeHandle(p);
     }
 
     /// <summary>
@@ -33,17 +34,18 @@ public class CascadeClassifier : DisposableCvObject
             throw new FileNotFoundException("\""+ fileName + "\"not found", fileName);
 
         NativeMethods.HandleException(
-            NativeMethods.objdetect_CascadeClassifier_newFromFile(fileName, out ptr));
+            NativeMethods.objdetect_CascadeClassifier_newFromFile(fileName, out var p));
+        InitSafeHandle(p);
     }
 
     /// <summary>
     /// Releases unmanaged resources
     /// </summary>
-    protected override void DisposeUnmanaged()
+
+    private void InitSafeHandle(IntPtr p, bool ownsHandle = true)
     {
-        NativeMethods.HandleException(
-            NativeMethods.objdetect_CascadeClassifier_delete(ptr));
-        base.DisposeUnmanaged();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle,
+            static h => NativeMethods.HandleException(NativeMethods.objdetect_CascadeClassifier_delete(h))));
     }
 
     #endregion
@@ -58,8 +60,7 @@ public class CascadeClassifier : DisposableCvObject
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.objdetect_CascadeClassifier_empty(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.objdetect_CascadeClassifier_empty(Handle, out var ret));
         return ret != 0;
     }
 
@@ -79,8 +80,7 @@ public class CascadeClassifier : DisposableCvObject
             throw new FileNotFoundException("\"" + fileName + "\"not found", fileName);
 
         NativeMethods.HandleException(
-            NativeMethods.objdetect_CascadeClassifier_load(ptr, fileName, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.objdetect_CascadeClassifier_load(Handle, fileName, out var ret));
         return ret != 0;
     }
 
@@ -90,14 +90,11 @@ public class CascadeClassifier : DisposableCvObject
     /// <param name="fn"></param>
     public virtual bool Read(FileNode fn)
     {
-        if (ptr == IntPtr.Zero)
-            throw new ObjectDisposedException(GetType().Name);
-        if (fn is null)
-            throw new ArgumentNullException(nameof(fn));
+        ObjectDisposedException.ThrowIf(ptr == IntPtr.Zero, this);
+        ArgumentNullException.ThrowIfNull(fn);
 
         NativeMethods.HandleException(
-            NativeMethods.objdetect_CascadeClassifier_read(ptr, fn.CvPtr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.objdetect_CascadeClassifier_read(Handle, fn.CvPtr, out var ret));
         GC.KeepAlive(fn);
 
         return ret != 0;
@@ -123,20 +120,18 @@ public class CascadeClassifier : DisposableCvObject
         Size? maxSize = null)
     {
         ThrowIfDisposed();
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
+        ArgumentNullException.ThrowIfNull(image);
         image.ThrowIfDisposed();
 
         var minSize0 = minSize.GetValueOrDefault(new Size());
         var maxSize0 = maxSize.GetValueOrDefault(new Size());
-        using var objectsVec = new VectorOfRect();
+        using var objectsVec = new StdVector<Rect>();
 
         NativeMethods.HandleException(
             NativeMethods.objdetect_CascadeClassifier_detectMultiScale1(
-                ptr, image.CvPtr, objectsVec.CvPtr,
+                Handle, image.CvPtr, objectsVec.CvPtr,
                 scaleFactor, minNeighbors, (int) flags, minSize0, maxSize0));
 
-        GC.KeepAlive(this);
         GC.KeepAlive(image);
         return objectsVec.ToArray();
     }
@@ -167,22 +162,20 @@ public class CascadeClassifier : DisposableCvObject
         bool outputRejectLevels = false)
     {
         ThrowIfDisposed();
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
+        ArgumentNullException.ThrowIfNull(image);
         image.ThrowIfDisposed();
 
         var minSize0 = minSize.GetValueOrDefault(new Size());
         var maxSize0 = maxSize.GetValueOrDefault(new Size());
-        using var objectsVec = new VectorOfRect();
-        using var rejectLevelsVec = new VectorOfInt32();
-        using var levelWeightsVec = new VectorOfDouble();
+        using var objectsVec = new StdVector<Rect>();
+        using var rejectLevelsVec = new StdVector<int>();
+        using var levelWeightsVec = new StdVector<double>();
 
         NativeMethods.HandleException(
             NativeMethods.objdetect_CascadeClassifier_detectMultiScale2(
-                ptr, image.CvPtr, objectsVec.CvPtr, rejectLevelsVec.CvPtr, levelWeightsVec.CvPtr,
+                Handle, image.CvPtr, objectsVec.CvPtr, rejectLevelsVec.CvPtr, levelWeightsVec.CvPtr,
                 scaleFactor, minNeighbors, (int) flags, minSize0, maxSize0, outputRejectLevels ? 1 : 0));
 
-        GC.KeepAlive(this);
         GC.KeepAlive(image);
 
         rejectLevels = rejectLevelsVec.ToArray();
@@ -198,8 +191,7 @@ public class CascadeClassifier : DisposableCvObject
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.objdetect_CascadeClassifier_isOldFormatCascade(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.objdetect_CascadeClassifier_isOldFormatCascade(Handle, out var ret));
         return ret != 0;
     }
 
@@ -211,8 +203,7 @@ public class CascadeClassifier : DisposableCvObject
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.objdetect_CascadeClassifier_getOriginalWindowSize(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.objdetect_CascadeClassifier_getOriginalWindowSize(Handle, out var ret));
         return ret;
     }
 
@@ -224,8 +215,7 @@ public class CascadeClassifier : DisposableCvObject
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.objdetect_CascadeClassifier_getFeatureType(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.objdetect_CascadeClassifier_getFeatureType(Handle, out var ret));
         return ret;
     }
 

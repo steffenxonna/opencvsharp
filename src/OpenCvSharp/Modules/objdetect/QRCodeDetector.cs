@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 using OpenCvSharp.Internal.Vectors;
 
 // ReSharper disable InconsistentNaming
@@ -8,7 +8,7 @@ namespace OpenCvSharp;
 /// <summary>
 /// 
 /// </summary>
-public class QRCodeDetector : DisposableCvObject
+public class QRCodeDetector : CvObject
 {
     /// <summary>
     /// 
@@ -16,17 +16,18 @@ public class QRCodeDetector : DisposableCvObject
     public QRCodeDetector()
     {
         NativeMethods.HandleException(
-            NativeMethods.objdetect_QRCodeDetector_new(out ptr));               
+            NativeMethods.objdetect_QRCodeDetector_new(out var p));               
+        InitSafeHandle(p);
     }
         
     /// <summary>
     /// Releases unmanaged resources
     /// </summary>
-    protected override void DisposeUnmanaged()
+
+    private void InitSafeHandle(IntPtr p, bool ownsHandle = true)
     {
-        NativeMethods.HandleException(
-            NativeMethods.objdetect_QRCodeDetector_delete(ptr));
-        base.DisposeUnmanaged();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle,
+            static h => NativeMethods.HandleException(NativeMethods.objdetect_QRCodeDetector_delete(h))));
     }
 
     /// <summary>
@@ -37,8 +38,7 @@ public class QRCodeDetector : DisposableCvObject
     public void SetEpsX(double epsX)
     {
         NativeMethods.HandleException(
-            NativeMethods.objdetect_QRCodeDetector_setEpsX(ptr, epsX));
-        GC.KeepAlive(this);
+            NativeMethods.objdetect_QRCodeDetector_setEpsX(Handle, epsX));
     }
 
     /// <summary>
@@ -49,8 +49,7 @@ public class QRCodeDetector : DisposableCvObject
     public void SetEpsY(double epsY)
     {
         NativeMethods.HandleException(
-            NativeMethods.objdetect_QRCodeDetector_setEpsY(ptr, epsY));
-        GC.KeepAlive(this);
+            NativeMethods.objdetect_QRCodeDetector_setEpsY(Handle, epsY));
     }
 
     /// <summary>
@@ -61,18 +60,13 @@ public class QRCodeDetector : DisposableCvObject
     /// <returns></returns>
     public bool Detect(InputArray img, out Point2f[] points)
     {
-        if (img is null)
-            throw new ArgumentNullException(nameof(img));
-        img.ThrowIfDisposed();
-
-        using var pointsVec = new VectorOfPoint2f();
+        using var pointsVec = new StdVector<Point2f>();
 
         NativeMethods.HandleException(
-            NativeMethods.objdetect_QRCodeDetector_detect(ptr, img.CvPtr, pointsVec.CvPtr, out var ret));
+            NativeMethods.objdetect_QRCodeDetector_detect(Handle, img.Proxy, pointsVec.CvPtr, out var ret));
         points = pointsVec.ToArray();
 
-        GC.KeepAlive(img);
-        GC.KeepAlive(this);
+        GC.KeepAlive(img.Source);
 
         return ret != 0;
     }
@@ -85,25 +79,19 @@ public class QRCodeDetector : DisposableCvObject
     /// <param name="points">Quadrangle vertices found by detect() method (or some other algorithm).</param>
     /// <param name="straightQrCode">The optional output image containing rectified and binarized QR code</param>
     /// <returns></returns>
-    public string Decode(InputArray img, IEnumerable<Point2f> points, OutputArray? straightQrCode = null)
+    public string Decode(InputArray img, IEnumerable<Point2f> points, OutputArray straightQrCode = default)
     {
-        if (img is null)
-            throw new ArgumentNullException(nameof(img));
-        if (points is null)
-            throw new ArgumentNullException(nameof(points));
-        img.ThrowIfDisposed();
-        straightQrCode?.ThrowIfNotReady();
+        ArgumentNullException.ThrowIfNull(points);
 
-        using var pointsVec = new VectorOfPoint2f(points);
+        using var pointsVec = new StdVector<Point2f>(points);
         using var resultString = new StdString();
         NativeMethods.HandleException(
             NativeMethods.objdetect_QRCodeDetector_decode(
-                ptr, img.CvPtr, pointsVec.CvPtr, Cv2.ToPtr(straightQrCode), resultString.CvPtr));
+                Handle, img.Proxy, pointsVec.CvPtr, straightQrCode.Proxy, resultString.CvPtr));
 
-        GC.KeepAlive(img);
+        GC.KeepAlive(img.Source);
         GC.KeepAlive(points);
-        GC.KeepAlive(straightQrCode);
-        GC.KeepAlive(this);
+        GC.KeepAlive(straightQrCode.Source);
 
         return resultString.ToString();
     }
@@ -115,23 +103,17 @@ public class QRCodeDetector : DisposableCvObject
     /// <param name="points">optional output array of vertices of the found QR code quadrangle. Will be empty if not found.</param>
     /// <param name="straightQrCode">The optional output image containing rectified and binarized QR code</param>
     /// <returns></returns>
-    public string DetectAndDecode(InputArray img, out Point2f[] points, OutputArray? straightQrCode = null)
+    public string DetectAndDecode(InputArray img, out Point2f[] points, OutputArray straightQrCode = default)
     {
-        if (img is null)
-            throw new ArgumentNullException(nameof(img));
-        img.ThrowIfDisposed();
-        straightQrCode?.ThrowIfNotReady();
-
-        using var pointsVec = new VectorOfPoint2f();
+        using var pointsVec = new StdVector<Point2f>();
         using var resultString = new StdString();
         NativeMethods.HandleException(
             NativeMethods.objdetect_QRCodeDetector_detectAndDecode(
-                ptr, img.CvPtr, pointsVec.CvPtr, Cv2.ToPtr(straightQrCode), resultString.CvPtr));
+                Handle, img.Proxy, pointsVec.CvPtr, straightQrCode.Proxy, resultString.CvPtr));
         points = pointsVec.ToArray();
 
-        GC.KeepAlive(img);
-        GC.KeepAlive(straightQrCode);
-        GC.KeepAlive(this);
+        GC.KeepAlive(img.Source);
+        GC.KeepAlive(straightQrCode.Source);
 
         return resultString.ToString();
     }
@@ -144,18 +126,13 @@ public class QRCodeDetector : DisposableCvObject
     /// <returns></returns>
     public bool DetectMulti(InputArray img, out Point2f[] points)
     {
-        if (img is null)
-            throw new ArgumentNullException(nameof(img));
-        img.ThrowIfDisposed();
-
-        using var pointsVec = new VectorOfPoint2f();
+        using var pointsVec = new StdVector<Point2f>();
 
         NativeMethods.HandleException(
-            NativeMethods.objdetect_QRCodeDetector_detectMulti(ptr, img.CvPtr, pointsVec.CvPtr, out var ret));
+            NativeMethods.objdetect_QRCodeDetector_detectMulti(Handle, img.Proxy, pointsVec.CvPtr, out var ret));
         points = pointsVec.ToArray();
 
-        GC.KeepAlive(img);
-        GC.KeepAlive(this);
+        GC.KeepAlive(img.Source);
 
         return ret != 0;
     }
@@ -166,11 +143,10 @@ public class QRCodeDetector : DisposableCvObject
     /// </summary>
     /// <param name="img">grayscale or color (BGR) image containing QR code.</param>
     /// <param name="points">Quadrangle vertices found by detect() method (or some other algorithm).</param>
-    /// <param name="decodedInfo">UTF8-encoded output vector of string or empty vector of string if the codes cannot be decoded. </param>
-    /// <returns></returns>
-    public bool DecodeMulti(InputArray img, IEnumerable<Point2f> points, out string?[] decodedInfo)
+    /// <returns>UTF8-encoded output vector of string or empty vector of string if the codes cannot be decoded.</returns>
+    public string?[] DecodeMulti(InputArray img, IEnumerable<Point2f> points)
     {
-        return DecodeMulti(img, points, out decodedInfo, out _, false);
+        return DecodeMulti(img, points, out _, false);
     }
 
     /// <summary>
@@ -179,12 +155,11 @@ public class QRCodeDetector : DisposableCvObject
     /// </summary>
     /// <param name="img">grayscale or color (BGR) image containing QR code.</param>
     /// <param name="points">Quadrangle vertices found by detect() method (or some other algorithm).</param>
-    /// <param name="decodedInfo">UTF8-encoded output vector of string or empty vector of string if the codes cannot be decoded. </param>
     /// <param name="straightQrCode">The optional output image containing rectified and binarized QR code</param>
-    /// <returns></returns>
-    public bool DecodeMulti(InputArray img, IEnumerable<Point2f> points, out string?[] decodedInfo, out Mat[] straightQrCode)
+    /// <returns>UTF8-encoded output vector of string or empty vector of string if the codes cannot be decoded.</returns>
+    public string?[] DecodeMulti(InputArray img, IEnumerable<Point2f> points, out Mat[] straightQrCode)
     {
-        return DecodeMulti(img, points, out decodedInfo, out straightQrCode, true);
+        return DecodeMulti(img, points, out straightQrCode, true);
     }
 
 
@@ -194,46 +169,38 @@ public class QRCodeDetector : DisposableCvObject
     /// </summary>
     /// <param name="img">grayscale or color (BGR) image containing QR code.</param>
     /// <param name="points">Quadrangle vertices found by detect() method (or some other algorithm).</param>
-    /// <param name="decodedInfo">UTF8-encoded output vector of string or empty vector of string if the codes cannot be decoded. </param>
     /// <param name="straightQrCode">The optional output image containing rectified and binarized QR code</param>
     /// <param name="isOutputStraightQrCode"><see langword="true"/> to output <paramref name="straightQrCode"/></param>
-    /// <returns></returns>
-    protected bool DecodeMulti(InputArray img, IEnumerable<Point2f> points, out string?[] decodedInfo, out Mat[] straightQrCode, bool isOutputStraightQrCode)
+    /// <returns>UTF8-encoded output vector of string or empty vector of string if the codes cannot be decoded.</returns>
+    protected string?[] DecodeMulti(InputArray img, IEnumerable<Point2f> points, out Mat[] straightQrCode, bool isOutputStraightQrCode)
     {
-        if (img is null)
-            throw new ArgumentNullException(nameof(img));
-        if (points is null)
-            throw new ArgumentNullException(nameof(points));
-
-        img.ThrowIfDisposed();
+        ArgumentNullException.ThrowIfNull(points);
 
         using var decodedInfoVec = new VectorOfString();
-        using var pointsVec = new VectorOfPoint2f(points);
+        using var pointsVec = new StdVector<Point2f>(points);
 
-        int ret;
         if (isOutputStraightQrCode)
         {
             using var straightQrCodeVec = new VectorOfMat();
             NativeMethods.HandleException(
                 NativeMethods.objdetect_QRCodeDetector_decodeMulti(
-                    ptr, img.CvPtr, pointsVec.CvPtr, decodedInfoVec.CvPtr, straightQrCodeVec.CvPtr, out ret));
+                    Handle, img.Proxy, pointsVec.CvPtr, decodedInfoVec.CvPtr, straightQrCodeVec.CvPtr, out _));
             straightQrCode = straightQrCodeVec.ToArray();
         }
         else
         {
             NativeMethods.HandleException(
                 NativeMethods.objdetect_QRCodeDetector_decodeMulti_NoStraightQrCode(
-                    ptr, img.CvPtr, pointsVec.CvPtr, decodedInfoVec.CvPtr, out ret));
+                    Handle, img.Proxy, pointsVec.CvPtr, decodedInfoVec.CvPtr, out _));
             straightQrCode = [];
         }
 
         // decode utf-8 bytes.
-        decodedInfo = decodedInfoVec.ToArray();
+        var decodedInfo = decodedInfoVec.ToArray();
 
-        GC.KeepAlive(img);
+        GC.KeepAlive(img.Source);
         GC.KeepAlive(points);
-        GC.KeepAlive(this);
 
-        return ret != 0;
+        return decodedInfo;
     }
 }

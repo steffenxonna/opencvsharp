@@ -1,9 +1,9 @@
-﻿
+﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal.Vectors;
 
 // ReSharper disable UnusedMember.Global
 
 // https://github.com/opencv/opencv_contrib/blob/33ae078b0989b44ac8d262d210335b04bb268b4d/modules/line_descriptor/src/binary_descriptor.cpp#L1030
-#if false
 namespace OpenCvSharp.LineDescriptor
 {
     /// <summary>
@@ -24,7 +24,7 @@ namespace OpenCvSharp.LineDescriptor
     /// indicate the order of extraction of a line inside a single octave.
     /// </summary>
     // ReSharper disable once InconsistentNaming
-    public class LSDDetector : DisposableCvObject
+    public class LSDDetector : CvObject
     {
         /// <summary>
         /// Default constructor.
@@ -32,7 +32,8 @@ namespace OpenCvSharp.LineDescriptor
         public LSDDetector()
         {
             NativeMethods.HandleException(
-                NativeMethods.line_descriptor_LSDDetector_new1(out ptr));
+                NativeMethods.line_descriptor_LSDDetector_new1(out var p));
+            InitSafeHandle(p);
         }
 
         /// <summary>
@@ -49,18 +50,18 @@ namespace OpenCvSharp.LineDescriptor
                     angTh: lsdParam.AngTh,
                     logEps: lsdParam.LogEps,
                     densityTh: lsdParam.DensityTh,
-                    nBins: lsdParam.NBins,
-                    out ptr));
+                    nBins: lsdParam.NBins, out var p));
+            InitSafeHandle(p);
         }
 
         /// <summary>
         /// Releases unmanaged resources
         /// </summary>
-        protected override void DisposeUnmanaged()
+
+        private void InitSafeHandle(IntPtr p, bool ownsHandle = true)
         {
-            NativeMethods.HandleException(
-                NativeMethods.line_descriptor_LSDDetector_delete(ptr));
-            base.DisposeUnmanaged();
+            SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle,
+                static h => NativeMethods.HandleException(NativeMethods.line_descriptor_LSDDetector_delete(h))));
         }
 
         /// <summary>
@@ -73,19 +74,16 @@ namespace OpenCvSharp.LineDescriptor
         /// <returns>vector that will store extracted lines for one or more images</returns>
         public KeyLine[] Detect(Mat image, int scale, int numOctaves, Mat? mask = null)
         {
-            if (image is null)
-                throw new ArgumentNullException(nameof(image));
+            ArgumentNullException.ThrowIfNull(image);
             image.ThrowIfDisposed();
             mask?.ThrowIfDisposed();
 
             using var keypointsVec = new VectorOfKeyLine();
             NativeMethods.HandleException(
                 NativeMethods.line_descriptor_LSDDetector_detect1(
-                    ptr, image.CvPtr, keypointsVec.CvPtr, scale, numOctaves, mask?.CvPtr ?? IntPtr.Zero));
+                    Handle, image.CvPtr, keypointsVec.CvPtr, scale, numOctaves, mask?.Handle ?? OpenCvSafeHandle.Null));
 
-            GC.KeepAlive(this);
             GC.KeepAlive(image);
-            GC.KeepAlive(mask);
 
             return keypointsVec.ToArray();
         }
@@ -100,8 +98,7 @@ namespace OpenCvSharp.LineDescriptor
         /// <returns>set of vectors that will store extracted lines for one or more images</returns>
         public KeyLine[][] Detect(IEnumerable<Mat> images, int scale, int numOctaves, IEnumerable<Mat>? masks = null)
         {
-            if (images is null)
-                throw new ArgumentNullException(nameof(images));
+            ArgumentNullException.ThrowIfNull(images);
 
             var imagesPtrs = images.Select(i =>
             {
@@ -121,12 +118,11 @@ namespace OpenCvSharp.LineDescriptor
             using var keypointsVec = new VectorOfVectorKeyLine();
             NativeMethods.HandleException(
                 NativeMethods.line_descriptor_LSDDetector_detect2(
-                    ptr, 
+                    Handle, 
                     imagesPtrs, imagesPtrs.Length,
                     keypointsVec.CvPtr, scale, numOctaves,
                     masksPtrs, masksPtrs.Length));
 
-            GC.KeepAlive(this);
             GC.KeepAlive(images);
             GC.KeepAlive(masks);
 
@@ -134,5 +130,3 @@ namespace OpenCvSharp.LineDescriptor
         }
     }
 }
-
-#endif

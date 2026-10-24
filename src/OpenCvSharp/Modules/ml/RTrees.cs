@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp.ML;
 
@@ -7,19 +7,14 @@ namespace OpenCvSharp.ML;
 /// </summary>
 public class RTrees : DTrees
 {
-    private Ptr? ptrObj;
-
     #region Init and Disposal
 
     /// <summary>
     /// Creates instance by raw pointer cv::ml::RTrees*
     /// </summary>
-    protected RTrees(IntPtr p)
-    {
-        ptrObj = new Ptr(p);
-        ptr = ptrObj.Get();
-    }
-
+    private RTrees(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.ml_Ptr_RTrees_delete(p)))
+    { }
     /// <summary>
     /// Creates the empty model.
     /// </summary>
@@ -27,8 +22,9 @@ public class RTrees : DTrees
     public new static RTrees Create()
     {
         NativeMethods.HandleException(
-            NativeMethods.ml_RTrees_create(out var ptr));
-        return new RTrees(ptr);
+            NativeMethods.ml_RTrees_create(out var smartPtr));
+        NativeMethods.HandleException(NativeMethods.ml_Ptr_RTrees_get(smartPtr, out var rawPtr));
+        return new RTrees(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -38,11 +34,11 @@ public class RTrees : DTrees
     /// <returns></returns>
     public new static RTrees Load(string filePath)
     {
-        if (filePath is null)
-            throw new ArgumentNullException(nameof(filePath));
+        ArgumentNullException.ThrowIfNull(filePath);
         NativeMethods.HandleException(
-            NativeMethods.ml_RTrees_load(filePath, out var ptr));
-        return new RTrees(ptr);
+            NativeMethods.ml_RTrees_load(filePath, out var smartPtr));
+        NativeMethods.HandleException(NativeMethods.ml_Ptr_RTrees_get(smartPtr, out var rawPtr));
+        return new RTrees(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -52,21 +48,11 @@ public class RTrees : DTrees
     /// <returns></returns>
     public new static RTrees LoadFromString(string strModel)
     {
-        if (strModel is null)
-            throw new ArgumentNullException(nameof(strModel));
+        ArgumentNullException.ThrowIfNull(strModel);
         NativeMethods.HandleException(
-            NativeMethods.ml_RTrees_loadFromString(strModel, out var ptr));
-        return new RTrees(ptr);
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
+            NativeMethods.ml_RTrees_loadFromString(strModel, out var smartPtr));
+        NativeMethods.HandleException(NativeMethods.ml_Ptr_RTrees_get(smartPtr, out var rawPtr));
+        return new RTrees(smartPtr, rawPtr);
     }
 
     #endregion
@@ -83,16 +69,14 @@ public class RTrees : DTrees
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.ml_RTrees_getCalculateVarImportance(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.ml_RTrees_getCalculateVarImportance(Handle, out var ret));
             return ret != 0;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.ml_RTrees_setCalculateVarImportance(ptr, value ? 1 : 0));
-            GC.KeepAlive(this);
+                NativeMethods.ml_RTrees_setCalculateVarImportance(Handle, value ? 1 : 0));
         }
     }
 
@@ -106,16 +90,14 @@ public class RTrees : DTrees
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.ml_RTrees_getActiveVarCount(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.ml_RTrees_getActiveVarCount(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.ml_RTrees_setActiveVarCount(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.ml_RTrees_setActiveVarCount(Handle, value));
         }
     }
 
@@ -128,16 +110,14 @@ public class RTrees : DTrees
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.ml_RTrees_getTermCriteria(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.ml_RTrees_getTermCriteria(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.ml_RTrees_setTermCriteria(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.ml_RTrees_setTermCriteria(Handle, value));
         }
     }
 
@@ -146,9 +126,9 @@ public class RTrees : DTrees
     #region Methods
 
     /// <summary>
-    /// Returns the variable importance array. 
-    /// The method returns the variable importance vector, computed at the training 
-    /// stage when CalculateVarImportance is set to true. If this flag was set to false, 
+    /// Returns the variable importance array.
+    /// The method returns the variable importance vector, computed at the training
+    /// stage when CalculateVarImportance is set to true. If this flag was set to false,
     /// the empty matrix is returned.
     /// </summary>
     /// <returns></returns>
@@ -156,28 +136,25 @@ public class RTrees : DTrees
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.ml_RTrees_getVarImportance(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.ml_RTrees_getVarImportance(Handle, out var ret));
         return new Mat(ret);
     }
 
-    #endregion
-
-    internal new class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
+    /// <summary>
+    /// Returns the class probabilities for each sample, as voted by each of the trees.
+    /// </summary>
+    /// <param name="samples">Array containing the samples for which votes will be calculated.</param>
+    /// <param name="results">Array where the result of the calculation will be written.</param>
+    /// <param name="flags">Flags for defining the type of RTrees.</param>
+    public void GetVotes(InputArray samples, OutputArray results, int flags)
     {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ml_Ptr_RTrees_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
+        ThrowIfDisposed();
 
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ml_Ptr_RTrees_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+        NativeMethods.HandleException(
+            NativeMethods.ml_RTrees_getVotes(Handle, samples.Proxy, results.Proxy, flags));
+        GC.KeepAlive(samples.Source);
+        GC.KeepAlive(results.Source);
     }
+
+    #endregion
 }

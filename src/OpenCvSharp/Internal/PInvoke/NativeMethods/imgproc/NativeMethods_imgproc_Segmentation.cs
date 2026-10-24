@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 #pragma warning disable 1591
@@ -10,56 +10,56 @@ namespace OpenCvSharp.Internal;
 
 static partial class NativeMethods
 {
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_new(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_new(
         out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_delete(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_delete(
         IntPtr obj);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_setWeights(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_setWeights(
         IntPtr obj,
         float weight_non_edge, float weight_gradient_direction, float weight_gradient_magnitude);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_setGradientMagnitudeMaxLimit(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_setGradientMagnitudeMaxLimit(
         IntPtr obj,
         float gradient_magnitude_threshold_max);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_setEdgeFeatureZeroCrossingParameters(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_setEdgeFeatureZeroCrossingParameters(
         IntPtr obj,
         float gradient_magnitude_min_value);
 
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_setEdgeFeatureCannyParameters(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_setEdgeFeatureCannyParameters(
         IntPtr obj,
         double threshold1, double threshold2,
         int apertureSize, int L2gradient);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_applyImage(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_applyImage(
         IntPtr obj,
-        IntPtr image);
+        in InputArrayProxy image);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_applyImageFeatures(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_applyImageFeatures(
         IntPtr obj,
-        IntPtr non_edge,
-        IntPtr gradient_direction,
-        IntPtr gradient_magnitude,
-        IntPtr image);
+        in InputArrayProxy non_edge,
+        in InputArrayProxy gradient_direction,
+        in InputArrayProxy gradient_magnitude,
+        in InputArrayProxy image);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_buildMap(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_buildMap(
         IntPtr obj,
         Point sourcePt);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_getContour(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus imgproc_segmentation_IntelligentScissorsMB_getContour(
         IntPtr obj,
-        Point targetPt, IntPtr contour, int backward);
+        Point targetPt, in OutputArrayProxy contour, int backward);
 }

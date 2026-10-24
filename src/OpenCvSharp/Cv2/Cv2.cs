@@ -1,4 +1,4 @@
-﻿
+
 
 // ReSharper disable InconsistentNaming
 
@@ -25,12 +25,8 @@ public static partial class Cv2
     public const int FILLED = -1;
         
     /// <summary>
-    /// 引数がnullの時はIntPtr.Zeroに変換する
+    /// Returns the object's native pointer, or <see cref="IntPtr.Zero"/> when the object is null
+    /// (for optional native arguments such as mask / noArray).
     /// </summary>
-    /// <param name="obj"></param>
-    /// <returns></returns>
-    internal static IntPtr ToPtr(ICvPtrHolder? obj)
-    {
-        return obj?.CvPtr ?? IntPtr.Zero;
-    }
+    internal static IntPtr ToPtr(CvObject? obj) => obj?.CvPtr ?? IntPtr.Zero;
 }

@@ -1,6 +1,12 @@
-name: Windows Server 2022
+name: Windows Server 2025
 
 on:
+  workflow_dispatch:
+    inputs:
+      run_binskim:
+        description: 'Run BinSkim security hardening check'
+        type: boolean
+        default: true
   pull_request:
     types: [synchronize, opened]
   push:
@@ -8,172 +14,515 @@ on:
       - main
 
 env:
-  OPENCV_VERSION: "4.11.0"
-  OPENCV_FILES_TAG: "4.11.0.20250505"
-  TESSERACT_RELEASE_VERSION: "2024.08.19"
+  OPENCV_VERSION: "5.0.0"
+  OPENCV_ARM64_CACHE_REVISION: "3"
+  MEDIAMTX_VERSION: "1.19.3"
+  MEDIAMTX_SHA256: "5d82148d1032a6a190d9909a2997d9989457aaadf49af87dd02cd4512d31bebe"
 
 jobs:
   build:
+    name: Windows (x64)
 
-    runs-on: windows-2022
-    
+    runs-on: windows-2025
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
-          fetch-depth: 1
           submodules: true
-
-#      - name: Cache restored NuGet packages
-#        uses: actions/cache@v2
-#        with:
-#          path: ${{ github.workspace }}/.nuget/packages
-#          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-#          restore-keys: |
-#            ${{ runner.os }}-nuget-
-
-      - name: Cache OpenCV binaries
-        id: cache_opencv
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/opencv_files
-          key: opencv-${{ env.OPENCV_VERSION }}-rev1
-
-      - name: Download OpenCV binaries
-        if: steps.cache_opencv.outputs.cache-hit != 'true'
-        shell: powershell
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release download --repo shimat/opencv_files ${env:OPENCV_FILES_TAG} --pattern "opencv_win_x64.zip" 
-          gh release download --repo shimat/opencv_files ${env:OPENCV_FILES_TAG} --pattern "opencv_win_x86.zip"       
-          Expand-Archive -Path opencv_win_x64.zip -DestinationPath opencv_files/opencv_win_x64 -Force -ErrorAction Stop
-          Expand-Archive -Path opencv_win_x86.zip -DestinationPath opencv_files/opencv_win_x86 -Force -ErrorAction Stop
-          ls opencv_files
-          ls opencv_files/opencv_win_x64
-
-      - name: Cache Tesseract binaries
-        id: cache_tesseract
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/tesseract_files
-          key: tesseract-41-rev2
-
-      - name: Download Tesseract binaries
-        if: steps.cache_tesseract.outputs.cache-hit != 'true'
-        shell: powershell
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release download --repo shimat/tesseract_vcpkg ${TESSERACT_RELEASE_VERSION} --pattern "*.zip" --output tesseract.zip
-          Expand-Archive -Path tesseract.zip -DestinationPath tesseract_files -Force -ErrorAction Stop
-          ls tesseract_files          
-          Move-Item tesseract_files/tesseract_vcpkg.0.0.9-beta tesseract_files/tesseract_vcpkg
-          ls tesseract_files/tesseract_vcpkg
-          New-Item tesseract_files/tesseract_vcpkg -ItemType Directory -Force
-          Move-Item tesseract_files/tesseract_vcpkg/installed/* tesseract_files/tesseract_vcpkg/
-          ls tesseract_files/tesseract_vcpkg
-
-      - name: NuGet restore
-        shell: cmd
-        run: |
-          nuget restore
-
-      - name: Install Server-Media-Foundation
-        shell: powershell
-        run: |
-          Install-WindowsFeature Server-Media-Foundation
-
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Build x64
-        shell: cmd
-        run: msbuild OpenCvSharp.sln /t:build /p:configuration=Release /p:platform=x64 -maxcpucount
-
-      - name: Build x86
-        shell: cmd
-        run: msbuild OpenCvSharp.sln /t:build /p:configuration=Release /p:platform=x86 -maxcpucount
-
-      #- name: Build ARM
-      #  shell: cmd
-      #  run: msbuild OpenCvSharp.sln /t:build /p:configuration=Release /p:platform=ARM -maxcpucount
+          fetch-depth: 1
 
       - name: Install .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
-            8.0.x
+            10.0.x
 
-      - name: Build
-        shell: cmd
+      - name: Restore vcpkg packages cache
+        id: vcpkg-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ github.workspace }}/vcpkg_installed
+          key: vcpkg-${{ hashFiles('vcpkg.json', 'cmake/triplets/*.cmake') }}-x64-windows-static
+
+      - name: Update vcpkg to match builtin-baseline
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
         run: |
-          dotnet build src/OpenCvSharp.Extensions/OpenCvSharp.Extensions.csproj -f net6.0 -p:configuration=Release -maxcpucount
-          dotnet build src/OpenCvSharp.WpfExtensions/OpenCvSharp.WpfExtensions.csproj -f net6.0-windows -p:configuration=Release -maxcpucount
+          $baseline = (Get-Content vcpkg.json | ConvertFrom-Json).'builtin-baseline'
+          git -C $env:VCPKG_INSTALLATION_ROOT fetch --depth=1 origin $baseline
+          git -C $env:VCPKG_INSTALLATION_ROOT checkout $baseline
+          & "$env:VCPKG_INSTALLATION_ROOT/bootstrap-vcpkg.bat" -disableMetrics
 
-      - name: Pack NuGet packages
+      - name: Install vcpkg dependencies
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+        run: vcpkg install --triplet x64-windows-static --overlay-triplets=${{ github.workspace }}/cmake/triplets --x-install-root=${{ github.workspace }}/vcpkg_installed
+
+      - name: Save vcpkg packages cache
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ github.workspace }}/vcpkg_installed
+          key: vcpkg-${{ hashFiles('vcpkg.json', 'cmake/triplets/*.cmake') }}-x64-windows-static
+
+      - name: Restore OpenCV cache
+        id: opencv-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ github.workspace }}/opencv_artifacts
+          key: opencv-${{ env.OPENCV_VERSION }}-windows-x64-${{ hashFiles('cmake/opencv_build_options.cmake') }}-${{ hashFiles('vcpkg.json', 'cmake/triplets/*.cmake') }}
+
+      - name: Configure OpenCV
+        if: steps.opencv-cache.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Continue'
+          # Force OpenCV 5's vendored MLAS off by giving CMake no ASM compiler
+          # (see -D CMAKE_ASM_COMPILER below). MinGW or Strawberry-Perl gcc on the
+          # runner PATH would otherwise be picked by MLAS's check_language(ASM),
+          # building GNU-syntax .S SGEMM kernels that fail the MSVC link (x64:
+          # missing SgemmKernelSse2.obj) and inject pthread into the OpenCV link
+          # interface (arm64: LNK1181 pthread.lib). MLAS then disables and DNN uses
+          # its built-in SGEMM, matching a clean local VS build. Windows builds the
+          # image codecs via vcpkg, so no other ASM language is needed.
+          cmake `
+            -C cmake/opencv_build_options.cmake `
+            -S opencv `
+            -B opencv/build `
+            -G "Visual Studio 18 2026" -A x64 `
+            -D CMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -D VCPKG_TARGET_TRIPLET=x64-windows-static `
+            -D VCPKG_MANIFEST_INSTALL=OFF `
+            -D "VCPKG_INSTALLED_DIR=$env:GITHUB_WORKSPACE/vcpkg_installed" `
+            -D "VCPKG_OVERLAY_TRIPLETS=$env:GITHUB_WORKSPACE/cmake/triplets" `
+            -D OPENCV_EXTRA_MODULES_PATH="$env:GITHUB_WORKSPACE/opencv_contrib/modules" `
+            -D CMAKE_INSTALL_PREFIX="$env:GITHUB_WORKSPACE/opencv_artifacts" `
+            -D CMAKE_ASM_COMPILER="" `
+            *>&1 | Tee-Object -FilePath "$env:TEMP\opencv-configure.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify OpenCV cmake features
+        if: steps.opencv-cache.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          $log = Get-Content "$env:TEMP\opencv-configure.log" -Raw
+          $features = @('Tesseract', 'FFMPEG', 'JPEG', 'PNG', 'TIFF', 'WEBP')
+          $fail = $false
+          foreach ($f in $features) {
+            $m = [regex]::Match($log, "(?m)^--\s+${f}:\s+(.+)$")
+            if ($m.Success -and $m.Groups[1].Value.Trim() -notmatch '^NO\b') {
+              Write-Host "OK: $f = $($m.Groups[1].Value.Trim())"
+            } else {
+              Write-Host "MISSING or DISABLED: $f"
+              $log -split "`n" | Select-String -Pattern $f | Select-Object -Last 3 | ForEach-Object { Write-Host $_ }
+              $fail = $true
+            }
+          }
+          if ($fail) { exit 1 }
+
+      - name: Build OpenCV
+        if: steps.opencv-cache.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          cmake --build opencv/build --config Release -j 4
+          cmake --install opencv/build --config Release
+
+      - name: Save OpenCV cache
+        if: steps.opencv-cache.outputs.cache-hit != 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ github.workspace }}/opencv_artifacts
+          key: opencv-${{ env.OPENCV_VERSION }}-windows-x64-${{ hashFiles('cmake/opencv_build_options.cmake') }}-${{ hashFiles('vcpkg.json', 'cmake/triplets/*.cmake') }}
+
+      # Commented out: FFmpeg backend is included in opencv_videoio_ffmpeg DLLs
+      # If video tests fail, uncomment this step
+      #- name: Install Server-Media-Foundation
+      #  shell: powershell
+      #  run: |
+      #    Install-WindowsFeature Server-Media-Foundation
+
+      - name: Build OpenCvSharpExtern (full)
         shell: powershell
         run: |
           $ErrorActionPreference = "Stop"
-          
-          $date = Get-Date -Format "yyyyMMdd"
-          $version = "${env:OPENCV_VERSION}.${date}-beta"
-          Write-Host "version = ${version}"
+          cmake `
+            -S src `
+            -B src/build `
+            -G "Visual Studio 18 2026" -A x64 `
+            -D CMAKE_PREFIX_PATH="$env:GITHUB_WORKSPACE/opencv_artifacts" `
+            -D CMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -D VCPKG_TARGET_TRIPLET=x64-windows-static `
+            -D VCPKG_MANIFEST_INSTALL=OFF `
+            -D "VCPKG_INSTALLED_DIR=$env:GITHUB_WORKSPACE/vcpkg_installed" `
+            -D "VCPKG_OVERLAY_TRIPLETS=$env:GITHUB_WORKSPACE/cmake/triplets"
+          cmake --build src/build --config Release -j 4
 
-          (Get-ChildItem $env:GITHUB_WORKSPACE -Recurse).Where{ $_.Extension -eq ".nuspec" }.ForEach{
-              [xml]$xml = Get-Content $_.FullName
-              $xml.package.metadata.version = $version
-              $xml.Save($_.FullName)
+      - name: Verify FFmpeg plugin deployment
+        shell: pwsh
+        run: |
+          $ffmpegPlugin = "test\OpenCvSharp.Tests\opencv_videoio_ffmpeg500_64.dll"
+          if (-not (Test-Path $ffmpegPlugin)) {
+            throw "OpenCV FFmpeg plugin was not deployed to the test project: $ffmpegPlugin"
           }
 
-          $windowsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.Windows.nuspec"
-          $extensionsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.Extensions.nuspec"
-          $wpfExtensionsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.WpfExtensions.nuspec"
-          $nuspecFiles = @($windowsNuspec, $extensionsNuspec, $wpfExtensionsNuspec)
-          foreach ( $nuspecFile in $nuspecFiles ) {
-              [xml]$xml = Get-Content $nuspecFile
-              foreach ($group in $xml.package.metadata.dependencies.ChildNodes){
-                  foreach ($dependency in $group.ChildNodes){
-                      $packageId = $dependency.GetAttribute("id")
-                      if ($packageId.StartsWith("OpenCvSharp")){
-                          Write-Host "before: " $packageId "=" $dependency.GetAttribute("version")
-                          $dependency.SetAttribute("version", $version)
-                          Write-Host "after:  " $packageId "=" $dependency.GetAttribute("version")
-                          $xml.Save($nuspecFile)
-                      }
-                      else {
-                          Write-Host "Skipped: " $packageId
-                      }
-                  }
-              }
-          }
-
-          nuget pack nuget/OpenCvSharp4.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
-          nuget pack nuget/OpenCvSharp4.Windows.nuspec -OutputDirectory artifacts
-          nuget pack nuget/OpenCvSharp4.Extensions.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
-          nuget pack nuget/OpenCvSharp4.WpfExtensions.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
-          nuget pack nuget/OpenCvSharp4.runtime.win.nuspec -OutputDirectory artifacts
-
-      - name: Test
+      - name: Build OpenCvSharpExtern (slim)
         shell: powershell
         run: |
-          cd ${env:GITHUB_WORKSPACE}\test\OpenCvSharp.Tests
-          dotnet test -c Release -f net48 --runtime win-x64
+          $ErrorActionPreference = "Stop"
+          cmake `
+            -S src `
+            -B src/build_slim `
+            -G "Visual Studio 18 2026" -A x64 `
+            -D CMAKE_PREFIX_PATH="$env:GITHUB_WORKSPACE/opencv_artifacts" `
+            -D CMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -D VCPKG_TARGET_TRIPLET=x64-windows-static `
+            -D VCPKG_MANIFEST_INSTALL=OFF `
+            -D "VCPKG_INSTALLED_DIR=$env:GITHUB_WORKSPACE/vcpkg_installed" `
+            -D "VCPKG_OVERLAY_TRIPLETS=$env:GITHUB_WORKSPACE/cmake/triplets" `
+            -D NO_CONTRIB=ON `
+            -D NO_VIDEOIO=ON `
+            -D NO_HIGHGUI=ON `
+            -D NO_DNN=ON `
+            -D NO_STITCHING=ON `
+            -D NO_INSTALL_TO_TEST=ON
+          cmake --build src/build_slim --config Release -j 4
+
+      - name: Test
+        shell: cmd
+        # The MTP crash dump extension collects a full memory dump and a test sequence file into
+        # test\OpenCvSharp.Tests\TestResults\ if the test host crashes, so an
+        # intermittent native access violation can be attributed to a specific test without a
+        # re-run. See "Upload crash dumps on failure" below.
+        run: dotnet test --project test\OpenCvSharp.Tests\OpenCvSharp.Tests.csproj -c Release -f net10.0 --runtime win-x64 --results-directory test\OpenCvSharp.Tests\TestResults --crashdump --crashdump-type Full
+
+      - name: Test RTSP capture
+        uses: ./.github/actions/test-rtsp-windows
+        with:
+          mediamtx-version: ${{ env.MEDIAMTX_VERSION }}
+          mediamtx-sha256: ${{ env.MEDIAMTX_SHA256 }}
+
+      - name: Upload crash dumps on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-x64-crash-dumps
+          path: test/OpenCvSharp.Tests/TestResults/
+          if-no-files-found: ignore
 
       - name: Test Windows-only functions
         shell: powershell
         run: |
           cd ${env:GITHUB_WORKSPACE}\test\OpenCvSharp.Tests.Windows
-          dotnet test -c Release -f net48 --runtime win-x64
+          dotnet test --project OpenCvSharp.Tests.Windows.csproj -c Release -f net10.0-windows --runtime win-x64
 
-      - name: Run ReleaseMaker
+      - name: Test Avalonia extensions
         shell: powershell
         run: |
-          cd "${env:GITHUB_WORKSPACE}\tool\OpenCvSharp.ReleaseMaker"
-          dotnet run -c Release --runtime win-x64 -- "${env:GITHUB_WORKSPACE}" "${env:GITHUB_WORKSPACE}\artifacts" ${{env.OPENCV_VERSION}}
+          cd ${env:GITHUB_WORKSPACE}\test\OpenCvSharp.Tests.Avalonia
+          # --runtime here (matching the dotnet test call below) makes the build land in a
+          # RID-specific bin\Release\net10.0\win-x64\ subfolder; copy into that exact folder.
+          dotnet build -c Release -f net10.0 --runtime win-x64
+          Copy-Item ${env:GITHUB_WORKSPACE}\test\OpenCvSharp.Tests\OpenCvSharpExtern.dll bin\Release\net10.0\win-x64\
+          dotnet test --project OpenCvSharp.Tests.Avalonia.csproj -c Release -f net10.0 --runtime win-x64 --no-build
 
-      - name: Upload NuGet packages and Release packages
-        uses: actions/upload-artifact@v4
+      - name: Test NativeAOT publish
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+
+          # Some ILCompiler versions resolve link.exe via a bare `vswhere.exe` call, which requires
+          # the VS Installer directory on PATH - not guaranteed for a plain (non-"Developer") shell.
+          $env:Path += ";${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer"
+
+          cd ${env:GITHUB_WORKSPACE}\test\OpenCvSharp.Tests.NativeAot
+
+          # Restore and publish as separate steps: NuGet's static graph restore evaluates
+          # OpenCvSharp.Analyzers.csproj (a netstandard2.0 analyzer, referenced with
+          # UndefineProperties so the *build* graph never sees PublishAot/RuntimeIdentifier) under
+          # the raw command-line global properties regardless of that item metadata, so passing
+          # -p:PublishAot=true to a combined restore+publish invocation still fails restore with
+          # NETSDK1207. Restoring without it first, then publishing with --no-restore, avoids that.
+          dotnet restore -r win-x64
+          dotnet publish -c Release -f net10.0 --runtime win-x64 -p:PublishAot=true --no-restore
+
+          # Only OpenCvSharpExtern.dll is needed: this smoke test never touches video/ffmpeg, and
+          # opencv_videoio_ffmpeg500_64.dll is only conditionally copied by CMake's POST_BUILD step
+          # in the first place (see OpenCvSharpExtern/CMakeLists.txt's `if(EXISTS ...)` guard), so
+          # it is not guaranteed to exist here.
+          $publishDir = "bin\Release\net10.0\win-x64\publish"
+          Copy-Item ${env:GITHUB_WORKSPACE}\test\OpenCvSharp.Tests\OpenCvSharpExtern.dll $publishDir
+
+          & "$publishDir\OpenCvSharp.Tests.NativeAot.exe"
+          if ($LASTEXITCODE -ne 0) { throw "NativeAOT smoke test failed with exit code $LASTEXITCODE" }
+
+      - name: Verify security hardening with BinSkim
+        if: inputs.run_binskim == true
+        shell: powershell
+        run: |
+          # Official install: download .nupkg from NuGet, unzip, run exe from tools/
+          $dest = "$env:TEMP\binskim"
+          Invoke-WebRequest "https://www.nuget.org/api/v2/package/Microsoft.CodeAnalysis.BinSkim" -OutFile "$dest.zip"
+          Expand-Archive "$dest.zip" $dest -Force
+          $binskimExe = Get-ChildItem "$dest\tools\net*\win-x64\binskim.exe" | Select-Object -Last 1 -ExpandProperty FullName
+          if (-not $binskimExe) { throw "binskim.exe not found" }
+
+          # Scan OpenCvSharpExtern.dll only.
+          # opencv_videoio_ffmpeg*.dll is a pre-built binary from opencv_3rdparty
+          # and cannot be recompiled with different flags (see opencv/3rdparty/ffmpeg/ffmpeg.cmake).
+          $dll = "$env:GITHUB_WORKSPACE\src\build\OpenCvSharpExtern\Release\OpenCvSharpExtern.dll"
+          if (-not (Test-Path $dll)) { throw "OpenCvSharpExtern.dll not found: $dll" }
+
+          $sarifFile = "$env:TEMP\binskim.sarif"
+          & $binskimExe analyze $dll --output $sarifFile
+          # Ignore BinSkim's own exit code (it returns 1 on PDB load failures etc.);
+          # rely solely on SARIF result filtering below.
+          $LASTEXITCODE = 0
+
+          # Ignore findings we cannot address:
+          #   ERR997 - PDB unavailable (Release builds have no PDB by default)
+          #   BA2007 - compiler warning level violations in vcpkg static libs (tesseract, tiff, etc.)
+          if (-not (Test-Path $sarifFile)) { Write-Warning "No SARIF output produced."; exit 0 }
+          $failures = (Get-Content $sarifFile | ConvertFrom-Json).runs[0].results | Where-Object {
+            $ruleId = ($_.ruleId -split "/")[0]
+            $_.level -eq "error" -and $ruleId -notmatch "^ERR997" -and $ruleId -ne "BA2007"
+          }
+          if ($failures) {
+            $failures | ForEach-Object { Write-Host "FAIL $($_.ruleId): $(($_.message.text -split "`n")[0])" }
+            exit 1
+          }
+          Write-Host "Security hardening verified: no actionable failures."
+
+      - name: Pack NuGet packages
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+
+          $date = Get-Date -Format "yyyyMMdd"
+          $version = "${env:OPENCV_VERSION}.${date}-beta"
+          Write-Host "version = ${version}"
+
+          # Pack main libraries (dotnet pack triggers build implicitly)
+          dotnet pack src/OpenCvSharp/OpenCvSharp.csproj -c Release -o artifacts -p:Version=$version
+          dotnet pack src/OpenCvSharp.GdipExtensions/OpenCvSharp.GdipExtensions.csproj -c Release -o artifacts -p:Version=$version
+          dotnet pack src/OpenCvSharp.WpfExtensions/OpenCvSharp.WpfExtensions.csproj -c Release -o artifacts -p:Version=$version
+          dotnet pack src/OpenCvSharp.AvaloniaExtensions/OpenCvSharp.AvaloniaExtensions.csproj -c Release -o artifacts -p:Version=$version
+
+          # Pack runtime packages
+          dotnet pack packaging/nuget/OpenCvSharp5.runtime.win.csproj -o artifacts -p:Version=$version
+          dotnet pack packaging/nuget/OpenCvSharp5.runtime.win.slim.csproj -o artifacts -p:Version=$version
+
+          # Add local artifacts as NuGet source for meta-package
+          dotnet nuget add source "${env:GITHUB_WORKSPACE}\artifacts" --name LocalPackages
+
+          # Pack meta-package (depends on packages built above)
+          dotnet pack packaging/nuget/OpenCvSharp5.Windows.csproj -o artifacts -p:Version=$version -p:PackageVersion=$version
+          dotnet pack packaging/nuget/OpenCvSharp5.Windows.Slim.csproj -o artifacts -p:Version=$version -p:PackageVersion=$version
+
+      - name: Upload NuGet packages
+        uses: actions/upload-artifact@v7
         with:
           name: packages_windows
+          path: ${{ github.workspace }}\artifacts
+
+  build-arm64:
+    name: Windows (arm64)
+
+    runs-on: windows-11-vs2026-arm
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+          fetch-depth: 1
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            10.0.x
+
+      - name: Restore vcpkg packages cache
+        id: vcpkg-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ github.workspace }}/vcpkg_installed
+          key: vcpkg-${{ hashFiles('vcpkg.json', 'cmake/triplets/*.cmake') }}-arm64-windows-static-vs2026
+
+      - name: Update vcpkg to match builtin-baseline
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+        run: |
+          $baseline = (Get-Content vcpkg.json | ConvertFrom-Json).'builtin-baseline'
+          git -C $env:VCPKG_INSTALLATION_ROOT fetch --depth=1 origin $baseline
+          git -C $env:VCPKG_INSTALLATION_ROOT checkout $baseline
+          & "$env:VCPKG_INSTALLATION_ROOT/bootstrap-vcpkg.bat" -disableMetrics
+
+      - name: Install vcpkg dependencies
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+        run: vcpkg install --triplet arm64-windows-static --overlay-triplets=${{ github.workspace }}/cmake/triplets --x-install-root=${{ github.workspace }}/vcpkg_installed
+
+      - name: Save vcpkg packages cache
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ github.workspace }}/vcpkg_installed
+          key: vcpkg-${{ hashFiles('vcpkg.json', 'cmake/triplets/*.cmake') }}-arm64-windows-static-vs2026
+
+      - name: Restore OpenCV cache
+        id: opencv-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ github.workspace }}/opencv_artifacts
+          key: opencv-${{ env.OPENCV_VERSION }}-windows-arm64-v${{ env.OPENCV_ARM64_CACHE_REVISION }}-${{ hashFiles('cmake/opencv_build_options.cmake') }}-${{ hashFiles('vcpkg.json', 'cmake/triplets/*.cmake') }}
+
+      - name: Configure OpenCV
+        if: steps.opencv-cache.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Continue'
+          # Force OpenCV 5's vendored MLAS off by giving CMake no ASM compiler
+          # (see -D CMAKE_ASM_COMPILER below). MinGW or Strawberry-Perl gcc on the
+          # runner PATH would otherwise be picked by MLAS's check_language(ASM),
+          # building GNU-syntax .S SGEMM kernels that fail the MSVC link (x64:
+          # missing SgemmKernelSse2.obj) and inject pthread into the OpenCV link
+          # interface (arm64: LNK1181 pthread.lib). MLAS then disables and DNN uses
+          # its built-in SGEMM, matching a clean local VS build. Windows builds the
+          # image codecs via vcpkg, so no other ASM language is needed.
+          # OpenCV 5's vendored MLAS uses GNU-syntax aarch64 .S SGEMM kernels that
+          # armasm64 cannot assemble. CMAKE_ASM_COMPILER="" does not disable ASM under the VS ARM64 generator
+          # (it does under VS x64). MLAS is an OpenCV 5 addition (absent in
+          # OpenCV 4), so skip building it on this toolchain; DNN keeps working via
+          # its built-in SGEMM (as OpenCV 4 ARM64 did). Drop the add_subdirectory
+          # that pulls MLAS into opencv_dnn.
+          (Get-Content opencv/modules/dnn/CMakeLists.txt) `
+            -replace 'add_subdirectory\("\$\{OpenCV_SOURCE_DIR\}/3rdparty/mlas".*', '# [win-arm64] MLAS disabled (armasm64 cannot assemble its aarch64 .S kernels)' `
+            | Set-Content opencv/modules/dnn/CMakeLists.txt
+          cmake `
+            -C cmake/opencv_build_options.cmake `
+            -S opencv `
+            -B opencv/build `
+            -G "Visual Studio 18 2026" -A ARM64 `
+            -D CMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -D VCPKG_TARGET_TRIPLET=arm64-windows-static `
+            -D VCPKG_MANIFEST_INSTALL=OFF `
+            -D "VCPKG_INSTALLED_DIR=$env:GITHUB_WORKSPACE/vcpkg_installed" `
+            -D "VCPKG_OVERLAY_TRIPLETS=$env:GITHUB_WORKSPACE/cmake/triplets" `
+            -D OPENCV_EXTRA_MODULES_PATH="$env:GITHUB_WORKSPACE/opencv_contrib/modules" `
+            -D CMAKE_INSTALL_PREFIX="$env:GITHUB_WORKSPACE/opencv_artifacts" `
+            -D WITH_FFMPEG=OFF `
+            -D CMAKE_C_FLAGS="/Z7" `
+            -D CMAKE_CXX_FLAGS="/Z7" `
+            -D CMAKE_ASM_COMPILER="" `
+            *>&1 | Tee-Object -FilePath "$env:TEMP\opencv-configure.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify OpenCV cmake features
+        if: steps.opencv-cache.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          $log = Get-Content "$env:TEMP\opencv-configure.log" -Raw
+          $features = @('Tesseract', 'JPEG', 'PNG', 'TIFF', 'WEBP')
+          $fail = $false
+          foreach ($f in $features) {
+            $m = [regex]::Match($log, "(?m)^--\s+${f}:\s+(.+)$")
+            if ($m.Success -and $m.Groups[1].Value.Trim() -notmatch '^NO\b') {
+              Write-Host "OK: $f = $($m.Groups[1].Value.Trim())"
+            } else {
+              Write-Host "MISSING or DISABLED: $f"
+              $log -split "`n" | Select-String -Pattern $f | Select-Object -Last 3 | ForEach-Object { Write-Host $_ }
+              $fail = $true
+            }
+          }
+          if ($fail) { exit 1 }
+
+      - name: Build OpenCV
+        if: steps.opencv-cache.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          cmake --build opencv/build --config Release -j 4
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --install opencv/build --config Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Save OpenCV cache
+        if: steps.opencv-cache.outputs.cache-hit != 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ github.workspace }}/opencv_artifacts
+          key: opencv-${{ env.OPENCV_VERSION }}-windows-arm64-v${{ env.OPENCV_ARM64_CACHE_REVISION }}-${{ hashFiles('cmake/opencv_build_options.cmake') }}-${{ hashFiles('vcpkg.json', 'cmake/triplets/*.cmake') }}
+
+      - name: Build OpenCvSharpExtern (full)
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+          cmake `
+            -S src `
+            -B src/build_arm64 `
+            -G "Visual Studio 18 2026" -A ARM64 `
+            -D CMAKE_PREFIX_PATH="$env:GITHUB_WORKSPACE/opencv_artifacts" `
+            -D CMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -D VCPKG_TARGET_TRIPLET=arm64-windows-static `
+            -D VCPKG_MANIFEST_INSTALL=OFF `
+            -D "VCPKG_INSTALLED_DIR=$env:GITHUB_WORKSPACE/vcpkg_installed" `
+            -D "VCPKG_OVERLAY_TRIPLETS=$env:GITHUB_WORKSPACE/cmake/triplets" `
+            -D OPENCVSHARP_BUILD_WITH_DEBUG_INFO=ON
+          cmake --build src/build_arm64 --config Release -j 4
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build OpenCvSharpExtern (slim)
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+          cmake `
+            -S src `
+            -B src/build_arm64_slim `
+            -G "Visual Studio 18 2026" -A ARM64 `
+            -D CMAKE_PREFIX_PATH="$env:GITHUB_WORKSPACE/opencv_artifacts" `
+            -D CMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -D VCPKG_TARGET_TRIPLET=arm64-windows-static `
+            -D VCPKG_MANIFEST_INSTALL=OFF `
+            -D "VCPKG_INSTALLED_DIR=$env:GITHUB_WORKSPACE/vcpkg_installed" `
+            -D "VCPKG_OVERLAY_TRIPLETS=$env:GITHUB_WORKSPACE/cmake/triplets" `
+            -D NO_CONTRIB=ON `
+            -D NO_VIDEOIO=ON `
+            -D NO_HIGHGUI=ON `
+            -D NO_DNN=ON `
+            -D NO_STITCHING=ON `
+            -D NO_INSTALL_TO_TEST=ON
+          cmake --build src/build_arm64_slim --config Release -j 4
+
+      - name: Test
+        shell: cmd
+        # See the x64 job's "Test" step above for why crash dump collection is enabled here.
+        run: dotnet test --project test\OpenCvSharp.Tests\OpenCvSharp.Tests.csproj -c Release -f net10.0 --runtime win-arm64 --filter-not-method OpenCvSharp.Tests.Core.BuildConfigurationTest.FFMPEG_IsEnabled --results-directory test\OpenCvSharp.Tests\TestResults --crashdump --crashdump-type Full
+
+      - name: Upload crash dumps on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-arm64-crash-diagnostics
+          path: |
+            src/build_arm64/OpenCvSharpExtern/Release/OpenCvSharpExtern.dll
+            src/build_arm64/OpenCvSharpExtern/Release/OpenCvSharpExtern.pdb
+            test/OpenCvSharp.Tests/TestResults/
+          if-no-files-found: ignore
+
+      - name: Pack NuGet packages
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+
+          $date = Get-Date -Format "yyyyMMdd"
+          $version = "${env:OPENCV_VERSION}.${date}-beta"
+          Write-Host "version = ${version}"
+
+          dotnet pack packaging/nuget/OpenCvSharp5.runtime.win-arm64.csproj -o artifacts -p:Version=$version
+          dotnet pack packaging/nuget/OpenCvSharp5.runtime.win-arm64.slim.csproj -o artifacts -p:Version=$version
+
+      - name: Upload NuGet packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: packages_windows_arm64
           path: ${{ github.workspace }}\artifacts

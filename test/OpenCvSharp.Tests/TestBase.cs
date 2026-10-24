@@ -1,8 +1,9 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
+using System.Runtime.InteropServices;
 using Xunit;
 
-[assembly: CollectionBehavior(/*MaxParallelThreads = 2, */DisableTestParallelization = true)]
+[assembly: Xunit.v3.Parallelization(Mode = Xunit.Sdk.ParallelMode.None)]
 
 #pragma warning disable CA1810 // Initialize reference type static fields inline
 #pragma warning disable CA5359 
@@ -13,12 +14,14 @@ public abstract class TestBase
 {
     static TestBase()
     {
+#if NET48
 #pragma warning disable CA5364
 #pragma warning disable CA5386
         ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 #pragma warning restore CA5364
 #pragma warning restore CA5386
+#endif
     }
 
     protected static Mat LoadImage(string fileName, ImreadModes modes = ImreadModes.Color) 
@@ -37,7 +40,7 @@ public abstract class TestBase
 #pragma warning restore CA1062 
 
         using var comparison = new Mat();
-        Cv2.Compare(img1, img2, comparison, CmpType.NE);
+        Cv2.Compare(img1, img2, comparison, CmpTypes.NE);
 
         if (img1.Channels() == 1)
         {
@@ -71,11 +74,11 @@ public abstract class TestBase
         }
     }
 
-    protected static void ShowImagesWhenDebugMode(IEnumerable<Mat> mats, IEnumerable<string> names)
+    protected static void ShowImagesWhenDebugMode(params (string Title, Mat Image)[] images)
     {
         if (Debugger.IsAttached)
         {
-            Window.ShowImages(mats, names);
+            Window.ShowImages(images);
         }
     }
 }

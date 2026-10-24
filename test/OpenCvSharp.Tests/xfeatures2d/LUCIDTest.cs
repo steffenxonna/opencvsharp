@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.XFeatures2D;
+using OpenCvSharp.XFeatures2D;
 using Xunit;
 
 namespace OpenCvSharp.Tests.XFeatures2D;
@@ -45,5 +45,17 @@ public class LUCIDTest : TestBase
             var defnorm = alg.DefaultNorm;
             Assert.Equal(6, defnorm);
         }
+    }
+
+    [Fact]
+    public void Properties()
+    {
+        using var alg = LUCID.Create();
+
+        alg.LucidKernel = 2;
+        Assert.Equal(2, alg.LucidKernel);
+
+        alg.BlurKernel = 3;
+        Assert.Equal(3, alg.BlurKernel);
     }
 }

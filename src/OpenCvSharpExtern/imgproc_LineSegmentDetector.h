@@ -6,44 +6,77 @@
 
 #include "include_opencv.h"
 
-CVAPI(void) imgproc_LineSegmentDetector_detect_OutputArray(cv::LineSegmentDetector *obj, cv::_InputArray *image, cv::_OutputArray *lines,
-    cv::_OutputArray *width, cv::_OutputArray *prec, cv::_OutputArray *nfa)
+CVAPI(ExceptionStatus) imgproc_LineSegmentDetector_detect_OutputArray(
+    cv::LineSegmentDetector *obj,
+    const interop::InputArrayProxy *image,
+    const interop::OutputArrayProxy *lines,
+    const interop::OutputArrayProxy *width,
+    const interop::OutputArrayProxy *prec,
+    const interop::OutputArrayProxy *nfa)
 {
-    obj->detect(*image, *lines, entity(width), entity(prec), entity(nfa));
+    return cvTry([&] {
+        obj->detect(InProxy(*image), OutProxy(*lines), OutProxy(*width), OutProxy(*prec), OutProxy(*nfa));
+    });
 }
 
-CVAPI(void) imgproc_LineSegmentDetector_detect_vector(cv::LineSegmentDetector *obj, cv::_InputArray *image, std::vector<cv::Vec4f> *lines,
-    std::vector<double> *width, std::vector<double> *prec, std::vector<double> *nfa)
+CVAPI(ExceptionStatus) imgproc_LineSegmentDetector_detect_vector(
+    cv::LineSegmentDetector *obj,
+    const interop::InputArrayProxy *image,
+    std::vector<cv::Vec4f> *lines,
+    std::vector<double> *width,
+    std::vector<double> *prec,
+    std::vector<double> *nfa)
 {
-    obj->detect(*image, *lines, *width, *prec, *nfa);
+    return cvTry([&] {
+        obj->detect(InProxy(*image), *lines, *width, *prec, *nfa);
+    });
 }
 
-CVAPI(void) imgproc_LineSegmentDetector_drawSegments(cv::LineSegmentDetector *obj, cv::_InputOutputArray *image, cv::_InputArray *lines)
+CVAPI(ExceptionStatus) imgproc_LineSegmentDetector_drawSegments(
+    cv::LineSegmentDetector *obj,
+    const interop::InputOutputArrayProxy *image,
+    const interop::InputArrayProxy *lines)
 {
-    obj->drawSegments(*image, *lines);
+    return cvTry([&] {
+        obj->drawSegments(IoProxy(*image), InProxy(*lines));
+    });
 }
 
-CVAPI(int) imgproc_LineSegmentDetector_compareSegments(cv::LineSegmentDetector *obj, MyCvSize size,
-    cv::_InputArray *lines1, cv::_InputArray *lines2, cv::_InputOutputArray *image)
+CVAPI(ExceptionStatus) imgproc_LineSegmentDetector_compareSegments(
+    cv::LineSegmentDetector *obj,
+    interop::Size size,
+    const interop::InputArrayProxy *lines1,
+    const interop::InputArrayProxy *lines2,
+    const interop::InputOutputArrayProxy *image,
+    int *returnValue)
 {
-    return obj->compareSegments(cpp(size), *lines1, *lines2, entity(image));
+    return cvTry([&] {
+        *returnValue = obj->compareSegments(cpp(size), InProxy(*lines1), InProxy(*lines2), IoProxy(*image));
+    });
 }
 
 
-CVAPI(cv::Ptr<cv::LineSegmentDetector>*) imgproc_createLineSegmentDetector(
+CVAPI(ExceptionStatus) imgproc_createLineSegmentDetector(
     int refine, double scale, double sigma_scale, double quant, double ang_th,
-    double log_eps, double density_th, int n_bins)
+    double log_eps, double density_th, int n_bins,
+    cv::Ptr<cv::LineSegmentDetector> **returnValue)
 {
-    return clone( cv::createLineSegmentDetector(
-        refine, scale, sigma_scale, quant, ang_th, log_eps, density_th, n_bins));
+    return cvTry([&] {
+        *returnValue = clone(cv::createLineSegmentDetector(
+            static_cast<cv::LineSegmentDetectorModes>(refine), scale, sigma_scale, quant, ang_th, log_eps, density_th, n_bins));
+    });
 }
 
-CVAPI(void) imgproc_Ptr_LineSegmentDetector_delete(cv::Ptr<cv::LineSegmentDetector> *obj)
+CVAPI(ExceptionStatus) imgproc_Ptr_LineSegmentDetector_delete(cv::Ptr<cv::LineSegmentDetector> *obj)
 {
-    delete obj;
+    return cvTry([&] {
+        delete obj;
+    });
 }
 
-CVAPI(cv::LineSegmentDetector*) imgproc_Ptr_LineSegmentDetector_get(cv::Ptr<cv::LineSegmentDetector> *obj)
+CVAPI(ExceptionStatus) imgproc_Ptr_LineSegmentDetector_get(cv::Ptr<cv::LineSegmentDetector> *obj, cv::LineSegmentDetector **returnValue)
 {
-    return obj->get();
+    return cvTry([&] {
+        *returnValue = obj->get();
+    });
 }

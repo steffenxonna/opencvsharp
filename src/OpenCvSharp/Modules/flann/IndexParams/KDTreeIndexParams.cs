@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 // ReSharper disable InconsistentNaming
 
@@ -15,40 +15,24 @@ public class KDTreeIndexParams : IndexParams
     /// </summary>
     /// <param name="trees">The number of parallel kd-trees to use. Good values are in the range [1..16]</param>
     public KDTreeIndexParams(int trees = 4)
-        : base(null)
+        : this(Create(trees))
+    {
+    }
+
+    private KDTreeIndexParams((IntPtr smartPtr, IntPtr rawPtr) ptrs)
+        : base(ptrs.smartPtr, ptrs.rawPtr,
+            static h => NativeMethods.HandleException(NativeMethods.flann_Ptr_KDTreeIndexParams_delete(h)))
+    {
+    }
+
+    private static (IntPtr smartPtr, IntPtr rawPtr) Create(int trees)
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_Ptr_KDTreeIndexParams_new(trees, out var p));
-        if (p == IntPtr.Zero)
+            NativeMethods.flann_Ptr_KDTreeIndexParams_new(trees, out var smartPtr));
+        if (smartPtr == IntPtr.Zero)
             throw new OpenCvSharpException($"Failed to create {nameof(KDTreeIndexParams)}");
-
-        PtrObj = new Ptr(p);
-        ptr = PtrObj.Get();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    protected KDTreeIndexParams(OpenCvSharp.Ptr ptrObj)
-        : base(ptrObj)
-    {
-    }
-
-    internal new class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.flann_Ptr_KDTreeIndexParams_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.flann_Ptr_KDTreeIndexParams_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+        NativeMethods.HandleException(
+            NativeMethods.flann_Ptr_KDTreeIndexParams_get(smartPtr, out var rawPtr));
+        return (smartPtr, rawPtr);
     }
 }

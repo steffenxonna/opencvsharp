@@ -13,17 +13,12 @@ public class RadialVarianceHash : ImgHashBase
     /// <summary>
     /// cv::Ptr&lt;T&gt;
     /// </summary>
-    private Ptr? ptrObj;
-
     /// <summary>
     /// 
     /// </summary>
-    protected RadialVarianceHash(IntPtr p)
-    {
-        ptrObj = new Ptr(p);
-        ptr = ptrObj.Get();
-    }
-
+    private RadialVarianceHash(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.img_hash_Ptr_RadialVarianceHash_delete(p)))
+    { }
     /// <summary>
     /// Create BlockMeanHash object
     /// </summary>
@@ -33,19 +28,9 @@ public class RadialVarianceHash : ImgHashBase
     public static RadialVarianceHash Create(double sigma = 1, int numOfAngleLine = 180)
     {
         NativeMethods.HandleException(
-            NativeMethods.img_hash_RadialVarianceHash_create(sigma, numOfAngleLine, out var p));
-        return new RadialVarianceHash(p);
-    }
-        
-    /// <inheritdoc />
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
+            NativeMethods.img_hash_RadialVarianceHash_create(sigma, numOfAngleLine, out var smartPtr));
+        NativeMethods.HandleException(NativeMethods.img_hash_Ptr_RadialVarianceHash_get(smartPtr, out var rawPtr));
+        return new RadialVarianceHash(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -57,16 +42,14 @@ public class RadialVarianceHash : ImgHashBase
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.img_hash_RadialVarianceHash_getSigma(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.img_hash_RadialVarianceHash_getSigma(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.img_hash_RadialVarianceHash_setSigma(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.img_hash_RadialVarianceHash_setSigma(Handle, value));
         }
     }
 
@@ -79,46 +62,21 @@ public class RadialVarianceHash : ImgHashBase
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.img_hash_RadialVarianceHash_getNumOfAngleLine(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.img_hash_RadialVarianceHash_getNumOfAngleLine(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.img_hash_RadialVarianceHash_setNumOfAngleLine(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.img_hash_RadialVarianceHash_setNumOfAngleLine(Handle, value));
         }
     }
         
     // ReSharper disable once RedundantOverriddenMember
     /// <inheritdoc />
-    /// <summary>
-    /// Computes average hash value of the input image
-    /// </summary>
-    /// <param name="inputArr">input image want to compute hash value, type should be CV_8UC4, CV_8UC3, CV_8UC1.</param>
-    /// <param name="outputArr">Hash value of input</param>
-    /// <returns></returns>
     public override void Compute(InputArray inputArr, OutputArray outputArr)
     {
         base.Compute(inputArr, outputArr);
-    }
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.img_hash_Ptr_RadialVarianceHash_get(ptr, out var ret));
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.img_hash_Ptr_RadialVarianceHash_delete(ptr));
-            base.DisposeUnmanaged();
-        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Xunit;
-using Xunit.Abstractions;
+using Xunit;
 
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 
@@ -7,11 +6,36 @@ namespace OpenCvSharp.Tests.Core;
 
 public class MatTest : TestBase
 {
+    private static readonly int[] OneToFour = { 1, 2, 3, 4 };
+
     private readonly ITestOutputHelper testOutputHelper;
 
     public MatTest(ITestOutputHelper testOutputHelper)
     {
         this.testOutputHelper = testOutputHelper;
+    }
+
+    [Fact]
+    public void MatOfTElementIndexerAndEnumerable()
+    {
+        using var mat = new Mat<int>(2, 2);
+        mat[0, 0] = 1;
+        mat[0, 1] = 2;
+        mat[1, 0] = 3;
+        mat[1, 1] = 4;
+        Assert.Equal(4, mat[1, 1]);
+
+        var collected = new System.Collections.Generic.List<int>();
+        foreach (var v in mat)
+            collected.Add(v);
+        Assert.Equal(OneToFour, collected);
+    }
+
+    [Fact]
+    public void MatOfTTypeMismatchThrows()
+    {
+        using var byteMat = new Mat(3, 3, MatType.CV_8UC1, Scalar.All(0));
+        Assert.Throws<OpenCvSharpException>(() => new Mat<float>(byteMat));
     }
 
     [Fact]
@@ -34,20 +58,19 @@ public class MatTest : TestBase
         using var img = new Mat(new Size(10, 10), MatType.CV_8UC1, Scalar.All(value));
         using var imgB = new Mat<byte>(img);
         var indexer = imgB.GetIndexer();
-        var genericIndexer = img.GetGenericIndexer<byte>();
         var unsafeGenericIndexer = img.GetUnsafeGenericIndexer<byte>();
 
         Assert.Equal(value, indexer[0, 0]);
-        Assert.Equal(value, genericIndexer[0, 0]);
+        Assert.Equal(value, img.At<byte>(0, 0));
         Assert.Equal(value, unsafeGenericIndexer[0, 0]);
 
         Assert.Equal(value, indexer[5, 7]);
-        Assert.Equal(value, genericIndexer[5, 7]);
+        Assert.Equal(value, img.At<byte>(5, 7));
         Assert.Equal(value, unsafeGenericIndexer[5, 7]);
 
         indexer[3, 4] = 1;
         Assert.Equal(1, img.Get<byte>(3, 4));
-        genericIndexer[3, 4] = 2;
+        img.At<byte>(3, 4) = 2;
         Assert.Equal(2, img.Get<byte>(3, 4));
         unsafeGenericIndexer[3, 4] = 3;
         Assert.Equal(3, img.Get<byte>(3, 4));
@@ -62,21 +85,20 @@ public class MatTest : TestBase
         using var img = new Mat(new Size(10, 10), MatType.CV_64FC3, scalarValue);
         using var imgB = new Mat<Vec3d>(img);
         var indexer = imgB.GetIndexer();
-        var genericIndexer = img.GetGenericIndexer<Vec3d>();
         var unsafeGenericIndexer = img.GetUnsafeGenericIndexer<Vec3d>();
 
         Assert.Equal(expectedValue, indexer[0, 0]);
-        Assert.Equal(expectedValue, genericIndexer[0, 0]);
+        Assert.Equal(expectedValue, img.At<Vec3d>(0, 0));
         Assert.Equal(expectedValue, unsafeGenericIndexer[0, 0]);
 
         Assert.Equal(expectedValue, indexer[5, 7]);
-        Assert.Equal(expectedValue, genericIndexer[5, 7]);
+        Assert.Equal(expectedValue, img.At<Vec3d>(5, 7));
         Assert.Equal(expectedValue, unsafeGenericIndexer[5, 7]);
 
         indexer[3, 4] = new Vec3d(2, 3, 4);
         Assert.Equal(new Vec3d(2, 3, 4), img.Get<Vec3d>(3, 4));
 
-        genericIndexer[3, 4] = new Vec3d(3, 4, 5);
+        img.At<Vec3d>(3, 4) = new Vec3d(3, 4, 5);
         Assert.Equal(new Vec3d(3, 4, 5), img.Get<Vec3d>(3, 4));
 
         unsafeGenericIndexer[3, 4] = new Vec3d(4, 5, 6);
@@ -157,6 +179,37 @@ public class MatTest : TestBase
         Assert.Equal(55.5555f, mat32FC1.At<float>(2, 0));
     }
 
+#if NET8_0_OR_GREATER
+    [Fact]
+    public void ConvertTo16FMatchesHalfValues()
+    {
+        var srcValues = new float[]
+        {
+            -2.0f, -0.5f, 0.0f,
+            0.5f, 1.0f, 10.25f,
+        };
+
+        using var src32f = new Mat(2, 3, MatType.CV_32FC1);
+        Assert.True(src32f.SetArray(srcValues));
+
+        using var halfMat = new Mat();
+        src32f.ConvertTo(halfMat, MatType.CV_16FC1);
+
+        Assert.Equal(MatType.CV_16FC1, halfMat.Type());
+        Assert.Equal(MatType.CV_16F, halfMat.Depth());
+        Assert.Equal(2, halfMat.ElemSize1());
+
+        var halfValues = halfMat.AsSpan<Half>();
+        Assert.Equal(srcValues.Length, halfValues.Length);
+
+        for (var i = 0; i < srcValues.Length; i++)
+        {
+            var expected = (Half)srcValues[i];
+            Assert.Equal(expected, halfValues[i]);
+        }
+    }
+#endif
+
     [Fact]
     public void Diag()
     {
@@ -183,10 +236,10 @@ public class MatTest : TestBase
     {
         using var src = LoadImage("mandrill.png", ImreadModes.Grayscale);
         using var dst = new Mat();
-        using var mask = src.GreaterThan(128);
+        using Mat mask = src.GreaterThan(128);
         src.CopyTo(dst, mask);
         ShowImagesWhenDebugMode(dst);
-        src.CopyTo(dst, null);
+        src.CopyTo(dst, default);
         ShowImagesWhenDebugMode(dst);
     }
 
@@ -195,7 +248,8 @@ public class MatTest : TestBase
     {
         using var graySrc = LoadImage("mandrill.png", ImreadModes.Grayscale);
         using var resultImage = graySrc.Clone();
-        using var mask = graySrc.InRange(100, 200);
+        using var mask = new Mat();
+        Cv2.InRange(graySrc, new Scalar(100), new Scalar(200), mask);
         var ret = resultImage.SetTo(0, mask);
         ShowImagesWhenDebugMode(resultImage);
         Assert.True(ReferenceEquals(resultImage, ret));
@@ -203,6 +257,35 @@ public class MatTest : TestBase
         ret = resultImage.SetTo(0, null);
         ShowImagesWhenDebugMode(resultImage);
         Assert.True(ReferenceEquals(resultImage, ret));
+    }
+
+    [Fact]
+    public void SetToInputArray()
+    {
+        // Mat::setTo(InputArray value, ...) treats value as a scalar (one element per channel),
+        // not a same-shape fill source - a single-pixel Mat here plays that role.
+        using var mat = Mat.ZerosMat(3, 3, MatType.CV_8UC1);
+        using var value = Mat.FromPixelData(1, 1, MatType.CV_8UC1, new byte[] { 7 });
+
+        var ret = mat.SetTo(value);
+
+        Assert.True(ReferenceEquals(mat, ret));
+        Assert.Equal(7, mat.Get<byte>(0, 0));
+        Assert.Equal(7, mat.Get<byte>(2, 2));
+    }
+
+    [Fact]
+    public void Cross()
+    {
+        using var a = Mat.FromPixelData(1, 3, MatType.CV_64FC1, new double[] { 1, 0, 0 });
+        using var b = Mat.FromPixelData(1, 3, MatType.CV_64FC1, new double[] { 0, 1, 0 });
+
+        using var c = a.Cross(b);
+
+        // c is a 1x3 row vector: Get<T>(i0) addresses row i0, so columns need the 2-index accessor.
+        Assert.Equal(0, c.Get<double>(0, 0), 6);
+        Assert.Equal(0, c.Get<double>(0, 1), 6);
+        Assert.Equal(1, c.Get<double>(0, 2), 6);
     }
 
 #if NET5_0_OR_GREATER
@@ -271,6 +354,8 @@ public class MatTest : TestBase
         Assert.Equal(new Size(4, 3), mat.Size());
 
         // OK
+        // These two-argument calls resolve to the dedicated SubMat(System.Range, System.Range)
+        // overload, not SubMat(Range[]), so they are unaffected by dropping params there.
         using var subMat1 = mat.SubMat(0..2, 1..4);
         Assert.Equal(new Size(3, 2), subMat1.Size());
         Assert.True(subMat1.GetArray(out byte[] subMat1Array));
@@ -281,7 +366,7 @@ public class MatTest : TestBase
         Assert.True(subMat2.GetArray(out byte[] subMat2Array));
         Assert.Equal([5, 6,7,8], subMat2Array);
 
-        // out of range 
+        // out of range
         Assert.Throws<ArgumentOutOfRangeException>(() =>
         {
             using (mat.SubMat(0..10, ..)) { }
@@ -299,6 +384,26 @@ public class MatTest : TestBase
             using (mat.SubMat(.., 10..20)) { }
         });
     }
+
+    [Fact]
+    public void RoiConstructorRequiresExplicitRangesArray()
+    {
+        var values = new byte[,] {
+            {1, 2, 3, 4},
+            {5, 6, 7, 8},
+            {9, 10,11,12}};
+        using var mat = Mat.FromArray(values);
+
+        using var roi = new Mat(mat, [new Range(0, 2), new Range(1, 4)]);
+        Assert.Equal(new Size(3, 2), roi.Size());
+        Assert.True(roi.GetArray(out byte[] roiArray));
+        Assert.Equal([2, 3,4, 6,7,8], roiArray);
+
+        Assert.Throws<ArgumentException>(() =>
+        {
+            using (new Mat(mat, [])) { }
+        });
+    }
 #endif
 
     [Fact]
@@ -306,8 +411,7 @@ public class MatTest : TestBase
     {
         var data = new byte[] { 1, 10, 100 };
         using var mat = Mat.FromPixelData(3, 1, MatType.CV_8UC1, data);
-        using var tExpr = mat.T();
-        using var t = tExpr.ToMat();
+        using Mat t = mat.T();
 
         Assert.Equal(1, t.Rows);
         Assert.Equal(3, t.Cols);
@@ -323,8 +427,7 @@ public class MatTest : TestBase
     {
         var data = new double[] { 1, 2, 3, 4 };
         using var mat = Mat.FromPixelData(2, 2, MatType.CV_64FC1, data);
-        using var invExpr = mat.Inv();
-        using var inv = invExpr.ToMat();
+        using Mat inv = mat.Inv();
 
         Assert.Equal(2, inv.Rows);
         Assert.Equal(2, inv.Cols);
@@ -860,6 +963,16 @@ public class MatTest : TestBase
     }
 
     [Fact]
+    public void SetArrayRejectsSourceBufferSmallerThanMat()
+    {
+        using var mat = new Mat(2, 2, MatType.CV_8UC1);
+
+        var exception = Assert.Throws<ArgumentException>(() => mat.SetArray(new byte[] { 1 }));
+
+        Assert.Equal("data", exception.ParamName);
+    }
+
+    [Fact]
     public void SetRectangularArrayByte()
     {
         using var mat = new Mat(2, 2, MatType.CV_8UC1);
@@ -875,6 +988,16 @@ public class MatTest : TestBase
         Assert.Equal(data[0, 1], mat.Get<byte>(0, 1));
         Assert.Equal(data[1, 0], mat.Get<byte>(1, 0));
         Assert.Equal(data[1, 1], mat.Get<byte>(1, 1));
+    }
+
+    [Fact]
+    public void SetRectangularArrayRejectsSourceBufferSmallerThanMat()
+    {
+        using var mat = new Mat(2, 2, MatType.CV_8UC1);
+
+        var exception = Assert.Throws<ArgumentException>(() => mat.SetRectangularArray(new byte[,] { { 1 } }));
+
+        Assert.Equal("data", exception.ParamName);
     }
 
     [Fact]
@@ -1005,7 +1128,7 @@ public class MatTest : TestBase
         using var mat = new Mat(10, 10, MatType.CV_8UC1, Scalar.All(0));
 
         var rect = new Rect(2, 2, 7, 5);
-        mat.Rectangle(rect, new Scalar(expectedValue), -1);
+        Cv2.Rectangle(mat, rect, new Scalar(expectedValue), -1);
 
         using var subMat = mat.SubMat(rect);
         Assert.Equal(rect.Width, subMat.Cols);
@@ -1021,6 +1144,29 @@ public class MatTest : TestBase
     }
 
     [Fact]
+    public void SubMatWithEmptyRangesArrayThrows()
+    {
+        // SubMat(Range[]) is not params, so mat.SubMat() is now a compile error;
+        // this covers the residual case of an explicitly empty array.
+        using var mat = new Mat(10, 10, MatType.CV_8UC1, Scalar.All(0));
+        Assert.Throws<ArgumentException>(() => mat.SubMat(Array.Empty<Range>()));
+    }
+
+#if DEBUG
+    // The idx.Length < Dims guard in Mat.Ptr is DEBUG-only (Dims is a P/Invoke call, and this is
+    // a per-pixel-access hot path), so this test only applies to DEBUG builds. In Release, calling
+    // Ptr() with too few indices is undefined behavior (an out-of-bounds native read), matching
+    // cv::Mat::ptr's own CV_DbgAssert-only bounds checking.
+    [Fact]
+    public void PtrWithTooFewIndicesThrows()
+    {
+        using var mat = new Mat(10, 10, MatType.CV_8UC1, Scalar.All(0));
+        Assert.Throws<ArgumentException>(() => mat.Ptr());
+        Assert.Throws<ArgumentException>(() => mat.Ptr(new int[] { 0 }));
+    }
+#endif
+
+    [Fact]
     public void GetSubMatByIndexer()
     {
         const byte expectedValue = 128;
@@ -1028,7 +1174,7 @@ public class MatTest : TestBase
         using var mat = new Mat(10, 10, MatType.CV_8UC1, Scalar.All(0));
 
         var rect = new Rect(2, 2, 7, 5);
-        mat.Rectangle(rect, new Scalar(expectedValue), -1);
+        Cv2.Rectangle(mat, rect, new Scalar(expectedValue), -1);
 
         using var subMat = mat[rect];
         Assert.Equal(rect.Width, subMat.Cols);
@@ -1118,7 +1264,8 @@ public class MatTest : TestBase
         using var mat1 = Mat.FromPixelData(8, 8, MatType.CV_32FC1, ptr);
         for (long i = 0; i < 1000000; i++)
         {
-            using var mat2 = mat1.Idct();
+            using var mat2 = new Mat();
+            Cv2.Idct(mat1, mat2);
             GC.KeepAlive(mat2);
         }
 
@@ -1132,7 +1279,7 @@ public class MatTest : TestBase
     public void TestStreamWriting()
     {
         using var m = new Mat(new Size(87, 92), MatType.CV_8UC1);
-        m.Randn(Scalar.RandomColor(), new Scalar(7));
+        Cv2.Randn(m, Scalar.RandomColor(), new Scalar(7));
 
         using var stream = new System.IO.MemoryStream();
         stream.Write([1, 2, 3, 4], 0, 4);
@@ -1241,13 +1388,13 @@ public class MatTest : TestBase
 
         for (int i = 0; i < 5; i++)
         {
-            using var mi_3d = m.SubMat(new Range(i, i + 1), Range.All, Range.All);
+            using var mi_3d = m.SubMat(new Range[] { new Range(i, i + 1), Range.All, Range.All });
             Assert.Equal(3, mi_3d.Dims);
             Assert.Equal(1, mi_3d.Size(0));
             Assert.Equal(6, mi_3d.Size(1));
             Assert.Equal(7, mi_3d.Size(2));
 
-            using var mi = mi_3d.Reshape(0, mi_3d.Size(1), mi_3d.Size(2));
+            using var mi = mi_3d.Reshape(0, new int[] { mi_3d.Size(1), mi_3d.Size(2) });
             Assert.Equal(2, mi.Dims);
             Assert.Equal(6, mi.Size(0));
             Assert.Equal(7, mi.Size(1));
@@ -1259,6 +1406,57 @@ public class MatTest : TestBase
                     Assert.Equal((byte)(i + j + k), mi.At<byte>(j, k));
                 }
             }
+        }
+    }
+
+    // Regression test for https://github.com/shimat/opencvsharp/issues/1889
+    [Fact]
+    public void AsRowsParallelFor()
+    {
+        const int rows = 500;
+        const int cols = 1_000;
+
+        using var matX = new Mat(rows, cols, MatType.CV_32FC1);
+        using var matY = new Mat(rows, cols, MatType.CV_32FC1);
+        matX.SetTo(Scalar.All(0f));
+        matY.SetTo(Scalar.All(0f));
+
+        Parallel.For(0, rows, y =>
+        {
+            var rowX = matX.AsRows<float>()[y];
+            var rowY = matY.AsRows<float>()[y];
+            for (var x = 0; x < cols; x++)
+            {
+                rowX[x] = 11f;
+                rowY[x] = 12f;
+            }
+        });
+
+        var resultX = matX.AsRows<float>();
+        var resultY = matY.AsRows<float>();
+        for (var y = 0; y < rows; y++)
+        {
+            var rowX = resultX[y];
+            var rowY = resultY[y];
+            for (var x = 0; x < cols; x++)
+            {
+                Assert.Equal(11f, rowX[x]);
+                Assert.Equal(12f, rowY[x]);
+            }
+        }
+    }
+
+    [Fact]
+    public void AsRowsIndexerChecksRowBounds()
+    {
+        using var mat = new Mat(2, 2, MatType.CV_8UC1);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => AccessRow(mat, -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => AccessRow(mat, mat.Rows));
+
+        static void AccessRow(Mat source, int row)
+        {
+            _ = source.AsRows<byte>()[row];
         }
     }
 }

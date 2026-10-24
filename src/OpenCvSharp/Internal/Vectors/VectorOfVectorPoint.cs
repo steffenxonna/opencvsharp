@@ -1,28 +1,29 @@
-﻿using OpenCvSharp.Internal.Util;
+using OpenCvSharp.Internal.Util;
 
 namespace OpenCvSharp.Internal.Vectors;
 
 /// <summary> 
 /// </summary>
-public class VectorOfVectorPoint : DisposableCvObject, IStdVector<Point[]>
+public class VectorOfVectorPoint : CvObject, IStdVector<Point[]>
 {
     /// <summary>
     /// Constructor
     /// </summary>
     public VectorOfVectorPoint()
     {
-        ptr = NativeMethods.vector_vector_Point_new1();
+        var p = NativeMethods.vector_vector_Point_new1();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
     }
         
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="size"></param>
-    public VectorOfVectorPoint(nuint size)
+    public VectorOfVectorPoint(int size)
     {
-        if (size < 0)
-            throw new ArgumentOutOfRangeException(nameof(size));
-        ptr = NativeMethods.vector_vector_Point_new2(size);
+        ArgumentOutOfRangeException.ThrowIfNegative(size);
+        var p = NativeMethods.vector_vector_Point_new2((nuint)size);
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
     }
 
     /// <summary>
@@ -30,7 +31,7 @@ public class VectorOfVectorPoint : DisposableCvObject, IStdVector<Point[]>
     /// </summary>
     protected override void DisposeUnmanaged()
     {
-        NativeMethods.vector_vector_Point_delete(ptr);
+        NativeMethods.vector_vector_Point_delete(CvPtr);
         base.DisposeUnmanaged();
     }
 
@@ -39,8 +40,7 @@ public class VectorOfVectorPoint : DisposableCvObject, IStdVector<Point[]>
     /// </summary>
     public int GetSize1()
     {
-        var res = NativeMethods.vector_vector_Point_getSize1(ptr);
-        GC.KeepAlive(this);
+        var res = NativeMethods.vector_vector_Point_getSize1(Handle);
         return (int)res;
     }
 
@@ -56,9 +56,8 @@ public class VectorOfVectorPoint : DisposableCvObject, IStdVector<Point[]>
     {
         var size1 = GetSize1();
         var size2 = new nuint[size1];
-        NativeMethods.vector_vector_Point_getSize2(ptr, size2);
-        GC.KeepAlive(this);
-        return size2.Select(s => (long)s).ToArray();
+        NativeMethods.vector_vector_Point_getSize2(Handle, size2);
+        return size2.ToInt64Array();
     }
 
     /// <summary>
@@ -79,8 +78,7 @@ public class VectorOfVectorPoint : DisposableCvObject, IStdVector<Point[]>
         }
 
         using var retPtr = new ArrayAddress2<Point>(ret);
-        NativeMethods.vector_vector_Point_copy(ptr, retPtr.GetPointer());
-        GC.KeepAlive(this);
+        NativeMethods.vector_vector_Point_copy(Handle, retPtr.GetPointer());
         return ret;
     }
 }

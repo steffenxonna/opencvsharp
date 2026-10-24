@@ -1,53 +1,31 @@
-﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using OpenCvSharp.Internal.Util;
+
+#pragma warning disable CA1051
 
 namespace OpenCvSharp;
 
 /// <summary>
 /// 3-Tuple of byte (System.Byte)
 /// </summary>
-[Serializable]
 [StructLayout(LayoutKind.Sequential)]
-[SuppressMessage("Design", "CA1051: Do not declare visible instance fields")]
 // ReSharper disable once InconsistentNaming
-public struct Vec3b : IVec<Vec3b, byte>, IEquatable<Vec3b>
+public record struct Vec3b(byte Item0, byte Item1, byte Item2)
 {
     /// <summary>
     /// The value of the first component of this object.
     /// </summary>
-    public byte Item0;
+    public byte Item0 = Item0;
 
     /// <summary>
     /// The value of the second component of this object.
     /// </summary>
-    public byte Item1;
+    public byte Item1 = Item1;
 
     /// <summary>
     /// The value of the third component of this object.
     /// </summary>
-    public byte Item2;
-
-    /// <summary>
-    /// Deconstructing a Vector
-    /// </summary>
-    /// <param name="item0"></param>
-    /// <param name="item1"></param>
-    /// <param name="item2"></param>
-    public readonly void Deconstruct(out byte item0, out byte item1, out byte item2) => (item0, item1, item2) = (Item0, Item1, Item2);
-
-    /// <summary>
-    /// Initializer
-    /// </summary>
-    /// <param name="item0"></param>
-    /// <param name="item1"></param>
-    /// <param name="item2"></param>
-    public Vec3b(byte item0, byte item1, byte item2)
-    {
-        Item0 = item0;
-        Item1 = item1;
-        Item2 = item2;
-    }
+    public byte Item2 = Item2;
 
     #region Operators
 
@@ -137,49 +115,6 @@ public struct Vec3b : IVec<Vec3b, byte>, IEquatable<Vec3b>
     // ReSharper restore InconsistentNaming
 #pragma warning restore 1591
 
-    /// <inheritdoc />
-    public readonly bool Equals(Vec3b other) =>
-        Item0 == other.Item0 &&
-        Item1 == other.Item1 &&
-        Item2 == other.Item2;
-
-    /// <inheritdoc />
-    public readonly override bool Equals(object? obj)
-    {
-        if (obj is null) return false;
-        return obj is Vec3b b && Equals(b);
-    }
-
-    /// <summary> 
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    public static bool operator ==(Vec3b a, Vec3b b) => a.Equals(b);
-
-    /// <summary> 
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    public static bool operator !=(Vec3b a, Vec3b b) => !(a == b);
-
-    /// <inheritdoc />
-    public readonly override int GetHashCode()
-    {
-#if DOTNET_FRAMEWORK || NETSTANDARD2_0
-        unchecked
-        {
-            var hashCode = Item0.GetHashCode();
-            hashCode = (hashCode * 397) ^ Item1.GetHashCode();
-            hashCode = (hashCode * 397) ^ Item2.GetHashCode();
-            return hashCode;
-        }
-#else
-            return HashCode.Combine(Item0, Item1, Item2);
-#endif
-    }
-
-    /// <inheritdoc />
-    public readonly override string ToString() => $"{nameof(Vec3b)} ({Item0}, {Item1}, {Item2})";
+    /// <summary>Returns a <see cref="Span{T}"/> over the 3 elements of this vector.</summary>
+    public Span<byte> AsSpan() => MemoryMarshal.CreateSpan(ref Item0, 3);
 }

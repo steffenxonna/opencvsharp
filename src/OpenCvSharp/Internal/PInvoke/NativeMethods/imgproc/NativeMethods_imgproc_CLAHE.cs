@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 #pragma warning disable 1591
@@ -10,31 +10,42 @@ namespace OpenCvSharp.Internal;
 
 static partial class NativeMethods
 {
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_createCLAHE(double clipLimit, Size tileGridSize, out IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_createCLAHE(double clipLimit, Size tileGridSize, out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_Ptr_CLAHE_delete(IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_Ptr_CLAHE_delete(IntPtr obj);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_Ptr_CLAHE_get(IntPtr obj, out IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_Ptr_CLAHE_get(IntPtr obj, out IntPtr returnValue);
 
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_CLAHE_apply(IntPtr obj, IntPtr src, IntPtr dst);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_CLAHE_setClipLimit(IntPtr obj, double clipLimit);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_CLAHE_getClipLimit(IntPtr obj, out double returnValue);
+    // The object handle is passed as an OpenCvSafeHandle so the marshaller keeps the managed CLAHE
+    // alive for the duration of the call; callers no longer need GC.KeepAlive(this).
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus imgproc_CLAHE_apply(OpenCvSafeHandle obj, in InputArrayProxy src, in OutputArrayProxy dst);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_CLAHE_setTilesGridSize(IntPtr obj, Size tileGridSize);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_CLAHE_setClipLimit(OpenCvSafeHandle obj, double clipLimit);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_CLAHE_getTilesGridSize(IntPtr obj, out Size returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_CLAHE_getClipLimit(OpenCvSafeHandle obj, out double returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus imgproc_CLAHE_collectGarbage(IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_CLAHE_setTilesGridSize(OpenCvSafeHandle obj, Size tileGridSize);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_CLAHE_getTilesGridSize(OpenCvSafeHandle obj, out Size returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_CLAHE_collectGarbage(OpenCvSafeHandle obj);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_CLAHE_setBitShift(OpenCvSafeHandle obj, int bitShift);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus imgproc_CLAHE_getBitShift(OpenCvSafeHandle obj, out int returnValue);
+
 }

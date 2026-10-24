@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using OpenCvSharp.Internal.Util;
 
 #pragma warning disable CA1051
@@ -8,38 +8,19 @@ namespace OpenCvSharp;
 /// <summary>
 /// 2-Tuple of short (System.Int16)
 /// </summary>
-[Serializable]
 [StructLayout(LayoutKind.Sequential)]
 // ReSharper disable once InconsistentNaming
-public struct Vec2s : IVec<Vec2s, short>, IEquatable<Vec2s>
+public record struct Vec2s(short Item0, short Item1)
 {
     /// <summary>
     /// The value of the first component of this object.
     /// </summary>
-    public short Item0;
+    public short Item0 = Item0;
 
     /// <summary>
     /// The value of the second component of this object.
     /// </summary>
-    public short Item1;
-
-    /// <summary>
-    /// Deconstructing a Vector
-    /// </summary>
-    /// <param name="item0"></param>
-    /// <param name="item1"></param>
-    public readonly void Deconstruct(out short item0, out short item1) => (item0, item1) = (Item0, Item1);
-
-    /// <summary>
-    /// Initializer
-    /// </summary>
-    /// <param name="item0"></param>
-    /// <param name="item1"></param>
-    public Vec2s(short item0, short item1)
-    {
-        Item0 = item0;
-        Item1 = item1;
-    }
+    public short Item1 = Item1;
 
     #region Operators
 
@@ -84,6 +65,7 @@ public struct Vec2s : IVec<Vec2s, short>, IEquatable<Vec2s>
     public static Vec2s operator -(Vec2s a, Vec2s b) => a.Subtract(b);
     public static Vec2s operator *(Vec2s a, double alpha) => a.Multiply(alpha);
     public static Vec2s operator /(Vec2s a, double alpha) => a.Divide(alpha);
+    public static Vec2s operator -(Vec2s a) => new(SaturateCast.ToInt16(-a.Item0), SaturateCast.ToInt16(-a.Item1));
 #pragma warning restore 1591
 
     /// <summary>
@@ -122,43 +104,6 @@ public struct Vec2s : IVec<Vec2s, short>, IEquatable<Vec2s>
     // ReSharper restore InconsistentNaming
 #pragma warning restore 1591
 
-    /// <inheritdoc />
-    public readonly bool Equals(Vec2s other) => Item0 == other.Item0 && Item1 == other.Item1;
-
-    /// <inheritdoc />
-    public readonly override bool Equals(object? obj)
-    {
-        if (obj is null) return false;
-        return obj is Vec2s v && Equals(v);
-    }
-
-    /// <summary> 
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    public static bool operator ==(Vec2s a, Vec2s b) => a.Equals(b);
-
-    /// <summary> 
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    public static bool operator !=(Vec2s a, Vec2s b) => !a.Equals(b);
-
-    /// <inheritdoc />
-    public readonly override int GetHashCode()
-    {
-#if DOTNET_FRAMEWORK || NETSTANDARD2_0
-        unchecked
-        {
-            return (Item0.GetHashCode() * 397) ^ Item1.GetHashCode();
-        }
-#else
-            return HashCode.Combine(Item0, Item1);
-#endif
-    }
-
-    /// <inheritdoc />
-    public readonly override string ToString() => $"{nameof(Vec2s)} ({Item0}, {Item1})";
+    /// <summary>Returns a <see cref="Span{T}"/> over the 2 elements of this vector.</summary>
+    public Span<short> AsSpan() => MemoryMarshal.CreateSpan(ref Item0, 2);
 }

@@ -1,28 +1,46 @@
-﻿using System.Text;
+using System.Text;
 
 namespace OpenCvSharp.Internal.Vectors;
 
 /// <summary> 
 /// </summary>
-public class VectorOfString : DisposableCvObject, IStdVector<string?>
+public class VectorOfString : CvObject, IStdVector<string?>
 {
     /// <summary>
     /// Constructor
     /// </summary>
     public VectorOfString()
     {
-        ptr = NativeMethods.vector_string_new1();
+        var p = NativeMethods.vector_string_new1();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
     }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="size"></param>
-    public VectorOfString(nuint size)
+    public VectorOfString(int size)
     {
-        if (size < 0)
-            throw new ArgumentOutOfRangeException(nameof(size));
-        ptr = NativeMethods.vector_string_new2(size);
+        ArgumentOutOfRangeException.ThrowIfNegative(size);
+        var p = NativeMethods.vector_string_new2((nuint)size);
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
+    }
+
+    /// <summary>
+    /// Creates a vector populated from <paramref name="data"/>.
+    /// </summary>
+    /// <param name="data"></param>
+    public VectorOfString(IEnumerable<string> data)
+    {
+        ArgumentNullException.ThrowIfNull(data);
+        var p = NativeMethods.vector_string_new1();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
+        foreach (var s in data)
+        {
+            if (s is null)
+                throw new ArgumentException("Collection must not contain null elements.", nameof(data));
+            NativeMethods.vector_string_pushBack(Handle, s);
+        }
     }
 
     /// <summary>
@@ -30,7 +48,7 @@ public class VectorOfString : DisposableCvObject, IStdVector<string?>
     /// </summary>
     protected override void DisposeUnmanaged()
     {
-        NativeMethods.vector_string_delete(ptr);
+        NativeMethods.vector_string_delete(CvPtr);
         base.DisposeUnmanaged();
     }
 
@@ -41,8 +59,7 @@ public class VectorOfString : DisposableCvObject, IStdVector<string?>
     {
         get
         {
-            var res = NativeMethods.vector_string_getSize(ptr);
-            GC.KeepAlive(this);
+            var res = NativeMethods.vector_string_getSize(Handle);
             return (int)res;
         }
     }
@@ -61,7 +78,7 @@ public class VectorOfString : DisposableCvObject, IStdVector<string?>
         var cStringPointers = new IntPtr[size];
         var stringLengths = new int[size];
 
-        NativeMethods.vector_string_getElements(ptr, cStringPointers, stringLengths);
+        NativeMethods.vector_string_getElements(Handle, cStringPointers, stringLengths);
 
         for (var i = 0; i < size; i++)
         {
@@ -73,6 +90,7 @@ public class VectorOfString : DisposableCvObject, IStdVector<string?>
 
         GC.KeepAlive(cStringPointers);
         GC.KeepAlive(stringLengths);
+        // cStringPointers alias native memory held by this vector and were just dereferenced above.
         GC.KeepAlive(this);
         return ret;
     }

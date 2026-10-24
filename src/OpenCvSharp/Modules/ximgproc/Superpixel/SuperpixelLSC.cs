@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 // ReSharper disable once CheckNamespace
 namespace OpenCvSharp.XImgProc;
@@ -16,27 +16,13 @@ namespace OpenCvSharp.XImgProc;
 // ReSharper disable once InconsistentNaming
 public class SuperpixelLSC : Algorithm
 {
-    private Ptr? detectorPtr;
 
     /// <summary>
     /// Creates instance by raw pointer
     /// </summary>
-    protected SuperpixelLSC(IntPtr p)
-    {
-        detectorPtr = new Ptr(p);
-        ptr = detectorPtr.Get();
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        detectorPtr?.Dispose();
-        detectorPtr = null;
-        base.DisposeManaged();
-    }
-
+    private SuperpixelLSC(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.ximgproc_Ptr_SuperpixelLSC_delete(p)))
+    { }
     /// <summary>
     /// Class implementing the LSC (Linear Spectral Clustering) superpixels.
     ///
@@ -53,16 +39,13 @@ public class SuperpixelLSC : Algorithm
     public static SuperpixelLSC Create(
         InputArray image, int regionSize = 10, float ratio = 0.075f)
     {
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
-        image.ThrowIfDisposed();
-
         NativeMethods.HandleException(
             NativeMethods.ximgproc_createSuperpixelLSC(
-                image.CvPtr, regionSize, ratio, out var p));
+                image.Proxy, regionSize, ratio, out var smartPtr));
             
-        GC.KeepAlive(image); 
-        return new SuperpixelLSC(p);
+        GC.KeepAlive(image.Source); 
+        NativeMethods.HandleException(NativeMethods.ximgproc_Ptr_SuperpixelLSC_get(smartPtr, out var rawPtr));
+        return new SuperpixelLSC(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -74,8 +57,7 @@ public class SuperpixelLSC : Algorithm
         ThrowIfDisposed(); 
         NativeMethods.HandleException(
             NativeMethods.ximgproc_SuperpixelLSC_getNumberOfSuperpixels(
-                ptr, out var ret));
-        GC.KeepAlive(this);
+                Handle, out var ret));
         return ret;
     }
 
@@ -97,8 +79,7 @@ public class SuperpixelLSC : Algorithm
         ThrowIfDisposed();
         NativeMethods.HandleException(
             NativeMethods.ximgproc_SuperpixelLSC_iterate(
-                ptr, numIterations));
-        GC.KeepAlive(this);
+                Handle, numIterations));
     }
 
     /// <summary>
@@ -113,15 +94,10 @@ public class SuperpixelLSC : Algorithm
     public virtual void GetLabels(OutputArray labelsOut)
     {
         ThrowIfDisposed();
-        if (labelsOut is null)
-            throw new ArgumentNullException(nameof(labelsOut));
-        labelsOut.ThrowIfNotReady();
 
         NativeMethods.HandleException(
             NativeMethods.ximgproc_SuperpixelLSC_getLabels(
-                ptr, labelsOut.CvPtr));
-        GC.KeepAlive(this);
-        labelsOut.Fix();
+                Handle, labelsOut.Proxy));
     }
 
     /// <summary>
@@ -133,15 +109,10 @@ public class SuperpixelLSC : Algorithm
     public virtual void GetLabelContourMask(OutputArray image, bool thickLine = true)
     {
         ThrowIfDisposed();
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
-        image.ThrowIfNotReady();
 
         NativeMethods.HandleException(
             NativeMethods.ximgproc_SuperpixelLSC_getLabelContourMask(
-                ptr, image.CvPtr, thickLine ? 1 : 0));
-        GC.KeepAlive(this);
-        image.Fix();
+                Handle, image.Proxy, thickLine ? 1 : 0));
     }
 
     /// <summary>
@@ -157,25 +128,6 @@ public class SuperpixelLSC : Algorithm
         ThrowIfDisposed();
         NativeMethods.HandleException(
             NativeMethods.ximgproc_SuperpixelLSC_enforceLabelConnectivity(
-                ptr, minElementSize));
-        GC.KeepAlive(this);
-    }
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ximgproc_Ptr_SuperpixelLSC_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ximgproc_Ptr_SuperpixelLSC_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+                Handle, minElementSize));
     }
 }

@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp;
 
@@ -13,12 +13,32 @@ public abstract class DenseOpticalFlowExt : Algorithm
     /// <summary>
     /// 
     /// </summary>
+    protected DenseOpticalFlowExt(IntPtr smartPtr, IntPtr rawPtr, Action<IntPtr> release)
+        : base(smartPtr, rawPtr, release) { }
+
+    /// <summary>
+    /// Creates instance from cv::Ptr&lt;T&gt; .
+    /// ptr is disposed when the wrapper disposes.
+    /// </summary>
+    /// <param name="ptr"></param>
+    internal static DenseOpticalFlowExt FromPtr(IntPtr ptr)
+    {
+        if (ptr == IntPtr.Zero)
+            throw new OpenCvSharpException("Invalid DenseOpticalFlowExt pointer");
+
+        NativeMethods.HandleException(NativeMethods.superres_Ptr_DenseOpticalFlowExt_get(ptr, out var rawPtr));
+        return new GenericDenseOpticalFlowExt(ptr, rawPtr);
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
     /// <returns></returns>
     public static DenseOpticalFlowExt CreateFarneback()
     {
         NativeMethods.HandleException(
             NativeMethods.superres_createOptFlow_Farneback(out var ptr));
-        return FarnebackOpticalFlow.FromPtr(ptr);
+        return SuperResFarnebackOpticalFlow.FromPtr(ptr);
     }
 
     /// <summary>
@@ -29,7 +49,7 @@ public abstract class DenseOpticalFlowExt : Algorithm
     {
         NativeMethods.HandleException(
             NativeMethods.superres_createOptFlow_Farneback_CUDA(out var ptr));
-        return FarnebackOpticalFlow.FromPtr(ptr);
+        return SuperResFarnebackOpticalFlow.FromPtr(ptr);
     }
 
     /// <summary>
@@ -40,7 +60,7 @@ public abstract class DenseOpticalFlowExt : Algorithm
     {
         NativeMethods.HandleException(
             NativeMethods.superres_createOptFlow_DualTVL1(out var ptr));
-        return FarnebackOpticalFlow.FromPtr(ptr);
+        return DualTVL1OpticalFlow.FromPtr(ptr);
     }
 
     /// <summary>
@@ -51,7 +71,7 @@ public abstract class DenseOpticalFlowExt : Algorithm
     {
         NativeMethods.HandleException(
             NativeMethods.superres_createOptFlow_DualTVL1_CUDA(out var ptr));
-        return FarnebackOpticalFlow.FromPtr(ptr);
+        return DualTVL1OpticalFlow.FromPtr(ptr);
     }
 
     /// <summary>
@@ -62,7 +82,7 @@ public abstract class DenseOpticalFlowExt : Algorithm
     {
         NativeMethods.HandleException(
             NativeMethods.superres_createOptFlow_Brox_CUDA(out var ptr));
-        return FarnebackOpticalFlow.FromPtr(ptr);
+        return BroxOpticalFlow.FromPtr(ptr);
     }
 
     /// <summary>
@@ -73,7 +93,7 @@ public abstract class DenseOpticalFlowExt : Algorithm
     {
         NativeMethods.HandleException(
             NativeMethods.superres_createOptFlow_PyrLK_CUDA(out var ptr));
-        return FarnebackOpticalFlow.FromPtr(ptr);
+        return PyrLKOpticalFlow.FromPtr(ptr);
     }
 
     #endregion
@@ -84,8 +104,7 @@ public abstract class DenseOpticalFlowExt : Algorithm
     public virtual void CollectGarbage()
     {
         NativeMethods.HandleException(
-            NativeMethods.superres_DenseOpticalFlowExt_collectGarbage(ptr));
-        GC.KeepAlive(this);
+            NativeMethods.superres_DenseOpticalFlowExt_collectGarbage(Handle));
     }
 
     /// <summary>
@@ -95,29 +114,23 @@ public abstract class DenseOpticalFlowExt : Algorithm
     /// <param name="frame1"></param>
     /// <param name="flow1"></param>
     /// <param name="flow2"></param>
-    public virtual void Calc(InputArray frame0, InputArray frame1, OutputArray flow1, OutputArray? flow2 = null)
+    public virtual void Calc(InputArray frame0, InputArray frame1, OutputArray flow1, OutputArray flow2 = default)
     {
-        if (frame0 is null)
-            throw new ArgumentNullException(nameof(frame0));
-        if (frame1 is null)
-            throw new ArgumentNullException(nameof(frame1));
-        if (flow1 is null)
-            throw new ArgumentNullException(nameof(flow1));
-        frame0.ThrowIfDisposed();
-        frame1.ThrowIfDisposed();
-        flow1.ThrowIfNotReady();
-        flow2?.ThrowIfNotReady();
-
         NativeMethods.HandleException(
             NativeMethods.superres_DenseOpticalFlowExt_calc(
-                ptr, frame0.CvPtr, frame1.CvPtr, flow1.CvPtr, Cv2.ToPtr(flow2)));
+                Handle, frame0.Proxy, frame1.Proxy, flow1.Proxy, flow2.Proxy));
 
-        GC.KeepAlive(this);
-        GC.KeepAlive(frame0);
-        GC.KeepAlive(frame1);
-        GC.KeepAlive(flow1);
-        GC.KeepAlive(flow2);
-        flow1.Fix();
-        flow2?.Fix();
+        GC.KeepAlive(frame0.Source);
+        GC.KeepAlive(frame1.Source);
+        GC.KeepAlive(flow1.Source);
+        GC.KeepAlive(flow2.Source);
+    }
+
+    private sealed class GenericDenseOpticalFlowExt : DenseOpticalFlowExt
+    {
+        public GenericDenseOpticalFlowExt(IntPtr smartPtr, IntPtr rawPtr)
+            : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.superres_Ptr_DenseOpticalFlowExt_delete(p)))
+        {
+        }
     }
 }

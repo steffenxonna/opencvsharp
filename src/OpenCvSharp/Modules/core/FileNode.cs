@@ -1,5 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Nodes;
 using OpenCvSharp.Internal;
 using OpenCvSharp.Internal.Vectors;
 
@@ -10,7 +11,7 @@ namespace OpenCvSharp;
 /// <summary>
 /// File Storage Node class
 /// </summary>
-public class FileNode : DisposableCvObject, IEnumerable<FileNode>
+public class FileNode : CvObject, IEnumerable<FileNode>
 {
     // ReSharper disable InconsistentNaming
 
@@ -22,7 +23,8 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     public FileNode()
     {
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_new1(out ptr));
+            NativeMethods.core_FileNode_new1(out var p));
+        InitSafeHandle(p);
     }
 
     /// <summary>
@@ -31,17 +33,39 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     /// <param name="ptr"></param>
     public FileNode(IntPtr ptr)
     {
-        this.ptr = ptr;
+        InitSafeHandle(ptr);
     }
 
     /// <summary>
     /// Releases unmanaged resources
     /// </summary>
-    protected override void DisposeUnmanaged()
+
+    private void InitSafeHandle(IntPtr p, bool ownsHandle = true)
     {
-        NativeMethods.HandleException(
-            NativeMethods.core_FileNode_delete(ptr));
-        base.DisposeUnmanaged();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle,
+            static h => NativeMethods.HandleException(NativeMethods.core_FileNode_delete(h))));
+    }
+
+    /// <summary>
+    /// Wraps a native cv::FileNode* as a nullable FileNode, normalizing the "not found" case.
+    /// Native FileNode lookups (FileStorage/FileNode indexers) never return a null pointer -
+    /// a missing key comes back as a non-null, heap-allocated node whose Type is None. That
+    /// sentinel is indistinguishable from a key that is present but explicitly stores a "none"
+    /// value (e.g. YAML's <c>~</c>), so this treats both as "not found" and returns null,
+    /// which is what a C# caller chaining with <c>?.</c> actually expects.
+    /// </summary>
+    internal static FileNode? FromRawPtrOrNull(IntPtr ptr)
+    {
+        if (ptr == IntPtr.Zero)
+            return null;
+
+        var node = new FileNode(ptr);
+        if (node.IsNone)
+        {
+            node.Dispose();
+            return null;
+        }
+        return node;
     }
 
     #endregion
@@ -55,8 +79,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     /// <returns></returns>
     public static explicit operator int(FileNode node)
     {
-        if (node is null)
-            throw new ArgumentNullException(nameof(node));
+        ArgumentNullException.ThrowIfNull(node);
         return node.ToInt32();
     }
 
@@ -69,9 +92,33 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_toInt(ptr, out var ret));
+            NativeMethods.core_FileNode_toInt(Handle, out var ret));
 
-        GC.KeepAlive(this);
+        return ret;
+    }
+
+    /// <summary>
+    /// Returns the node content as a signed 64-bit integer. If the node stores a floating-point number, it is rounded.
+    /// </summary>
+    /// <param name="node"></param>
+    /// <returns></returns>
+    public static explicit operator long(FileNode node)
+    {
+        ArgumentNullException.ThrowIfNull(node);
+        return node.ToInt64();
+    }
+
+    /// <summary>
+    /// Returns the node content as a signed 64-bit integer. If the node stores a floating-point number, it is rounded.
+    /// </summary>
+    /// <returns></returns>
+    public long ToInt64()
+    {
+        ThrowIfDisposed();
+
+        NativeMethods.HandleException(
+            NativeMethods.core_FileNode_toInt64(Handle, out var ret));
+
         return ret;
     }
 
@@ -82,8 +129,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     /// <returns></returns>
     public static explicit operator float(FileNode node)
     {
-        if (node is null)
-            throw new ArgumentNullException(nameof(node));
+        ArgumentNullException.ThrowIfNull(node);
         return node.ToSingle();
     }
 
@@ -96,9 +142,8 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_toFloat(ptr, out var ret));
+            NativeMethods.core_FileNode_toFloat(Handle, out var ret));
 
-        GC.KeepAlive(this);
         return ret;
     }
 
@@ -109,8 +154,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     /// <returns></returns>
     public static explicit operator double(FileNode node)
     {
-        if (node is null)
-            throw new ArgumentNullException(nameof(node));
+        ArgumentNullException.ThrowIfNull(node);
         return node.ToDouble();
     }
 
@@ -123,9 +167,8 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_toDouble(ptr, out var ret));
+            NativeMethods.core_FileNode_toDouble(Handle, out var ret));
 
-        GC.KeepAlive(this);
         return ret;
     }
 
@@ -136,8 +179,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     /// <returns></returns>
     public static explicit operator string(FileNode node)
     {
-        if (node is null)
-            throw new ArgumentNullException(nameof(node));
+        ArgumentNullException.ThrowIfNull(node);
         return node.ToString();
     }
 
@@ -151,9 +193,8 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
 
         using var buf = new StdString();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_toString(ptr, buf.CvPtr));
+            NativeMethods.core_FileNode_toString(Handle, buf.CvPtr));
 
-        GC.KeepAlive(this);
         return buf.ToString();
     }
         
@@ -164,8 +205,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     /// <returns></returns>
     public static explicit operator Mat(FileNode node)
     {
-        if (node is null)
-            throw new ArgumentNullException(nameof(node));
+        ArgumentNullException.ThrowIfNull(node);
         return node.ToMat();
     }
 
@@ -179,10 +219,61 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
 
         var matrix = new Mat();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_toMat(ptr, matrix.CvPtr));
+            NativeMethods.core_FileNode_toMat(Handle, matrix.CvPtr));
 
-        GC.KeepAlive(this);
         return matrix;
+    }
+
+    /// <summary>
+    /// Converts this node (and, recursively, its children) into a <see cref="JsonNode"/> tree,
+    /// regardless of whether the underlying <see cref="FileStorage"/> was opened as XML, YAML or
+    /// JSON. This is a generic structural conversion (scalars, sequences, mappings) - it does not
+    /// give special treatment to OpenCV-specific encodings such as <c>Mat</c>/<c>KeyPoint</c>/
+    /// <c>DMatch</c>, which come through as their raw mapping/sequence shape (e.g. a Mat becomes a
+    /// JSON object with "rows"/"cols"/"dt"/"data" members, not an <see cref="OpenCvSharp.Mat"/>).
+    /// The result can be fed to <see cref="System.Text.Json.JsonSerializer"/> or queried directly.
+    /// </summary>
+    /// <returns>
+    /// The converted node, or null for a <see cref="Types.None"/> node (mirroring JSON <c>null</c>).
+    /// </returns>
+    public JsonNode? ToJsonNode()
+    {
+        ThrowIfDisposed();
+
+        return Type switch
+        {
+            Types.None => null,
+            Types.Int => JsonValue.Create(ToInt64()),
+            Types.Real => JsonValue.Create(ToDouble()),
+            Types.Str => JsonValue.Create(ToString()),
+            Types.Seq => SeqToJsonArray(),
+            Types.Map => MapToJsonObject(),
+            _ => throw new NotSupportedException($"Cannot convert a FileNode of type {Type} to a JsonNode."),
+        };
+    }
+
+    private JsonArray SeqToJsonArray()
+    {
+        var array = new JsonArray();
+        foreach (var child in this)
+        {
+            using (child)
+            {
+                array.Add(child.ToJsonNode());
+            }
+        }
+        return array;
+    }
+
+    private JsonObject MapToJsonObject()
+    {
+        var obj = new JsonObject();
+        foreach (var key in Keys)
+        {
+            using var child = this[key];
+            obj[key] = child?.ToJsonNode();
+        }
+        return obj;
     }
 
     #endregion
@@ -190,28 +281,26 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     #region Properties
 
     /// <summary>
-    /// returns element of a mapping node
+    /// Returns the element of a mapping node with the given key, or null if the key is not
+    /// present (or is explicitly stored as a "none" value).
     /// </summary>
     public FileNode? this[string nodeName]
     {
         get
         {
             ThrowIfDisposed();
-            if (nodeName is null)
-                throw new ArgumentNullException(nameof(nodeName));
+            ArgumentNullException.ThrowIfNull(nodeName);
 
             NativeMethods.HandleException(
-                NativeMethods.core_FileNode_operatorThis_byString(ptr, nodeName, out var node));
+                NativeMethods.core_FileNode_operatorThis_byString(Handle, nodeName, out var node));
 
-            GC.KeepAlive(this);
-            if (node == IntPtr.Zero)
-                return null;
-            return new FileNode(node);
+            return FromRawPtrOrNull(node);
         }
     }
 
     /// <summary>
-    /// returns element of a sequence node
+    /// Returns the element of a sequence node at the given index, or null if the index is out
+    /// of range (or the element is explicitly stored as a "none" value).
     /// </summary>
     public FileNode? this[int i]
     {
@@ -219,14 +308,55 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
 
-            NativeMethods.HandleException( 
-                NativeMethods.core_FileNode_operatorThis_byInt(ptr, i, out var node));
+            NativeMethods.HandleException(
+                NativeMethods.core_FileNode_operatorThis_byInt(Handle, i, out var node));
 
-            GC.KeepAlive(this);
-            if (node == IntPtr.Zero)
-                return null;
-            return new FileNode(node);
+            return FromRawPtrOrNull(node);
         }
+    }
+
+    /// <summary>
+    /// Navigates a chain of mapping keys (<see cref="string"/>) and/or sequence indices
+    /// (<see cref="int"/>), disposing every intermediate <see cref="FileNode"/> along the way.
+    /// Equivalent to repeated indexer chaining (e.g. <c>node["a"][2]["b"]</c>), except that the
+    /// indexer chain leaves every intermediate node unreferenced - each one is still a real
+    /// native allocation that would otherwise sit around until the GC finalizes it.
+    /// </summary>
+    /// <param name="path">One or more mapping keys / sequence indices to follow, in order.</param>
+    /// <returns>The node at the end of the path, or null if any segment along the way is missing.</returns>
+    public FileNode? GetPath(object[] path)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        if (path.Length == 0)
+            throw new ArgumentException("Path must contain at least one key or index.", nameof(path));
+
+        ThrowIfDisposed();
+
+        var current = this;
+        var ownsCurrent = false;
+
+        foreach (var segment in path)
+        {
+            var next = segment switch
+            {
+                string key => current[key],
+                int index => current[index],
+                _ => throw new ArgumentException(
+                    $"Path segments must be string (mapping key) or int (sequence index), got '{segment?.GetType()}'.",
+                    nameof(path)),
+            };
+
+            if (ownsCurrent)
+                current.Dispose();
+
+            if (next is null)
+                return null;
+
+            current = next;
+            ownsCurrent = true;
+        }
+
+        return current;
     }
 
     /// <summary>
@@ -239,8 +369,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.core_FileNode_empty(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_empty(Handle, out var ret));
             return ret != 0;
         }
     }
@@ -255,8 +384,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException( 
-                NativeMethods.core_FileNode_isNone(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_isNone(Handle, out var ret));
             return ret != 0;
         }
     }
@@ -271,8 +399,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException( 
-                NativeMethods.core_FileNode_isSeq(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_isSeq(Handle, out var ret));
             return ret != 0;
         }
     }
@@ -287,8 +414,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException( 
-                NativeMethods.core_FileNode_isMap(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_isMap(Handle, out var ret));
             return ret != 0;
         }
     }
@@ -303,8 +429,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.core_FileNode_isInt(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_isInt(Handle, out var ret));
             return ret != 0;
         }
     }
@@ -319,8 +444,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException( 
-                NativeMethods.core_FileNode_isReal(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_isReal(Handle, out var ret));
             return ret != 0;
         }
     }
@@ -335,8 +459,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException( 
-                NativeMethods.core_FileNode_isString(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_isString(Handle, out var ret));
             return ret != 0;
         }
     }
@@ -351,8 +474,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.core_FileNode_isNamed(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_isNamed(Handle, out var ret));
             return ret != 0;
         }
     }
@@ -368,8 +490,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
             ThrowIfDisposed();
             using var buf = new StdString();
             NativeMethods.HandleException(
-                NativeMethods.core_FileNode_name(ptr, buf.CvPtr));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_name(Handle, buf.CvPtr));
             return buf.ToString();
         }
     }
@@ -384,8 +505,36 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.core_FileNode_size(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_size(Handle, out var ret));
+            return ret.ToInt64();
+        }
+    }
+
+    /// <summary>
+    /// Returns the keys of a mapping node.
+    /// </summary>
+    public string[] Keys
+    {
+        get
+        {
+            ThrowIfDisposed();
+            using var buf = new VectorOfString();
+            NativeMethods.HandleException(
+                NativeMethods.core_FileNode_keys(Handle, buf.CvPtr));
+            return buf.ToArray();
+        }
+    }
+
+    /// <summary>
+    /// Returns the raw size of the node in bytes.
+    /// </summary>
+    public long RawSize
+    {
+        get
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.core_FileNode_rawSize(Handle, out var ret));
             return ret.ToInt64();
         }
     }
@@ -400,8 +549,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.core_FileNode_type(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNode_type(Handle, out var ret));
             return (Types)ret;
         }
     }
@@ -418,8 +566,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_begin(ptr, out var p));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_begin(Handle, out var p));
         return new FileNodeIterator(p);
     }
 
@@ -431,8 +578,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_end(ptr, out var p));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_end(Handle, out var p));
         return new FileNodeIterator(p);
     }
         
@@ -458,16 +604,17 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     /// Reads node elements to the buffer with the specified format
     /// </summary>
     /// <param name="fmt"></param>
-    /// <param name="vec"></param>
-    /// <param name="len"></param>
-    public void ReadRaw(string fmt, IntPtr vec, long len)
+    /// <param name="vec">The buffer to read into.</param>
+    public unsafe void ReadRaw(string fmt, Span<byte> vec)
     {
         ThrowIfDisposed();
-        if (fmt is null)
-            throw new ArgumentNullException(nameof(fmt));
-        NativeMethods.HandleException(
-            NativeMethods.core_FileNode_readRaw(ptr, fmt, vec, new IntPtr(len)));
-        GC.KeepAlive(this);
+        ArgumentNullException.ThrowIfNull(fmt);
+
+        fixed (byte* p = vec)
+        {
+            NativeMethods.HandleException(
+                NativeMethods.core_FileNode_readRaw(Handle, fmt, (IntPtr)p, new IntPtr(vec.Length)));
+        }
     }
 
     #region Read
@@ -480,8 +627,19 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     public int ReadInt(int defaultValue = default)
     {
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_int(ptr, out var value, defaultValue));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_int(Handle, out var value, defaultValue));
+        return value;
+    }
+
+    /// <summary>
+    /// Reads the node element as Int64 (long)
+    /// </summary>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public long ReadInt64(long defaultValue = default)
+    {
+        NativeMethods.HandleException(
+            NativeMethods.core_FileNode_read_int64(Handle, out var value, defaultValue));
         return value;
     }
 
@@ -493,8 +651,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     public float ReadFloat(float defaultValue = default)
     {
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_float(ptr, out var value, defaultValue));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_float(Handle, out var value, defaultValue));
         return value;
     }
 
@@ -506,8 +663,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     public double ReadDouble(double defaultValue = default)
     {
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_double(ptr, out var value, defaultValue));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_double(Handle, out var value, defaultValue));
         return value;
     }
 
@@ -520,8 +676,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         using var value = new StdString();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_String(ptr, value.CvPtr, defaultValue));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_String(Handle, value.CvPtr, defaultValue));
         return value.ToString();
     }
 
@@ -536,9 +691,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         try
         {
             NativeMethods.HandleException(
-                NativeMethods.core_FileNode_read_Mat(ptr, value.CvPtr, Cv2.ToPtr(defaultMat)));
-            GC.KeepAlive(this);
-            GC.KeepAlive(defaultMat);
+                NativeMethods.core_FileNode_read_Mat(Handle, value.CvPtr, defaultMat?.Handle ?? OpenCvSafeHandle.Null));
         }
         catch
         {
@@ -559,9 +712,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
         try
         {
             NativeMethods.HandleException(
-                NativeMethods.core_FileNode_read_SparseMat(ptr, value.CvPtr, Cv2.ToPtr(defaultMat)));
-            GC.KeepAlive(this);
-            GC.KeepAlive(defaultMat);
+                NativeMethods.core_FileNode_read_SparseMat(Handle, value.CvPtr, defaultMat?.Handle ?? OpenCvSafeHandle.Null));
         }
         catch
         {
@@ -577,10 +728,9 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     /// <returns></returns>
     public KeyPoint[] ReadKeyPoints()
     {
-        using var valueVector = new VectorOfKeyPoint();
+        using var valueVector = new StdVector<KeyPoint>();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_vectorOfKeyPoint(ptr, valueVector.CvPtr));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_vectorOfKeyPoint(Handle, valueVector.CvPtr));
         return valueVector.ToArray();
     }
 
@@ -590,10 +740,9 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     /// <returns></returns>
     public DMatch[] ReadDMatches()
     {
-        using var valueVector = new VectorOfDMatch();
+        using var valueVector = new StdVector<DMatch>();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_vectorOfDMatch(ptr, valueVector.CvPtr));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_vectorOfDMatch(Handle, valueVector.CvPtr));
         return valueVector.ToArray();
     }
 
@@ -605,8 +754,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Range(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Range(Handle, out var ret));
         return ret;
     }
 
@@ -617,8 +765,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     public KeyPoint ReadKeyPoint()
     {
         ThrowIfDisposed();
-        NativeMethods.HandleException( NativeMethods.core_FileNode_read_KeyPoint(ptr, out var ret));
-        GC.KeepAlive(this);
+        NativeMethods.HandleException( NativeMethods.core_FileNode_read_KeyPoint(Handle, out var ret));
         return ret;
     }
 
@@ -629,8 +776,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     public DMatch ReadDMatch()
     {
         ThrowIfDisposed();
-        NativeMethods.HandleException(NativeMethods.core_FileNode_read_DMatch(ptr, out var ret));
-        GC.KeepAlive(this);
+        NativeMethods.HandleException(NativeMethods.core_FileNode_read_DMatch(Handle, out var ret));
         return ret;
     }
 
@@ -641,8 +787,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     public Point ReadPoint()
     {
         ThrowIfDisposed();
-        NativeMethods.HandleException( NativeMethods.core_FileNode_read_Point2i(ptr, out var ret));
-        GC.KeepAlive(this);
+        NativeMethods.HandleException( NativeMethods.core_FileNode_read_Point2i(Handle, out var ret));
         return ret;
     }
 
@@ -653,8 +798,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     public Point2f ReadPoint2f()
     {
         ThrowIfDisposed();
-        NativeMethods.HandleException( NativeMethods.core_FileNode_read_Point2f(ptr, out var ret));
-        GC.KeepAlive(this);
+        NativeMethods.HandleException( NativeMethods.core_FileNode_read_Point2f(Handle, out var ret));
         return ret;
     }
 
@@ -665,8 +809,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     public Point2d ReadPoint2d()
     {
         ThrowIfDisposed();
-        NativeMethods.HandleException( NativeMethods.core_FileNode_read_Point2d(ptr, out var ret));
-        GC.KeepAlive(this);
+        NativeMethods.HandleException( NativeMethods.core_FileNode_read_Point2d(Handle, out var ret));
         return ret;
     }
 
@@ -678,8 +821,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Point3i(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Point3i(Handle, out var ret));
         return ret;
     }
 
@@ -691,8 +833,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Point3f(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Point3f(Handle, out var ret));
         return ret;
     }
 
@@ -704,8 +845,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Point3d(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Point3d(Handle, out var ret));
         return ret;
     }
 
@@ -717,8 +857,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Size2i(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Size2i(Handle, out var ret));
         return ret;
     }
 
@@ -730,8 +869,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Size2f(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Size2f(Handle, out var ret));
         return ret;
     }
 
@@ -743,8 +881,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Size2d(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Size2d(Handle, out var ret));
         return ret;
     }
 
@@ -756,8 +893,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Rect2i(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Rect2i(Handle, out var ret));
         return ret;
     }
 
@@ -769,8 +905,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Rect2f(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Rect2f(Handle, out var ret));
         return ret;
     }
 
@@ -782,8 +917,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Rect2d(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Rect2d(Handle, out var ret));
         return ret;
     }
 
@@ -795,8 +929,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Scalar(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Scalar(Handle, out var ret));
         return ret;
     }
 
@@ -808,8 +941,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Vec2i(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec2i(Handle, out var ret));
         return ret;
     }
 
@@ -821,8 +953,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec3i(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec3i(Handle, out var ret));
         return ret;
     }
 
@@ -834,8 +965,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec4i(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec4i(Handle, out var ret));
         return ret;
     }
 
@@ -847,8 +977,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec6i(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec6i(Handle, out var ret));
         return ret;
     }
 
@@ -860,8 +989,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec2d(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec2d(Handle, out var ret));
         return ret;
     }
 
@@ -873,8 +1001,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec3d(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec3d(Handle, out var ret));
         return ret;
     }
 
@@ -886,8 +1013,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec4d(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec4d(Handle, out var ret));
         return ret;
     }
 
@@ -899,8 +1025,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec6d(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec6d(Handle, out var ret));
         return ret;
     }
 
@@ -912,8 +1037,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec2f(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec2f(Handle, out var ret));
         return ret;
     }
 
@@ -925,8 +1049,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec3f(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec3f(Handle, out var ret));
         return ret;
     }
 
@@ -938,8 +1061,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec4f(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec4f(Handle, out var ret));
         return ret;
     }
 
@@ -951,8 +1073,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec6f(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec6f(Handle, out var ret));
         return ret;
     }
         
@@ -964,8 +1085,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec2b(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec2b(Handle, out var ret));
         return ret;
     }
 
@@ -977,8 +1097,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec3b(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec3b(Handle, out var ret));
         return ret;
     }
 
@@ -990,8 +1109,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Vec4b(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec4b(Handle, out var ret));
         return ret;
     }
 
@@ -1003,8 +1121,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec6b(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec6b(Handle, out var ret));
         return ret;
     }
 
@@ -1017,8 +1134,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec2s(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec2s(Handle, out var ret));
         return ret;
     }
 
@@ -1030,8 +1146,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Vec3s(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec3s(Handle, out var ret));
         return ret;
     }
 
@@ -1043,8 +1158,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec4s(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec4s(Handle, out var ret));
         return ret;
     }
 
@@ -1056,8 +1170,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Vec6s(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec6s(Handle, out var ret));
         return ret;
     }
         
@@ -1069,8 +1182,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Vec2w(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec2w(Handle, out var ret));
         return ret;
     }
 
@@ -1082,8 +1194,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec3w(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec3w(Handle, out var ret));
         return ret;
     }
 
@@ -1095,8 +1206,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException( 
-            NativeMethods.core_FileNode_read_Vec4w(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec4w(Handle, out var ret));
         return ret;
     }
 
@@ -1108,8 +1218,7 @@ public class FileNode : DisposableCvObject, IEnumerable<FileNode>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNode_read_Vec6w(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNode_read_Vec6w(Handle, out var ret));
         return ret;
     }
 

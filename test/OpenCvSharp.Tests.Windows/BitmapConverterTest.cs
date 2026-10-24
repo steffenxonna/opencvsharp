@@ -1,9 +1,8 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using OpenCvSharp.Extensions;
+using OpenCvSharp.GdipExtensions;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace OpenCvSharp.Tests.Extensions;
 

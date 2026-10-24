@@ -1,13 +1,16 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using OpenCvSharp.Internal;
 
 namespace OpenCvSharp;
 
 /// <summary>
-/// Type-specific abstract matrix 
+/// Type-specific matrix. <typeparamref name="TElem"/> fixes the element type, so elements can be
+/// read and written as <typeparamref name="TElem"/> (e.g. via <c>mat[row, col]</c>) and the matrix
+/// can be enumerated.
 /// </summary>
 /// <typeparam name="TElem">Element Type</typeparam>
-public class Mat<TElem> : Mat
+public class Mat<TElem> : Mat, IEnumerable<TElem>
     where TElem : unmanaged
 {
     #region Init & Disposal
@@ -18,6 +21,21 @@ public class Mat<TElem> : Mat
         if (TypeMap.TryGetValue(type, out var value))
             return value;
         throw new NotSupportedException($"Type parameter {type} is not supported by Mat<T>");
+    }
+
+    /// <summary>
+    /// Throws if this matrix's element type does not match <typeparamref name="TElem"/>.
+    /// Empty matrices (which have no element type) are not checked.
+    /// </summary>
+    private void ThrowIfTypeMismatch()
+    {
+        if (Empty())
+            return;
+        var expected = GetMatType();
+        var actual = Type();
+        if (actual != expected)
+            throw new OpenCvSharpException(
+                $"Mat element type {actual} does not match {typeof(TElem)} ({expected}).");
     }
 
     /// <summary>
@@ -44,15 +62,20 @@ public class Mat<TElem> : Mat
 #pragma warning disable CA1000 // Do not declare static members on generic types
     public new static Mat<TElem> FromNativePointer(IntPtr ptr)
 #pragma warning restore CA1000
-        => new(ptr);
+    {
+        var mat = new Mat<TElem>(ptr);
+        mat.ThrowIfTypeMismatch();
+        return mat;
+    }
 
     /// <summary>
-    /// Initializes by Mat object
+    /// Initializes by Mat object. The Mat's element type must match <typeparamref name="TElem"/>.
     /// </summary>
     /// <param name="mat">Managed Mat object</param>
     public Mat(Mat mat)
         : base(mat)
     {
+        ThrowIfTypeMismatch();
     }
 
     /// <summary>
@@ -124,7 +147,7 @@ public class Mat<TElem> : Mat
     /// So, when you modify the matrix formed using such a constructor, you also modify the corresponding elements of m . 
     /// If you want to have an independent copy of the sub-array, use Mat.Clone() .</param>
     /// <param name="ranges">Array of selected ranges of m along each dimensionality.</param>
-    protected Mat(Mat<TElem> m, params Range[] ranges)
+    protected Mat(Mat<TElem> m, Range[] ranges)
         : base(m, ranges)
     {
     }
@@ -209,8 +232,7 @@ public class Mat<TElem> : Mat
     public static Mat<TElem> FromPixelData(IEnumerable<int> sizes, IntPtr data, IEnumerable<long>? steps = null)
 #pragma warning restore CA1000
     {
-        if (sizes is null)
-            throw new ArgumentNullException(nameof(sizes));
+        ArgumentNullException.ThrowIfNull(sizes);
         if (data == IntPtr.Zero)
             throw new ArgumentNullException(nameof(data));
 #pragma warning disable CA1508
@@ -218,19 +240,19 @@ public class Mat<TElem> : Mat
 #pragma warning restore CA1508
         var type = GetMatType();
 
-        IntPtr ptr;
+        IntPtr p;
         if (steps is null)
         {
             NativeMethods.HandleException(
-                NativeMethods.core_Mat_new9(sizesArray.Length, sizesArray, type, data, IntPtr.Zero, out ptr));
+                NativeMethods.core_Mat_new9(sizesArray.Length, sizesArray, type, data, IntPtr.Zero, out p));
         }
         else
         {
             var stepsArray = steps.Select(s => new IntPtr(s)).ToArray();
             NativeMethods.HandleException(
-                NativeMethods.core_Mat_new9(sizesArray.Length, sizesArray, type, data, stepsArray, out ptr));
+                NativeMethods.core_Mat_new9(sizesArray.Length, sizesArray, type, data, stepsArray, out p));
         }
-        return new Mat<TElem>(ptr);
+        return new Mat<TElem>(p);
     }
 
     /// <summary>
@@ -356,8 +378,15 @@ public class Mat<TElem> : Mat
     #region Methods
 
     /// <summary>
-    /// Gets a type-specific indexer. The indexer has getters/setters to access each matrix element.
+    /// Gets a type-specific indexer for fast repeated element access. The indexer captures the data
+    /// pointer once, so it is faster than <c>this[row, col]</c> for tight loops.
     /// </summary>
+    /// <remarks>
+    /// The indexer keeps this matrix alive, but it caches the data pointer at creation time. Do not
+    /// keep using an indexer after an operation that may reallocate the matrix data (e.g.
+    /// <see cref="Mat.Create(int, int, MatType)"/>); obtain a fresh one instead. For occasional
+    /// access prefer the <c>this[row, col]</c> indexer, which resolves the pointer each time.
+    /// </remarks>
     /// <returns></returns>
 #pragma warning disable CA1024 // Use properties where appropriate
     public MatIndexer<TElem> GetIndexer()
@@ -367,15 +396,28 @@ public class Mat<TElem> : Mat
     }
 
     /// <summary>
-    /// Gets read-only enumerator
+    /// Gets or sets the element at the specified 2-D position.
+    /// </summary>
+    /// <param name="row">Row index (dimension 0).</param>
+    /// <param name="col">Column index (dimension 1).</param>
+    public TElem this[int row, int col]
+    {
+        get => At<TElem>(row, col);
+        set => At<TElem>(row, col) = value;
+    }
+
+    /// <summary>
+    /// Enumerates all elements in row-major order (works for any dimensionality).
     /// </summary>
     /// <returns></returns>
     public IEnumerator<TElem> GetEnumerator()
     {
         ThrowIfDisposed();
-        var indexer = new Indexer(this);
-
         var dims = Dims;
+        if (dims <= 0)
+            yield break;
+
+        var indexer = new Indexer(this);
         if (dims == 2)
         {
             var rows = Rows;
@@ -387,12 +429,28 @@ public class Mat<TElem> : Mat
                     yield return indexer[r, c];
                 }
             }
+            yield break;
         }
-        else
+
+        // General n-dimensional traversal in row-major order (last dimension varies fastest).
+        var sizes = new int[dims];
+        for (var d = 0; d < dims; d++)
+            sizes[d] = Size(d);
+        var total = Total();
+        var idx = new int[dims];
+        for (long n = 0; n < total; n++)
         {
-            throw new NotImplementedException("GetEnumerator supports only 2-dimensional Mat");
+            yield return indexer[idx];
+            for (var d = dims - 1; d >= 0; d--)
+            {
+                if (++idx[d] < sizes[d])
+                    break;
+                idx[d] = 0;
+            }
         }
     }
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         
     /// <summary>
     /// Convert this mat to managed array
@@ -434,8 +492,7 @@ public class Mat<TElem> : Mat
     /// <returns></returns>
     protected Mat<TElem> Wrap(Mat mat)
     {
-        if (mat is null)
-            throw new ArgumentNullException(nameof(mat));
+        ArgumentNullException.ThrowIfNull(mat);
 
         var ret = new Mat<TElem>();
         mat.AssignTo(ret);
@@ -480,7 +537,7 @@ public class Mat<TElem> : Mat
     /// </summary>
     /// <param name="newDims">New number of rows. If the parameter is 0, the number of rows remains the same.</param>
     /// <returns></returns>
-    public Mat<TElem> Reshape(params int[] newDims)
+    public Mat<TElem> Reshape(int[] newDims)
     {
 #pragma warning disable CA2000 
         var result = base.Reshape(0, newDims);
@@ -497,7 +554,7 @@ public class Mat<TElem> : Mat
     /// <returns></returns>
     public new Mat<TElem> T()
     {
-        using var result = base.T();
+        using var result = base.T().ToMat();
         return Wrap(result);
     }
 
@@ -548,7 +605,7 @@ public class Mat<TElem> : Mat
     /// </summary>
     /// <param name="ranges">Array of selected ranges along each array dimension.</param>
     /// <returns></returns>
-    public new Mat<TElem> SubMat(params Range[] ranges)
+    public new Mat<TElem> SubMat(Range[] ranges)
     {
 #pragma warning disable CA2000 
         var result = base.SubMat(ranges);

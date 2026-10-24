@@ -1,0 +1,16 @@
+# Exclude everything by default; only allow what the Dockerfile COPYs.
+**
+
+# OpenCvSharp managed and native sources
+!src/
+src/build*/
+
+# cmake option files needed by Dockerfiles
+!cmake/opencv_build_options.cmake
+!cmake/opencv_build_options_slim.cmake
+
+# Test projects
+!test/
+
+# Test runner configuration
+!global.json

@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 // ReSharper disable once CheckNamespace
 namespace OpenCvSharp.XImgProc;
@@ -9,26 +9,13 @@ namespace OpenCvSharp.XImgProc;
 // ReSharper disable once InconsistentNaming
 public class GuidedFilter : Algorithm
 {
-    private Ptr? detectorPtr;
 
     /// <summary>
     /// Creates instance by raw pointer
     /// </summary>
-    protected GuidedFilter(IntPtr p)
-    {
-        detectorPtr = new Ptr(p);
-        ptr = detectorPtr.Get();
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        detectorPtr?.Dispose();
-        detectorPtr = null;
-        base.DisposeManaged();
-    }
+    private GuidedFilter(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.ximgproc_Ptr_GuidedFilter_delete(p)))
+    { }
 
     /// <summary>
     /// Factory method, create instance of GuidedFilter and produce initialization routines.
@@ -42,16 +29,13 @@ public class GuidedFilter : Algorithm
     public static GuidedFilter Create(
         InputArray guide, int radius, double eps)
     {
-        if (guide is null)
-            throw new ArgumentNullException(nameof(guide));
-        guide.ThrowIfDisposed();
-
         NativeMethods.HandleException(
             NativeMethods.ximgproc_createGuidedFilter(
-                guide.CvPtr, radius, eps, out var p));
+                guide.Proxy, radius, eps, out var smartPtr));
             
-        GC.KeepAlive(guide); 
-        return new GuidedFilter(p);
+        GC.KeepAlive(guide.Source); 
+        NativeMethods.HandleException(NativeMethods.ximgproc_Ptr_GuidedFilter_get(smartPtr, out var rawPtr));
+        return new GuidedFilter(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -63,37 +47,11 @@ public class GuidedFilter : Algorithm
     public virtual void Filter(InputArray src, OutputArray dst, int dDepth = -1)
     {
         ThrowIfDisposed();
-        if (src is null)
-            throw new ArgumentNullException(nameof(src));
-        if (dst is null)
-            throw new ArgumentNullException(nameof(dst));
-        src.ThrowIfDisposed();
-        dst.ThrowIfNotReady();
 
         NativeMethods.HandleException(
             NativeMethods.ximgproc_GuidedFilter_filter(
-                ptr, src.CvPtr, dst.CvPtr, dDepth));
+                Handle, src.Proxy, dst.Proxy, dDepth));
 
-        GC.KeepAlive(this);
-        GC.KeepAlive(src);
-        dst.Fix();
-    }
-        
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ximgproc_Ptr_GuidedFilter_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ximgproc_Ptr_GuidedFilter_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+        GC.KeepAlive(src.Source);
     }
 }

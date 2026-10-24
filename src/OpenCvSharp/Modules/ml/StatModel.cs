@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using OpenCvSharp.Internal;
 
 namespace OpenCvSharp.ML;
@@ -8,18 +8,19 @@ namespace OpenCvSharp.ML;
 /// </summary>
 public abstract class StatModel : Algorithm
 {
+    /// <inheritdoc />
+    protected StatModel(IntPtr smartPtr, IntPtr rawPtr, Action<IntPtr> release)
+        : base(smartPtr, rawPtr, release) { }
+
     /// <summary>
     /// Returns the number of variables in training samples
     /// </summary>
     /// <returns></returns>
     public virtual int GetVarCount()
     {
-        if (ptr == IntPtr.Zero)
-            throw new ObjectDisposedException(GetType().Name);
-            
+        ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.ml_StatModel_getVarCount(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.ml_StatModel_getVarCount(Handle, out var ret));
         return ret;
     }
 
@@ -29,12 +30,9 @@ public abstract class StatModel : Algorithm
     /// <returns></returns>
     public new virtual bool Empty()
     {
-        if (ptr == IntPtr.Zero)
-            throw new ObjectDisposedException(GetType().Name);
-
+        ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.ml_StatModel_empty(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.ml_StatModel_empty(Handle, out var ret));
         return ret != 0;
     }
 
@@ -44,12 +42,9 @@ public abstract class StatModel : Algorithm
     /// <returns></returns>
     public virtual bool IsTrained()
     {
-        if (ptr == IntPtr.Zero)
-            throw new ObjectDisposedException(GetType().Name);
-
+        ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.ml_StatModel_isTrained(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.ml_StatModel_isTrained(Handle, out var ret));
         return ret != 0;
     }
 
@@ -59,12 +54,9 @@ public abstract class StatModel : Algorithm
     /// <returns></returns>
     public virtual bool IsClassifier()
     {
-        if (ptr == IntPtr.Zero)
-            throw new ObjectDisposedException(GetType().Name);
-
+        ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.ml_StatModel_isClassifier(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.ml_StatModel_isClassifier(Handle, out var ret));
         return ret != 0;
     }
 
@@ -78,7 +70,13 @@ public abstract class StatModel : Algorithm
     /// <returns></returns>
     public virtual bool Train(TrainData trainData, int flags = 0)
     {
-        throw new NotImplementedException();
+        ThrowIfDisposed();
+        ArgumentNullException.ThrowIfNull(trainData);
+
+        NativeMethods.HandleException(
+            NativeMethods.ml_StatModel_train1(Handle, trainData.SmartPtr, flags, out var ret));
+        GC.KeepAlive(trainData);
+        return ret != 0;
     }
 
     /// <summary>
@@ -90,20 +88,12 @@ public abstract class StatModel : Algorithm
     /// <returns></returns>
     public virtual bool Train(InputArray samples, SampleTypes layout, InputArray responses)
     {
-        if (ptr == IntPtr.Zero)
-            throw new ObjectDisposedException(GetType().Name);
-        if (samples is null)
-            throw new ArgumentNullException(nameof(samples));
-        if (responses is null)
-            throw new ArgumentNullException(nameof(responses));
-        samples.ThrowIfDisposed();
-        responses.ThrowIfDisposed();
+        ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.ml_StatModel_train2(ptr, samples.CvPtr, (int)layout, responses.CvPtr, out var ret));
-        GC.KeepAlive(this);
-        GC.KeepAlive(samples);
-        GC.KeepAlive(responses);
+            NativeMethods.ml_StatModel_train2(Handle, samples.Proxy, (int)layout, responses.Proxy, out var ret));
+        GC.KeepAlive(samples.Source);
+        GC.KeepAlive(responses.Source);
         return ret != 0;
     }
 
@@ -121,7 +111,14 @@ public abstract class StatModel : Algorithm
     /// <returns></returns>
     public virtual float CalcError(TrainData data, bool test, OutputArray resp)
     {
-        throw new NotImplementedException();
+        ThrowIfDisposed();
+        ArgumentNullException.ThrowIfNull(data);
+
+        NativeMethods.HandleException(
+            NativeMethods.ml_StatModel_calcError(Handle, data.SmartPtr, test, resp.Proxy, out var ret));
+        GC.KeepAlive(data);
+        GC.KeepAlive(resp.Source);
+        return ret;
     }
 
     /// <summary>
@@ -131,22 +128,15 @@ public abstract class StatModel : Algorithm
     /// <param name="results">The optional output matrix of results.</param>
     /// <param name="flags">The optional flags, model-dependent.</param>
     /// <returns></returns>
-    public virtual float Predict(InputArray samples, OutputArray? results = null, Flags flags = 0)
+    public virtual float Predict(InputArray samples, OutputArray results = default, Flags flags = 0)
     {
-        if (ptr == IntPtr.Zero)
-            throw new ObjectDisposedException(GetType().Name);
-        if (samples is null)
-            throw new ArgumentNullException(nameof(samples));
-        samples.ThrowIfDisposed();
-        results?.ThrowIfNotReady();
+        ThrowIfDisposed();
 
         NativeMethods.HandleException(
             NativeMethods.ml_StatModel_predict(
-                ptr, samples.CvPtr, Cv2.ToPtr(results), (int) flags, out var ret));
-        GC.KeepAlive(this);
-        GC.KeepAlive(samples);
-        GC.KeepAlive(results);
-        results?.Fix();
+                Handle, samples.Proxy, results.Proxy, (int) flags, out var ret));
+        GC.KeepAlive(samples.Source);
+        GC.KeepAlive(results.Source);
         return ret;
     }
 

@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace OpenCvSharp.Internal;
 
@@ -6,14 +6,15 @@ namespace OpenCvSharp.Internal;
 /// <summary>
 /// C++ std::string
 /// </summary>
-public class StdString : DisposableCvObject
+public class StdString : CvObject
 {
     /// <inheritdoc />
     /// <summary>
     /// </summary>
     public StdString()
     {
-        ptr = NativeMethods.string_new1();
+        var p = NativeMethods.string_new1();
+        InitSafeHandle(p);
     }
         
     /// <inheritdoc />
@@ -22,20 +23,21 @@ public class StdString : DisposableCvObject
     /// <param name="str"></param>
     public StdString(string str)
     {
-        if (str is null)
-            throw new ArgumentNullException(nameof(str));
+        ArgumentNullException.ThrowIfNull(str);
 
         var utf8Bytes = Encoding.UTF8.GetBytes(str);
-        ptr = NativeMethods.string_new2(utf8Bytes);
+        var p = NativeMethods.string_new2(utf8Bytes);
+        InitSafeHandle(p);
     }
 
     /// <summary>
     /// Releases unmanaged resources
     /// </summary>
-    protected override void DisposeUnmanaged()
+
+    private void InitSafeHandle(IntPtr p, bool ownsHandle = true)
     {
-        NativeMethods.string_delete(ptr);
-        base.DisposeUnmanaged();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle,
+            static h => NativeMethods.string_delete(h)));
     }
 
     /// <summary>
@@ -45,9 +47,10 @@ public class StdString : DisposableCvObject
     {
         get
         {
-            var ret = NativeMethods.string_size(ptr); 
-            GC.KeepAlive(this);
-            return ret;
+            // Passing the SafeHandle keeps this instance alive for the duration of the
+            // call, so no explicit GC.KeepAlive is needed (the result is a value, not an
+            // interior pointer).
+            return NativeMethods.string_size(Handle);
         }
     }
 
@@ -59,7 +62,10 @@ public class StdString : DisposableCvObject
     {
         unsafe
         {
-            var stringPointer = NativeMethods.string_c_str(ptr);
+            // c_str() returns an interior pointer into the std::string buffer that is
+            // dereferenced by GetString below, so this instance must stay alive past the
+            // call: the SafeHandle parameter alone is not enough, keep GC.KeepAlive(this).
+            var stringPointer = NativeMethods.string_c_str(Handle);
             var ret = Encoding.UTF8.GetString((byte*) stringPointer, (int)Size);
             GC.KeepAlive(this);
             return ret;

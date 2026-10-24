@@ -1,6 +1,5 @@
-﻿using OpenCvSharp.ML;
+using OpenCvSharp.ML;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace OpenCvSharp.Tests.ML;
 // ReSharper disable once InconsistentNaming

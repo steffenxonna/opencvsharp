@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Xunit;
 
 namespace OpenCvSharp.Tests;
@@ -6,18 +7,10 @@ namespace OpenCvSharp.Tests;
 // ReSharper disable once UnusedMember.Global
 public sealed class ExplicitFactAttribute : FactAttribute
 {
-    public ExplicitFactAttribute()
-    {
-        if (!Debugger.IsAttached)
-        {
-            Skip = "Only running in interactive mode.";
-        }
-    }
-}
-
-public sealed class ExplicitStaFactAttribute : StaFactAttribute
-{
-    public ExplicitStaFactAttribute()
+    public ExplicitFactAttribute(
+        [CallerFilePath] string? sourceFilePath = null,
+        [CallerLineNumber] int sourceLineNumber = -1)
+        : base(sourceFilePath, sourceLineNumber)
     {
         if (!Debugger.IsAttached)
         {

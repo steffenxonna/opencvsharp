@@ -1,0 +1,20 @@
+name: "Close stale issues and PRs"
+
+on:
+  schedule:
+    - cron: "0 1 * * *"
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v11
+        with:
+          days-before-stale: 30
+          days-before-close: 5
+          # Keep triaged items open; omit "stale" so unlabeled items can still be closed.
+          exempt-issue-labels: "bug,dependencies,enhancement,needs investigation,out of scope,question,upstream: OpenCV"
+          exempt-pr-labels: "bug,dependencies,enhancement,needs investigation,out of scope,question,upstream: OpenCV"

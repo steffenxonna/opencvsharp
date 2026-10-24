@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using OpenCvSharp.Internal;
 using OpenCvSharp.Internal.Vectors;
 
@@ -7,6 +9,113 @@ namespace OpenCvSharp;
 
 static partial class Cv2
 {
+    // OpenCV's highgui stores a raw function pointer for the mouse/trackbar callback of each
+    // (name-keyed, process-global) window and invokes it later, from its own UI loop. The
+    // pointer handed to native is always a static [UnmanagedCallersOnly] trampoline; the real
+    // managed delegate plus the caller's userData are boxed into a context object rooted by a
+    // GCHandle, whose IntPtr representation is passed through as the native userData. This
+    // registry mirrors OpenCV's name-keyed model and is the single place those GCHandles are
+    // owned, so they can be freed when the owning window is destroyed.
+    private static readonly Dictionary<string, GCHandle> mouseCallbackHandles = [];
+    private static readonly Dictionary<(string Window, string Trackbar), GCHandle> trackbarCallbackHandles = [];
+    private static readonly object highguiCallbackSync = new();
+
+    private static void RegisterMouseCallback(string winName, GCHandle contextHandle)
+    {
+        lock (highguiCallbackSync)
+        {
+            if (mouseCallbackHandles.Remove(winName, out var old))
+                old.Free();
+            mouseCallbackHandles[winName] = contextHandle;
+        }
+    }
+
+    private static void RegisterTrackbarCallback(string winName, string trackbarName, GCHandle? contextHandle)
+    {
+        lock (highguiCallbackSync)
+        {
+            var key = (winName, trackbarName);
+            if (trackbarCallbackHandles.Remove(key, out var old))
+                old.Free();
+            if (contextHandle.HasValue)
+                trackbarCallbackHandles[key] = contextHandle.Value;
+        }
+    }
+
+    private static void ForgetWindowCallbacks(string winName)
+    {
+        lock (highguiCallbackSync)
+        {
+            if (mouseCallbackHandles.Remove(winName, out var mouseHandle))
+                mouseHandle.Free();
+            foreach (var key in trackbarCallbackHandles.Keys.Where(k => k.Window == winName).ToArray())
+            {
+                if (trackbarCallbackHandles.Remove(key, out var trackbarHandle))
+                    trackbarHandle.Free();
+            }
+        }
+    }
+
+    private static void ForgetAllCallbacks()
+    {
+        lock (highguiCallbackSync)
+        {
+            foreach (var handle in mouseCallbackHandles.Values)
+                handle.Free();
+            mouseCallbackHandles.Clear();
+
+            foreach (var handle in trackbarCallbackHandles.Values)
+                handle.Free();
+            trackbarCallbackHandles.Clear();
+        }
+    }
+
+    private sealed class MouseCallbackContext
+    {
+        public required MouseCallback Callback { get; init; }
+        public IntPtr UserData { get; init; }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static void MouseCallbackTrampoline(MouseEventTypes @event, int x, int y, MouseEventFlags flags, IntPtr contextHandle)
+    {
+        try
+        {
+            var context = (MouseCallbackContext)GCHandle.FromIntPtr(contextHandle).Target!;
+            context.Callback(@event, x, y, flags, context.UserData);
+        }
+        catch
+        {
+            // Exceptions must never unwind into native code from an UnmanagedCallersOnly method.
+        }
+    }
+
+    private static unsafe IntPtr GetMouseCallbackTrampolinePointer() =>
+        (IntPtr)(delegate* unmanaged[Cdecl]<MouseEventTypes, int, int, MouseEventFlags, IntPtr, void>)&MouseCallbackTrampoline;
+
+    private sealed class TrackbarCallbackContext
+    {
+        public required TrackbarCallbackNative Callback { get; init; }
+        public IntPtr UserData { get; init; }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static void TrackbarCallbackTrampoline(int pos, IntPtr contextHandle)
+    {
+        try
+        {
+            var context = (TrackbarCallbackContext)GCHandle.FromIntPtr(contextHandle).Target!;
+            context.Callback(pos, context.UserData);
+        }
+        catch
+        {
+            // Exceptions must never unwind into native code from an UnmanagedCallersOnly method.
+        }
+    }
+
+    private static unsafe IntPtr GetTrackbarCallbackTrampolinePointer() =>
+        (IntPtr)(delegate* unmanaged[Cdecl]<int, IntPtr, void>)&TrackbarCallbackTrampoline;
+
     /// <summary>
     /// Creates a window.
     /// </summary>
@@ -33,8 +142,12 @@ static partial class Cv2
         if (string.IsNullOrEmpty(winName))
             throw new ArgumentException("null or empty string.", nameof(winName));
 
-        NativeMethods.HandleException(
-            NativeMethods.highgui_destroyWindow(winName));
+        lock (highguiCallbackSync)
+        {
+            NativeMethods.HandleException(
+                NativeMethods.highgui_destroyWindow(winName));
+            ForgetWindowCallbacks(winName);
+        }
     }
 
     /// <summary>
@@ -42,8 +155,25 @@ static partial class Cv2
     /// </summary>
     public static void DestroyAllWindows()
     {
+        lock (highguiCallbackSync)
+        {
+            NativeMethods.HandleException(
+                NativeMethods.highgui_destroyAllWindows());
+            ForgetAllCallbacks();
+        }
+    }
+
+    /// <summary>
+    /// Returns the HighGUI backend name in use: could be COCOA, GTK2/3, QT, WAYLAND or WIN32.
+    /// Returns an empty string if there is no available UI backend.
+    /// </summary>
+    /// <returns></returns>
+    public static string CurrentUIFramework()
+    {
+        using var returnString = new StdString();
         NativeMethods.HandleException(
-            NativeMethods.highgui_destroyAllWindows());
+            NativeMethods.highgui_currentUIFramework(returnString.CvPtr));
+        return returnString.ToString();
     }
 
     /// <summary>
@@ -72,7 +202,7 @@ static partial class Cv2
     }
 
     /// <summary>
-    /// Waits for a pressed key. 
+    /// Waits for a pressed key.
     /// </summary>
     /// <param name="delay">Delay in milliseconds. 0 is the special value that means ”forever”</param>
     /// <returns>Returns the code of the pressed key or -1 if no key was pressed before the specified time had elapsed.</returns>
@@ -80,6 +210,18 @@ static partial class Cv2
     {
         NativeMethods.HandleException(
             NativeMethods.highgui_waitKey(delay, out var ret));
+        return ret;
+    }
+
+    /// <summary>
+    /// Polls for a pressed key without waiting. To wait until a key is pressed, use WaitKey instead.
+    /// Only works if there is at least one HighGUI window created and active.
+    /// </summary>
+    /// <returns>Returns the code of the pressed key or -1 if no key was pressed since the last invocation.</returns>
+    public static int PollKey()
+    {
+        NativeMethods.HandleException(
+            NativeMethods.highgui_pollKey(out var ret));
         return ret;
     }
 
@@ -92,8 +234,7 @@ static partial class Cv2
     {
         if (string.IsNullOrEmpty(winName))
             throw new ArgumentException("null or empty string.", nameof(winName));
-        if (mat is null)
-            throw new ArgumentNullException(nameof(mat));
+        ArgumentNullException.ThrowIfNull(mat);
 
         NativeMethods.HandleException(
             NativeMethods.highgui_imshow(winName, mat.CvPtr));
@@ -213,11 +354,26 @@ static partial class Cv2
     {
         if (string.IsNullOrEmpty(windowName))
             throw new ArgumentNullException(nameof(windowName));
-        if (onMouse is null)
-            throw new ArgumentNullException(nameof(onMouse));
+        ArgumentNullException.ThrowIfNull(onMouse);
 
-        NativeMethods.HandleException(
-            NativeMethods.highgui_setMouseCallback(windowName, onMouse, userData));
+        var context = new MouseCallbackContext { Callback = onMouse, UserData = userData };
+        var contextHandle = GCHandle.Alloc(context);
+        lock (highguiCallbackSync)
+        {
+            try
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.highgui_setMouseCallback(windowName, GetMouseCallbackTrampolinePointer(), GCHandle.ToIntPtr(contextHandle)));
+            }
+            catch
+            {
+                contextHandle.Free();
+                throw;
+            }
+
+            // Root the context (and thus the delegate) for the lifetime of the window (see registry note above).
+            RegisterMouseCallback(windowName, contextHandle);
+        }
     }
 
     /// <summary>
@@ -257,14 +413,11 @@ static partial class Cv2
     {
         if (string.IsNullOrEmpty(windowName))
             throw new ArgumentNullException(nameof(windowName));
-        if (img is null)
-            throw new ArgumentNullException(nameof(img));
-        img.ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.highgui_selectROI1(windowName, img.CvPtr, showCrosshair ? 1 : 0, fromCenter ? 1 : 0, out var ret));
+            NativeMethods.highgui_selectROI1(windowName, img.Proxy, showCrosshair ? 1 : 0, fromCenter ? 1 : 0, out var ret));
 
-        GC.KeepAlive(img);
+        GC.KeepAlive(img.Source);
         return ret;
     }
 
@@ -281,14 +434,10 @@ static partial class Cv2
     // ReSharper disable once InconsistentNaming
     public static Rect SelectROI(InputArray img, bool showCrosshair = true, bool fromCenter = false)
     {
-        if (img is null)
-            throw new ArgumentNullException(nameof(img));
-        img.ThrowIfDisposed();
-
         NativeMethods.HandleException(
-            NativeMethods.highgui_selectROI2(img.CvPtr, showCrosshair ? 1 : 0, fromCenter ? 1 : 0, out var ret));
+            NativeMethods.highgui_selectROI2(img.Proxy, showCrosshair ? 1 : 0, fromCenter ? 1 : 0, out var ret));
 
-        GC.KeepAlive(img);
+        GC.KeepAlive(img.Source);
         return ret;
     }
 
@@ -309,55 +458,51 @@ static partial class Cv2
     {
         if (string.IsNullOrEmpty(windowName))
             throw new ArgumentNullException(nameof(windowName));
-        if (img is null)
-            throw new ArgumentNullException(nameof(img));
-        img.ThrowIfDisposed();
 
-        using var boundingBoxesVec = new VectorOfRect();
+        using var boundingBoxesVec = new StdVector<Rect>();
         NativeMethods.HandleException(
-            NativeMethods.highgui_selectROIs(windowName, img.CvPtr, boundingBoxesVec.CvPtr, showCrosshair ? 1 : 0, fromCenter ? 1 : 0));
+            NativeMethods.highgui_selectROIs(windowName, img.Proxy, boundingBoxesVec.CvPtr, showCrosshair ? 1 : 0, fromCenter ? 1 : 0));
 
-        GC.KeepAlive(img);
+        GC.KeepAlive(img.Source);
         return boundingBoxesVec.ToArray();
     }
 
     /// <summary>
     /// Creates a trackbar and attaches it to the specified window.
-    /// The function createTrackbar creates a trackbar(a slider or range control) with the specified name 
-    /// and range, assigns a variable value to be a position synchronized with the trackbar and specifies 
-    /// the callback function onChange to be called on the trackbar position change.The created trackbar is 
-    /// displayed in the specified window winName.
+    /// An optional callback reports changes to the trackbar position.
     /// </summary>
     /// <param name="trackbarName">Name of the created trackbar.</param>
     /// <param name="winName">Name of the window that will be used as a parent of the created trackbar.</param>
-    /// <param name="value">Optional pointer to an integer variable whose value reflects the position of the slider.Upon creation,
-    ///  the slider position is defined by this variable.</param>
+    /// <param name="value">Initial slider position. To read later changes, use the callback or <see cref="GetTrackbarPos"/>.</param>
     /// <param name="count">Maximal position of the slider. The minimal position is always 0.</param>
     /// <param name="onChange">Pointer to the function to be called every time the slider changes position. 
     /// This function should be prototyped as void Foo(int, void\*); , where the first parameter is the trackbar 
     /// position and the second parameter is the user data(see the next parameter). If the callback is 
-    /// the NULL pointer, no callbacks are called, but only value is updated.</param>
+    /// the NULL pointer, no callbacks are called; use <see cref="GetTrackbarPos"/> to read the position.</param>
     /// <param name="userData">User data that is passed as is to the callback. It can be used to handle trackbar events without using global variables.</param>
     /// <returns></returns>
     public static int CreateTrackbar(string trackbarName, string winName,
         ref int value, int count, TrackbarCallbackNative? onChange = null, IntPtr userData = default)
     {
-        if (trackbarName is null)
-            throw new ArgumentNullException(nameof(trackbarName));
-        if (winName is null)
-            throw new ArgumentNullException(nameof(winName));
+        ArgumentNullException.ThrowIfNull(trackbarName);
+        ArgumentNullException.ThrowIfNull(winName);
 
-        NativeMethods.HandleException(
-            NativeMethods.highgui_createTrackbar(trackbarName, winName, ref value, count, onChange, userData, out var ret));
-        return ret;
+        lock (highguiCallbackSync)
+        {
+            // OpenCV retains a non-null value pointer after this call. A managed ref is only
+            // pinned during P/Invoke, so use the null-pointer overload and set the initial
+            // position after the callback context has been registered.
+            var ret = CreateTrackbar(trackbarName, winName, count, onChange, userData);
+            if (ret == 0)
+                return ret;
+            SetTrackbarPos(trackbarName, winName, value);
+            return ret;
+        }
     }
         
     /// <summary>
     /// Creates a trackbar and attaches it to the specified window.
-    /// The function createTrackbar creates a trackbar(a slider or range control) with the specified name 
-    /// and range, assigns a variable value to be a position synchronized with the trackbar and specifies 
-    /// the callback function onChange to be called on the trackbar position change.The created trackbar is 
-    /// displayed in the specified window winName.
+    /// An optional callback reports changes to the trackbar position.
     /// </summary>
     /// <param name="trackbarName">Name of the created trackbar.</param>
     /// <param name="winName">Name of the window that will be used as a parent of the created trackbar.</param>
@@ -365,19 +510,42 @@ static partial class Cv2
     /// <param name="onChange">Pointer to the function to be called every time the slider changes position. 
     /// This function should be prototyped as void Foo(int, void\*); , where the first parameter is the trackbar 
     /// position and the second parameter is the user data(see the next parameter). If the callback is 
-    /// the NULL pointer, no callbacks are called, but only value is updated.</param>
+    /// the NULL pointer, no callbacks are called; use <see cref="GetTrackbarPos"/> to read the position.</param>
     /// <param name="userData">User data that is passed as is to the callback. It can be used to handle trackbar events without using global variables.</param>
     /// <returns></returns>
     public static int CreateTrackbar(string trackbarName, string winName,
         int count, TrackbarCallbackNative? onChange = null, IntPtr userData = default)
     {
-        if (trackbarName is null)
-            throw new ArgumentNullException(nameof(trackbarName));
-        if (winName is null)
-            throw new ArgumentNullException(nameof(winName));
+        ArgumentNullException.ThrowIfNull(trackbarName);
+        ArgumentNullException.ThrowIfNull(winName);
 
-        NativeMethods.HandleException(
-            NativeMethods.highgui_createTrackbar(trackbarName, winName, IntPtr.Zero, count, onChange, userData, out var ret));
+        GCHandle? contextHandle = null;
+        var onChangePtr = IntPtr.Zero;
+        if (onChange is not null)
+        {
+            contextHandle = GCHandle.Alloc(new TrackbarCallbackContext { Callback = onChange, UserData = userData });
+            onChangePtr = GetTrackbarCallbackTrampolinePointer();
+        }
+
+        int ret;
+        lock (highguiCallbackSync)
+        {
+            try
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.highgui_createTrackbar(
+                        trackbarName, winName, IntPtr.Zero, count, onChangePtr,
+                        contextHandle.HasValue ? GCHandle.ToIntPtr(contextHandle.Value) : IntPtr.Zero, out ret));
+            }
+            catch
+            {
+                contextHandle?.Free();
+                throw;
+            }
+
+            // Root the context (and thus the delegate) for the lifetime of the window (see registry note above).
+            RegisterTrackbarCallback(winName, trackbarName, contextHandle);
+        }
         return ret;
     }
 
@@ -389,8 +557,7 @@ static partial class Cv2
     /// <returns>trackbar position</returns>
     public static int GetTrackbarPos(string trackbarName, string winName)
     {
-        if (trackbarName is null)
-            throw new ArgumentNullException(nameof(trackbarName));
+        ArgumentNullException.ThrowIfNull(trackbarName);
 
         NativeMethods.HandleException(
             NativeMethods.highgui_getTrackbarPos(trackbarName, winName, out var ret));
@@ -405,8 +572,7 @@ static partial class Cv2
     /// <param name="pos">New position.</param>
     public static void SetTrackbarPos(string trackbarName, string winName, int pos)
     {
-        if (trackbarName is null)
-            throw new ArgumentNullException(nameof(trackbarName));
+        ArgumentNullException.ThrowIfNull(trackbarName);
 
         NativeMethods.HandleException(
             NativeMethods.highgui_setTrackbarPos(trackbarName, winName, pos));
@@ -421,8 +587,7 @@ static partial class Cv2
     /// <param name="maxVal">New maximum position.</param>
     public static void SetTrackbarMax(string trackbarName, string winName, int maxVal)
     {
-        if (trackbarName is null)
-            throw new ArgumentNullException(nameof(trackbarName));
+        ArgumentNullException.ThrowIfNull(trackbarName);
 
         NativeMethods.HandleException(
             NativeMethods.highgui_setTrackbarMax(trackbarName, winName, maxVal));
@@ -437,38 +602,9 @@ static partial class Cv2
     /// <param name="minVal">New minimum position.</param>
     public static void SetTrackbarMin(string trackbarName, string winName, int minVal)
     {
-        if (trackbarName is null)
-            throw new ArgumentNullException(nameof(trackbarName));
+        ArgumentNullException.ThrowIfNull(trackbarName);
 
         NativeMethods.HandleException(
             NativeMethods.highgui_setTrackbarMin(trackbarName, winName, minVal));
     }
-
-    /// <summary>
-    /// get native window handle (HWND in case of Win32 and Widget in case of X Window) 
-    /// </summary>
-    /// <param name="windowName"></param>
-    public static IntPtr GetWindowHandle(string windowName)
-    {
-        if (windowName is null)
-            throw new ArgumentNullException(nameof(windowName));
-
-        NativeMethods.HandleException(
-            NativeMethods.highgui_cvGetWindowHandle(windowName, out var ret));
-        return ret;
-    }
-
-#if WINRT
-        // MP! Added: To correctly support imShow under WinRT.
-
-        /// <summary>
-        /// Initialize XAML container panel for use by ImShow
-        /// </summary>
-        /// <param name="panel">Panel container.</param>
-        public static void InitContainer(object panel)
-        {
-            NativeMethods.HandleException(
-                NativeMethods.highgui_initContainer(panel));
-        }
-#endif
 }

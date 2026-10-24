@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp.Flann;
 
@@ -11,40 +11,24 @@ public class LinearIndexParams : IndexParams
     /// Constructor
     /// </summary>
     public LinearIndexParams()
-        : base(null)
+        : this(Create())
+    {
+    }
+
+    private LinearIndexParams((IntPtr smartPtr, IntPtr rawPtr) ptrs)
+        : base(ptrs.smartPtr, ptrs.rawPtr,
+            static h => NativeMethods.HandleException(NativeMethods.flann_Ptr_LinearIndexParams_delete(h)))
+    {
+    }
+
+    private static (IntPtr smartPtr, IntPtr rawPtr) Create()
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_Ptr_LinearIndexParams_new(out var p));
-        if (p == IntPtr.Zero)
+            NativeMethods.flann_Ptr_LinearIndexParams_new(out var smartPtr));
+        if (smartPtr == IntPtr.Zero)
             throw new OpenCvSharpException($"Failed to create {nameof(LinearIndexParams)}");
-
-        PtrObj = new Ptr(p);
-        ptr = PtrObj.Get();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    protected LinearIndexParams(OpenCvSharp.Ptr ptrObj)
-        : base(ptrObj)
-    {
-    }
-
-    internal new class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.flann_Ptr_LinearIndexParams_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.flann_Ptr_LinearIndexParams_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+        NativeMethods.HandleException(
+            NativeMethods.flann_Ptr_LinearIndexParams_get(smartPtr, out var rawPtr));
+        return (smartPtr, rawPtr);
     }
 }

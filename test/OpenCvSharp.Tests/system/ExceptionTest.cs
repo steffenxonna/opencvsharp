@@ -1,9 +1,9 @@
-﻿using Xunit;
+using Xunit;
 
 namespace OpenCvSharp.Tests;
 
 /// <summary>
-/// RedirectError tests
+/// Native exception propagation tests.
 /// </summary>
 public class ExceptionTest : TestBase
 {
@@ -38,8 +38,7 @@ public class ExceptionTest : TestBase
             using var mat = Mat.FromPixelData(3, 1, MatType.CV_8UC1, data);
             var ex = Assert.Throws<OpenCVException>(() =>
             {
-                using var expr = mat.Inv();
-                using var evaluated = expr.ToMat();
+                using Mat evaluated = mat.Inv();
                 GC.KeepAlive(evaluated);
             });
                 
@@ -89,12 +88,11 @@ public class ExceptionTest : TestBase
     public void ArucoDetectMarkers()
     {
         using var image = new Mat();
-        using var dict = OpenCvSharp.Aruco.CvAruco.GetPredefinedDictionary(OpenCvSharp.Aruco.PredefinedDictionaryName.Dict6X6_250);
-
-        var param = new OpenCvSharp.Aruco.DetectorParameters();
+        using var dict = Cv2.Aruco.GetPredefinedDictionary(OpenCvSharp.Aruco.PredefinedDictionaryType.Dict6X6_250);
+        using var detector = new OpenCvSharp.Aruco.ArucoDetector(dict);
 
         var ex = Assert.Throws<OpenCVException>(
-            () => { OpenCvSharp.Aruco.CvAruco.DetectMarkers(image, dict, out _, out _, param, out _); });
+            () => { detector.DetectMarkers(image, out _, out _, out _); });
 
         Assert.StartsWith("!_image.empty()", ex.ErrMsg, StringComparison.Ordinal);
         Assert.NotEmpty(ex.FileName);

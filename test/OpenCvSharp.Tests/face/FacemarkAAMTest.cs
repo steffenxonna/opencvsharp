@@ -1,4 +1,5 @@
-﻿using OpenCvSharp.Face;
+using System.IO;
+using OpenCvSharp.Face;
 using Xunit;
 
 namespace OpenCvSharp.Tests.Face;
@@ -20,11 +21,39 @@ public class FacemarkAAMTest : TestBase
     [Fact]
     public void CreateAndDisposeWithParameter()
     {
-        using (var parameter = new FacemarkAAM.Params())
+        var parameter = new FacemarkAAM.Params();
         using (var facemark = FacemarkAAM.Create(parameter))
         {
             GC.KeepAlive(facemark);
         }
+    }
+
+    [Fact]
+    public void ParameterDefaultsFromNative()
+    {
+        // Verifies the managed Params pulls the real OpenCV defaults through the
+        // native getAll bridge (a wrong struct layout would surface as garbage here).
+        var parameter = new FacemarkAAM.Params();
+        Assert.True(parameter.M > 0);
+        Assert.True(parameter.N > 0);
+        Assert.True(parameter.NIter > 0);
+        Assert.True(parameter.MaxM > 0);
+        Assert.True(parameter.MaxN > 0);
+        Assert.True(parameter.TextureMaxM > 0);
+        Assert.True(parameter.Verbose);
+        Assert.True(parameter.SaveModel);
+        Assert.NotEmpty(parameter.Scales);
+    }
+
+    [Fact]
+    public void FitConfigDefaults()
+    {
+        var config = new FacemarkAAM.Config();
+
+        Assert.Null(config.Rotation);
+        Assert.Equal(default, config.Translation);
+        Assert.Equal(1.0f, config.Scale);
+        Assert.Equal(0, config.ModelScaleIndex);
     }
 
     /*
@@ -34,7 +63,7 @@ public class FacemarkAAMTest : TestBase
     [Fact]
     public void GetFaces()
     {
-        using (var parameter = new FacemarkAAM.Params())
+        var parameter = new FacemarkAAM.Params();
         {
             parameter.ModelFilename = CascadeFile;
             parameter.Scales = new float[] {2, 4};
@@ -63,7 +92,7 @@ public class FacemarkAAMTest : TestBase
     {
         const string value = "foo";
 
-        using (var parameter = new FacemarkAAM.Params())
+        var parameter = new FacemarkAAM.Params();
         {
             parameter.ModelFilename = value;
             Assert.Equal(value, parameter.ModelFilename);
@@ -75,7 +104,7 @@ public class FacemarkAAMTest : TestBase
     {
         const int value = 12345;
 
-        using (var parameter = new FacemarkAAM.Params())
+        var parameter = new FacemarkAAM.Params();
         {
             parameter.M = value;
             Assert.Equal(value, parameter.M);
@@ -87,7 +116,7 @@ public class FacemarkAAMTest : TestBase
     {
         const int value = 12345;
 
-        using (var parameter = new FacemarkAAM.Params())
+        var parameter = new FacemarkAAM.Params();
         {
             parameter.N = value;
             Assert.Equal(value, parameter.N);
@@ -99,7 +128,7 @@ public class FacemarkAAMTest : TestBase
     {
         const int value = 12345;
 
-        using (var parameter = new FacemarkAAM.Params())
+        var parameter = new FacemarkAAM.Params();
         {
             parameter.NIter = value;
             Assert.Equal(value, parameter.NIter);
@@ -111,7 +140,7 @@ public class FacemarkAAMTest : TestBase
     {
         float[] value = [1, 2, 3];
 
-        using (var parameter = new FacemarkAAM.Params())
+        var parameter = new FacemarkAAM.Params();
         {
             parameter.Scales = value;
             Assert.Equal(value, parameter.Scales);
@@ -121,7 +150,7 @@ public class FacemarkAAMTest : TestBase
     [Fact]
     public void ParameterSaveModel()
     {
-        using (var parameter = new FacemarkAAM.Params())
+        var parameter = new FacemarkAAM.Params();
         {
             parameter.SaveModel = true;
             Assert.True(parameter.SaveModel);
@@ -133,12 +162,53 @@ public class FacemarkAAMTest : TestBase
     [Fact]
     public void ParameterVerbose()
     {
-        using (var parameter = new FacemarkAAM.Params())
+        var parameter = new FacemarkAAM.Params();
         {
             parameter.Verbose = true;
             Assert.True(parameter.Verbose);
             parameter.Verbose = false;
             Assert.False(parameter.Verbose);
+        }
+    }
+
+    [Fact]
+    public void GetData_ReturnsMeanShape()
+    {
+        // FacemarkAAMImpl::getData() unconditionally returns true and copies whatever mean shape
+        // the model currently holds (empty before training) - this proves the typed
+        // FacemarkAAM::Data(&data) marshaling reaches native and copies s0 back without crashing.
+        using var facemark = FacemarkAAM.Create();
+        var result = facemark.GetData(out var s0);
+        Assert.True(result);
+        Assert.NotNull(s0);
+    }
+
+    [Fact]
+    public void ReadWrite()
+    {
+        // cv::face::Facemark inherits Algorithm virtually; this exercises the P/Invoke plumbing
+        // that keeps the native pointer at its concrete type across the write/read call, rather
+        // than reinterpreting it as cv::Algorithm* (which would corrupt memory).
+        using var facemark = FacemarkAAM.Create();
+
+        var fileName = Path.Combine(Path.GetTempPath(), $"facemark_aam_test_{Guid.NewGuid():N}.yml");
+        try
+        {
+            using (var fs = new FileStorage(fileName, FileStorage.Modes.Write))
+            {
+                fs.Write("marker", 1);
+                facemark.Write(fs);
+            }
+
+            using var fs2 = new FileStorage(fileName, FileStorage.Modes.Read);
+            var root = fs2.Root();
+            Assert.NotNull(root);
+            facemark.Read(root);
+        }
+        finally
+        {
+            if (File.Exists(fileName))
+                File.Delete(fileName);
         }
     }
 }

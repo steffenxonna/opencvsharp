@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 using OpenCvSharp.Internal.Vectors;
 
 namespace OpenCvSharp.Face;
@@ -15,28 +15,9 @@ public class LBPHFaceRecognizer : FaceRecognizer
     /// <summary>
     ///
     /// </summary>
-    private Ptr? recognizerPtr;
-
-    #region Init & Disposal
-
-    /// <summary>
-    ///
-    /// </summary>
-    protected LBPHFaceRecognizer()
-    {
-        recognizerPtr = null;
-        ptr = IntPtr.Zero;
-    }
-        
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        recognizerPtr?.Dispose();
-        recognizerPtr = null;
-        base.DisposeManaged();
-    }
+    private LBPHFaceRecognizer(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.face_Ptr_LBPHFaceRecognizer_delete(p)))
+    { }
 
     /// <summary>
     /// The Circular Local Binary Patterns (used in training and prediction) expect the data given as
@@ -58,149 +39,134 @@ public class LBPHFaceRecognizer : FaceRecognizer
         int gridX = 8, int gridY = 8, double threshold = double.MaxValue)
     {
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_create(radius, neighbors, gridX, gridY, threshold, out var p));
-        if (p == IntPtr.Zero)
+            NativeMethods.face_LBPHFaceRecognizer_create(radius, neighbors, gridX, gridY, threshold, out var smartPtr));
+        if (smartPtr == IntPtr.Zero)
             throw new OpenCvSharpException($"Invalid cv::Ptr<{nameof(LBPHFaceRecognizer)}> pointer");
-        var ptrObj = new Ptr(p);
-        var detector = new LBPHFaceRecognizer
-        {
-            recognizerPtr = ptrObj,
-            ptr = ptrObj.Get()
-        };
-        return detector;
+        NativeMethods.HandleException(NativeMethods.face_Ptr_LBPHFaceRecognizer_get(smartPtr, out var rawPtr));
+        return new LBPHFaceRecognizer(smartPtr, rawPtr);
     }
 
-    #endregion
-
-    #region Methods
-
     /// <summary>
-    /// 
+    /// Gets the number of cells in the horizontal direction used to build the Circular Local Binary Pattern.
     /// </summary>
     /// <returns></returns>
     public virtual int GetGridX()
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_getGridX(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_getGridX(Handle, out var ret));
         return ret;
     }
 
     /// <summary>
-    /// 
+    /// Sets the number of cells in the horizontal direction used to build the Circular Local Binary Pattern.
     /// </summary>
     /// <param name="val"></param>
     public virtual void SetGridX(int val)
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_setGridX(ptr, val));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_setGridX(Handle, val));
     }
 
     /// <summary>
-    /// 
+    /// Gets the number of cells in the vertical direction used to build the Circular Local Binary Pattern.
     /// </summary>
     /// <returns></returns>
     public virtual int GetGridY()
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_getGridY(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_getGridY(Handle, out var ret));
         return ret;
     }
 
     /// <summary>
-    /// 
+    /// Sets the number of cells in the vertical direction used to build the Circular Local Binary Pattern.
     /// </summary>
     /// <param name="val"></param>
     public virtual void SetGridY(int val)
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_setGridY(ptr, val));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_setGridY(Handle, val));
     }
 
     /// <summary>
-    /// 
+    /// Gets the radius used for building the Circular Local Binary Pattern.
     /// </summary>
     /// <returns></returns>
     public virtual int GetRadius()
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_getRadius(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_getRadius(Handle, out var ret));
         return ret;
     }
 
     /// <summary>
-    /// 
+    /// Sets the radius used for building the Circular Local Binary Pattern. The greater the radius,
+    /// the smoother the image but more spatial information you can get.
     /// </summary>
     /// <param name="val"></param>
     public virtual void SetRadius(int val)
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_setRadius(ptr, val));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_setRadius(Handle, val));
     }
 
     /// <summary>
-    /// 
+    /// Gets the number of sample points used to build the Circular Local Binary Pattern.
     /// </summary>
     /// <returns></returns>
     public virtual int GetNeighbors()
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_getNeighbors(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_getNeighbors(Handle, out var ret));
         return ret;
     }
 
     /// <summary>
-    /// 
+    /// Sets the number of sample points used to build the Circular Local Binary Pattern. An appropriate
+    /// value is 8; keep in mind that including more sample points increases the computational cost.
     /// </summary>
     /// <param name="val"></param>
     public virtual void SetNeighbors(int val)
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_setNeighbors(ptr, val));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_setNeighbors(Handle, val));
     }
 
     /// <summary>
-    /// 
+    /// Gets the threshold applied in the prediction. If the distance to the nearest neighbor is
+    /// larger than the threshold, the prediction returns -1.
     /// </summary>
     /// <returns></returns>
     public new virtual double GetThreshold()
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_getThreshold(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_getThreshold(Handle, out var ret));
         return ret;
     }
 
     /// <summary>
-    /// 
+    /// Sets the threshold applied in the prediction. If the distance to the nearest neighbor is
+    /// larger than the threshold, the prediction returns -1.
     /// </summary>
     /// <param name="val"></param>
     public new virtual void SetThreshold(double val)
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_setThreshold(ptr, val));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_setThreshold(Handle, val));
     }
 
     /// <summary>
-    /// 
+    /// Gets the Local Binary Patterns histograms calculated from the given training data (empty if none was given).
     /// </summary>
     /// <returns></returns>
     public virtual Mat[] GetHistograms()
@@ -208,13 +174,12 @@ public class LBPHFaceRecognizer : FaceRecognizer
         ThrowIfDisposed();
         using var resultVector = new VectorOfMat();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_getHistograms(ptr, resultVector.CvPtr));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_getHistograms(Handle, resultVector.CvPtr));
         return resultVector.ToArray();
     }
 
     /// <summary>
-    /// 
+    /// Gets the labels corresponding to the calculated Local Binary Patterns histograms.
     /// </summary>
     /// <returns></returns>
     public virtual Mat GetLabels()
@@ -222,28 +187,7 @@ public class LBPHFaceRecognizer : FaceRecognizer
         ThrowIfDisposed();
         var result = new Mat();
         NativeMethods.HandleException(
-            NativeMethods.face_LBPHFaceRecognizer_getLabels(ptr, result.CvPtr));
-        GC.KeepAlive(this);
+            NativeMethods.face_LBPHFaceRecognizer_getLabels(Handle, result.CvPtr));
         return result;
-    }
-
-    #endregion
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.face_Ptr_LBPHFaceRecognizer_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.face_Ptr_LBPHFaceRecognizer_delete(ptr));
-            base.DisposeUnmanaged();
-        }
     }
 }

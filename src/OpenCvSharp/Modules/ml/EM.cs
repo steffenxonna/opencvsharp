@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 using OpenCvSharp.Internal.Vectors;
 
 namespace OpenCvSharp;
@@ -8,7 +8,6 @@ namespace OpenCvSharp;
 /// </summary>
 public class EM : Algorithm
 {
-    private Ptr? ptrObj;
 
     #region Constants
 
@@ -26,12 +25,9 @@ public class EM : Algorithm
     /// <summary>
     /// Creates instance by pointer cv::Ptr&lt;EM&gt;
     /// </summary>
-    protected EM(IntPtr p)
-    {
-        ptrObj = new Ptr(p);
-        ptr = ptrObj.Get();
-    }
-
+    private EM(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.ml_Ptr_EM_delete(p)))
+    { }
     /// <summary>
     /// Creates empty EM model. 
     /// </summary>
@@ -40,7 +36,8 @@ public class EM : Algorithm
     {
         NativeMethods.HandleException(
             NativeMethods.ml_EM_create(out var ret));
-        return new EM(ret);
+        NativeMethods.HandleException(NativeMethods.ml_Ptr_EM_get(ret, out var rawPtr));
+        return new EM(ret, rawPtr);
     }
 
     /// <summary>
@@ -50,11 +47,11 @@ public class EM : Algorithm
     /// <returns></returns>
     public static EM Load(string filePath)
     {
-        if (filePath is null)
-            throw new ArgumentNullException(nameof(filePath));
+        ArgumentNullException.ThrowIfNull(filePath);
         NativeMethods.HandleException(
             NativeMethods.ml_EM_load(filePath, out var ret));
-        return new EM(ret);
+        NativeMethods.HandleException(NativeMethods.ml_Ptr_EM_get(ret, out var rawPtr));
+        return new EM(ret, rawPtr);
     }
 
     /// <summary>
@@ -64,21 +61,11 @@ public class EM : Algorithm
     /// <returns></returns>
     public static EM LoadFromString(string strModel)
     {
-        if (strModel is null)
-            throw new ArgumentNullException(nameof(strModel));
+        ArgumentNullException.ThrowIfNull(strModel);
         NativeMethods.HandleException(
             NativeMethods.ml_EM_loadFromString(strModel, out var ret));
-        return new EM(ret);
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
+        NativeMethods.HandleException(NativeMethods.ml_Ptr_EM_get(ret, out var rawPtr));
+        return new EM(ret, rawPtr);
     }
 
     #endregion
@@ -96,15 +83,13 @@ public class EM : Algorithm
         get
         {
             NativeMethods.HandleException(
-                NativeMethods.ml_EM_getClustersNumber(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.ml_EM_getClustersNumber(Handle, out var ret));
             return ret;
         }
         set
         {
             NativeMethods.HandleException(
-                NativeMethods.ml_EM_setClustersNumber(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.ml_EM_setClustersNumber(Handle, value));
         }
     }
 
@@ -116,15 +101,13 @@ public class EM : Algorithm
         get
         {
             NativeMethods.HandleException(
-                NativeMethods.ml_EM_getCovarianceMatrixType(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.ml_EM_getCovarianceMatrixType(Handle, out var ret));
             return ret;
         }
         set
         {
             NativeMethods.HandleException(
-                NativeMethods.ml_EM_setCovarianceMatrixType(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.ml_EM_setCovarianceMatrixType(Handle, value));
         }
     }
 
@@ -140,15 +123,13 @@ public class EM : Algorithm
         get
         {
             NativeMethods.HandleException(
-                NativeMethods.ml_EM_getTermCriteria(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.ml_EM_getTermCriteria(Handle, out var ret));
             return ret;
         }
         set
         {
             NativeMethods.HandleException(
-                NativeMethods.ml_EM_setTermCriteria(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.ml_EM_setTermCriteria(Handle, value));
         }
     }
 
@@ -165,8 +146,7 @@ public class EM : Algorithm
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.ml_EM_getWeights(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.ml_EM_getWeights(Handle, out var ret));
         return new Mat(ret);
     }
 
@@ -180,8 +160,7 @@ public class EM : Algorithm
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.ml_EM_getMeans(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.ml_EM_getMeans(Handle, out var ret));
         return new Mat(ret);
     }
 
@@ -196,8 +175,7 @@ public class EM : Algorithm
 
         using var vec = new VectorOfMat();
         NativeMethods.HandleException(
-            NativeMethods.ml_EM_getCovs(ptr, vec.CvPtr));
-        GC.KeepAlive(this);
+            NativeMethods.ml_EM_getCovs(Handle, vec.CvPtr));
         return vec.ToArray();
     }
 
@@ -218,36 +196,25 @@ public class EM : Algorithm
     // ReSharper disable once InconsistentNaming
     public virtual bool TrainEM(
         InputArray samples,
-        OutputArray? logLikelihoods = null,
-        OutputArray? labels = null,
-        OutputArray? probs = null)
+        OutputArray logLikelihoods = default,
+        OutputArray labels = default,
+        OutputArray probs = default)
     {
         ThrowIfDisposed();
-        if (samples is null)
-            throw new ArgumentNullException(nameof(samples));
-        samples.ThrowIfDisposed();
-
-        logLikelihoods?.ThrowIfNotReady();
-        labels?.ThrowIfNotReady();
-        probs?.ThrowIfNotReady();
 
         NativeMethods.HandleException(
             NativeMethods.ml_EM_trainEM(
-                ptr,
-                samples.CvPtr,
-                Cv2.ToPtr(logLikelihoods),
-                Cv2.ToPtr(labels),
-                Cv2.ToPtr(probs),
+                Handle,
+                samples.Proxy,
+                logLikelihoods.Proxy,
+                labels.Proxy,
+                probs.Proxy,
                 out var ret));
 
-        logLikelihoods?.Fix();
-        labels?.Fix();
-        probs?.Fix();
-        GC.KeepAlive(this);
-        GC.KeepAlive(samples);
-        GC.KeepAlive(logLikelihoods);
-        GC.KeepAlive(labels);
-        GC.KeepAlive(probs);
+        GC.KeepAlive(samples.Source);
+        GC.KeepAlive(logLikelihoods.Source);
+        GC.KeepAlive(labels.Source);
+        GC.KeepAlive(probs.Source);
         return ret != 0;
     }
 
@@ -275,49 +242,33 @@ public class EM : Algorithm
     public virtual bool TrainE(
         InputArray samples,
         InputArray means0,
-        InputArray? covs0 = null,
-        InputArray? weights0 = null,
-        OutputArray? logLikelihoods = null,
-        OutputArray? labels = null,
-        OutputArray? probs = null)
+        InputArray covs0 = default,
+        InputArray weights0 = default,
+        OutputArray logLikelihoods = default,
+        OutputArray labels = default,
+        OutputArray probs = default)
     {
         ThrowIfDisposed();
-        if (samples is null)
-            throw new ArgumentNullException(nameof(samples));
-        if (means0 is null)
-            throw new ArgumentNullException(nameof(means0));
-        samples.ThrowIfDisposed();
-        means0.ThrowIfDisposed();
-
-        logLikelihoods?.ThrowIfNotReady();
-        covs0?.ThrowIfDisposed();
-        weights0?.ThrowIfDisposed();
-        labels?.ThrowIfNotReady();
-        probs?.ThrowIfNotReady();
 
         NativeMethods.HandleException(
             NativeMethods.ml_EM_trainE(
-                ptr,
-                samples.CvPtr,
-                means0.CvPtr,
-                Cv2.ToPtr(covs0),
-                Cv2.ToPtr(weights0),
-                Cv2.ToPtr(logLikelihoods),
-                Cv2.ToPtr(labels),
-                Cv2.ToPtr(probs),
+                Handle,
+                samples.Proxy,
+                means0.Proxy,
+                covs0.Proxy,
+                weights0.Proxy,
+                logLikelihoods.Proxy,
+                labels.Proxy,
+                probs.Proxy,
                 out var ret));
 
-        logLikelihoods?.Fix();
-        labels?.Fix();
-        probs?.Fix();
-        GC.KeepAlive(this);
-        GC.KeepAlive(samples);
-        GC.KeepAlive(means0);
-        GC.KeepAlive(covs0);
-        GC.KeepAlive(weights0);
-        GC.KeepAlive(logLikelihoods);
-        GC.KeepAlive(labels);
-        GC.KeepAlive(probs);
+        GC.KeepAlive(samples.Source);
+        GC.KeepAlive(means0.Source);
+        GC.KeepAlive(covs0.Source);
+        GC.KeepAlive(weights0.Source);
+        GC.KeepAlive(logLikelihoods.Source);
+        GC.KeepAlive(labels.Source);
+        GC.KeepAlive(probs.Source);
         return ret != 0;
     }
 
@@ -338,41 +289,27 @@ public class EM : Algorithm
     public virtual bool TrainM(
         InputArray samples,
         InputArray probs0,
-        OutputArray? logLikelihoods = null,
-        OutputArray? labels = null,
-        OutputArray? probs = null)
+        OutputArray logLikelihoods = default,
+        OutputArray labels = default,
+        OutputArray probs = default)
     {
         ThrowIfDisposed();
-        if (samples is null)
-            throw new ArgumentNullException(nameof(samples));
-        if (probs0 is null)
-            throw new ArgumentNullException(nameof(probs0));
-        samples.ThrowIfDisposed();
-        probs0.ThrowIfDisposed();
-
-        logLikelihoods?.ThrowIfNotReady();
-        labels?.ThrowIfNotReady();
-        probs?.ThrowIfNotReady();
 
         NativeMethods.HandleException(
             NativeMethods.ml_EM_trainM(
-                ptr,
-                samples.CvPtr,
-                probs0.CvPtr,
-                Cv2.ToPtr(logLikelihoods),
-                Cv2.ToPtr(labels),
-                Cv2.ToPtr(probs), 
+                Handle,
+                samples.Proxy,
+                probs0.Proxy,
+                logLikelihoods.Proxy,
+                labels.Proxy,
+                probs.Proxy, 
                 out var ret));
 
-        logLikelihoods?.Fix();
-        labels?.Fix();
-        probs?.Fix();
-        GC.KeepAlive(this);
-        GC.KeepAlive(samples);
-        GC.KeepAlive(probs0);
-        GC.KeepAlive(logLikelihoods);
-        GC.KeepAlive(labels);
-        GC.KeepAlive(probs);
+        GC.KeepAlive(samples.Source);
+        GC.KeepAlive(probs0.Source);
+        GC.KeepAlive(logLikelihoods.Source);
+        GC.KeepAlive(labels.Source);
+        GC.KeepAlive(probs.Source);
 
         return ret != 0;
     }
@@ -384,42 +321,18 @@ public class EM : Algorithm
     /// \f$1 \times dims\f$ or \f$dims \times 1\f$ size.</param>
     /// <param name="probs">Optional output matrix that contains posterior probabilities of each component
     /// given the sample. It has \f$1 \times nclusters\f$ size and CV_64FC1 type.</param>
-    public virtual Vec2d Predict2(InputArray sample, OutputArray? probs = null)
+    public virtual Vec2d Predict2(InputArray sample, OutputArray probs = default)
     {
         ThrowIfDisposed();
-        if (sample is null)
-            throw new ArgumentNullException(nameof(sample));
-        sample.ThrowIfDisposed();
-        probs?.ThrowIfNotReady();
 
         NativeMethods.HandleException(
-            NativeMethods.ml_EM_predict2(ptr, sample.CvPtr, Cv2.ToPtr(probs), out var ret));
-        probs?.Fix();
-        GC.KeepAlive(this);
-        GC.KeepAlive(sample);
-        GC.KeepAlive(probs);
+            NativeMethods.ml_EM_predict2(Handle, sample.Proxy, probs.Proxy, out var ret));
+        GC.KeepAlive(sample.Source);
+        GC.KeepAlive(probs.Source);
         return ret;
     }
 
     #endregion
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ml_Ptr_EM_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ml_Ptr_EM_delete(ptr));
-            base.DisposeUnmanaged();
-        }
-    }
 }
 
 #pragma warning disable CA1027 // Mark enums with FlagsAttribute

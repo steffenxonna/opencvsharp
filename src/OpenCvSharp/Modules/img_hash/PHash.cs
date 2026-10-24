@@ -11,19 +11,11 @@ namespace OpenCvSharp.ImgHash;
 public class PHash : ImgHashBase
 {
     /// <summary>
-    /// cv::Ptr&lt;T&gt;
-    /// </summary>
-    private Ptr? ptrObj;
-
-    /// <summary>
     /// 
     /// </summary>
-    protected PHash(IntPtr p)
-    {
-        ptrObj = new Ptr(p);
-        ptr = ptrObj.Get();
-    }
-
+    private PHash(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.img_hash_Ptr_PHash_delete(p)))
+    { }
     /// <summary>
     /// Constructor
     /// </summary>
@@ -31,49 +23,16 @@ public class PHash : ImgHashBase
     public static PHash Create()
     {
         NativeMethods.HandleException(
-            NativeMethods.img_hash_PHash_create(out var p));
-        return new PHash(p);
+            NativeMethods.img_hash_PHash_create(out var smartPtr));
+        NativeMethods.HandleException(NativeMethods.img_hash_Ptr_PHash_get(smartPtr, out var rawPtr));
+        return new PHash(smartPtr, rawPtr);
     }
         
-    /// <inheritdoc />
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
-    }
-
     // ReSharper disable once RedundantOverriddenMember
     /// <inheritdoc />
-    /// <summary>
-    /// Computes pHash value of the input image
-    /// </summary>
-    /// <param name="inputArr">input image want to compute hash value, type should be CV_8UC4, CV_8UC3, CV_8UC1.</param>
-    /// <param name="outputArr">Hash value of input, it will contain 8 uchar value</param>
-    /// <returns></returns>
+
     public override void Compute(InputArray inputArr, OutputArray outputArr)
     {
         base.Compute(inputArr, outputArr);
-    }
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.img_hash_Ptr_PHash_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.img_hash_Ptr_PHash_delete(ptr));
-            base.DisposeUnmanaged();
-        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using OpenCvSharp.Internal;
 using OpenCvSharp.Internal.Vectors;
 
@@ -7,12 +7,18 @@ namespace OpenCvSharp;
 /// <summary>
 /// Video capturing class 
 /// </summary>
-public class VideoCapture : DisposableCvObject
+public class VideoCapture : CvObject
 {
     /// <summary>
     /// Capture type (File or Camera)
     /// </summary>
     private CaptureType captureType;
+
+    /// <summary>
+    /// Keeps the stream-reader callback delegates alive for as long as this VideoCapture may call back into them.
+    /// </summary>
+    private readonly object streamReaderBridgeSync = new();
+    private readonly DisposableObjectHolder<StreamReaderBridge> streamReaderBridgeHolder = new();
 
     #region Init and Disposal
 
@@ -24,12 +30,13 @@ public class VideoCapture : DisposableCvObject
     public VideoCapture()
     {
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_new1(out ptr));
+            NativeMethods.videoio_VideoCapture_new1(out var p));
             
-        if (ptr == IntPtr.Zero)
+        if (p == IntPtr.Zero)
             throw new OpenCvSharpException("Failed to create VideoCapture");
             
         captureType = CaptureType.NotSpecified;
+        InitSafeHandle(p);
     }
 
     /// <summary>
@@ -43,12 +50,13 @@ public class VideoCapture : DisposableCvObject
     public VideoCapture(int index, VideoCaptureAPIs apiPreference = VideoCaptureAPIs.ANY)
     {
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_new3(index, (int) apiPreference, out ptr));
+            NativeMethods.videoio_VideoCapture_new3(index, (int) apiPreference, out var p));
  
-        if (ptr == IntPtr.Zero)
+        if (p == IntPtr.Zero)
             throw new OpenCvSharpException("Failed to create VideoCapture");
             
         captureType = CaptureType.Camera;
+        InitSafeHandle(p);
     }
 
     /// <summary>
@@ -63,16 +71,16 @@ public class VideoCapture : DisposableCvObject
     /// <returns></returns>
     public VideoCapture(int index, VideoCaptureAPIs apiPreference, int[] prms)
     {
-        if (prms is null)
-            throw new ArgumentNullException(nameof(prms));
+        ArgumentNullException.ThrowIfNull(prms);
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_new5(index, (int)apiPreference, prms, prms.Length, out ptr));
+            NativeMethods.videoio_VideoCapture_new5(index, (int)apiPreference, prms, prms.Length, out var p));
 
-        if (ptr == IntPtr.Zero)
+        if (p == IntPtr.Zero)
             throw new OpenCvSharpException("Failed to create VideoCapture");
 
         captureType = CaptureType.Camera;
+        InitSafeHandle(p);
     }
 
     /// <summary>
@@ -86,17 +94,99 @@ public class VideoCapture : DisposableCvObject
     /// <returns></returns>
     public VideoCapture(int index, VideoCaptureAPIs apiPreference, VideoCapturePara prms)
     {
-        if (prms is null)
-            throw new ArgumentNullException(nameof(prms));
-        var p = prms.GetParameters();
+        ArgumentNullException.ThrowIfNull(prms);
+        var prmsArray = prms.GetParameters();
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_new5(index, (int)apiPreference, p, p.Length, out ptr));
+            NativeMethods.videoio_VideoCapture_new5(index, (int)apiPreference, prmsArray, prmsArray.Length, out var p));
 
-        if (ptr == IntPtr.Zero)
+        if (p == IntPtr.Zero)
             throw new OpenCvSharpException("Failed to create VideoCapture");
 
         captureType = CaptureType.Camera;
+        InitSafeHandle(p);
+    }
+
+    /// <summary>
+    /// Opens a video using a custom data stream.
+    /// </summary>
+    /// <param name="source">Custom stream reader providing the encoded video data.</param>
+    /// <param name="apiPreference">preferred Capture API backends to use. Can be used to enforce a specific reader implementation
+    /// if multiple are available: e.g. cv::CAP_FFMPEG.</param>
+    /// <param name="prms">The `params` parameter allows to specify extra parameters encoded as pairs `(paramId_1, paramValue_1, paramId_2, paramValue_2, ...)`.
+    /// See cv::VideoCaptureProperties</param>
+    /// <returns></returns>
+    public VideoCapture(IStreamReader source, VideoCaptureAPIs apiPreference, int[] prms)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(prms);
+
+        var newBridge = new StreamReaderBridge(source);
+        IntPtr p;
+        try
+        {
+            NativeMethods.HandleException(
+                NativeMethods.videoio_VideoCapture_new6(
+                    newBridge.ReadCallbackPointer, newBridge.SeekCallbackPointer, newBridge.UserData,
+                    (int)apiPreference, prms, prms.Length, out p));
+        }
+        catch
+        {
+            newBridge.Dispose();
+            throw;
+        }
+
+        if (p == IntPtr.Zero)
+        {
+            newBridge.Dispose();
+            throw new OpenCvSharpException("Failed to create VideoCapture");
+        }
+
+        captureType = CaptureType.File;
+        InitSafeHandle(p);
+        streamReaderBridgeHolder.Replace(newBridge);
+    }
+
+    /// <summary>
+    /// Opens a video using a custom data stream.
+    /// </summary>
+    /// <param name="source">Custom stream reader providing the encoded video data.</param>
+    /// <param name="apiPreference">preferred Capture API backends to use. Can be used to enforce a specific reader implementation
+    /// if multiple are available: e.g. cv::CAP_FFMPEG.</param>
+    /// <param name="prms">Parameters of VideoCapture for hardware acceleration</param>
+    /// <returns></returns>
+    public VideoCapture(IStreamReader source, VideoCaptureAPIs apiPreference, VideoCapturePara prms)
+        : this(source, apiPreference, (prms ?? throw new ArgumentNullException(nameof(prms))).GetParameters())
+    {
+    }
+
+    /// <summary>
+    /// Opens a video using an in-memory or otherwise custom <see cref="Stream"/> (e.g. a MemoryStream or network stream).
+    /// The caller remains responsible for disposing the stream; VideoCapture does not take ownership of it.
+    /// </summary>
+    /// <param name="source">Stream providing the encoded video data.</param>
+    /// <param name="apiPreference">preferred Capture API backends to use. Can be used to enforce a specific reader implementation
+    /// if multiple are available: e.g. cv::CAP_FFMPEG.</param>
+    /// <param name="prms">The `params` parameter allows to specify extra parameters encoded as pairs `(paramId_1, paramValue_1, paramId_2, paramValue_2, ...)`.
+    /// See cv::VideoCaptureProperties</param>
+    /// <returns></returns>
+    public VideoCapture(Stream source, VideoCaptureAPIs apiPreference, int[] prms)
+        : this(new StreamReaderStreamAdapter(source ?? throw new ArgumentNullException(nameof(source))), apiPreference, prms)
+    {
+    }
+
+    /// <summary>
+    /// Opens a video using an in-memory or otherwise custom <see cref="Stream"/> (e.g. a MemoryStream or network stream).
+    /// The caller remains responsible for disposing the stream; VideoCapture does not take ownership of it.
+    /// </summary>
+    /// <param name="source">Stream providing the encoded video data.</param>
+    /// <param name="apiPreference">preferred Capture API backends to use. Can be used to enforce a specific reader implementation
+    /// if multiple are available: e.g. cv::CAP_FFMPEG.</param>
+    /// <param name="prms">Parameters of VideoCapture for hardware acceleration</param>
+    /// <returns></returns>
+    public VideoCapture(Stream source, VideoCaptureAPIs apiPreference, VideoCapturePara prms)
+        : this(new StreamReaderStreamAdapter(source ?? throw new ArgumentNullException(nameof(source))), apiPreference, prms)
+    {
     }
 
     /// <summary>
@@ -120,7 +210,11 @@ public class VideoCapture : DisposableCvObject
     /// - or image sequence (e.g. `img_%02d.jpg`, which will read samples like `img_00.jpg, img_01.jpg, img_02.jpg, ...`)
     /// - or URL of video stream (e.g. `protocol://host:port/script_name?script_params|auth`).
     /// Note that each video stream or IP camera feed has its own URL scheme. Please refer to the
-    /// documentation of source stream to know the right URL.</param>
+    /// documentation of source stream to know the right URL.
+    /// On Windows, a path containing characters that can't be represented in the process's ANSI code
+    /// page may fail to open here even though the file exists; use the <see cref="Stream"/>-based
+    /// constructor instead (e.g. wrap the path in a <see cref="FileStream"/>) to open it via Unicode
+    /// file APIs.</param>
     /// <param name="apiPreference">apiPreference preferred Capture API backends to use. Can be used to enforce a specific reader
     /// implementation if multiple are available: e.g. cv::CAP_FFMPEG or cv::CAP_IMAGES or cv::CAP_DSHOW.</param>
     /// <returns></returns>
@@ -130,12 +224,13 @@ public class VideoCapture : DisposableCvObject
             throw new ArgumentNullException(nameof(fileName));
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_new2(fileName, (int)apiPreference, out ptr));
+            NativeMethods.videoio_VideoCapture_new2(fileName, (int)apiPreference, out var p));
 
-        if (ptr == IntPtr.Zero)
+        if (p == IntPtr.Zero)
             throw new OpenCvSharpException("Failed to create VideoCapture");
-            
+
         captureType = CaptureType.File;
+        InitSafeHandle(p);
     }
 
     /// <summary>
@@ -146,26 +241,30 @@ public class VideoCapture : DisposableCvObject
     /// - or image sequence (eg. `img_%02d.jpg`, which will read samples like `img_00.jpg, img_01.jpg, img_02.jpg, ...`)
     /// - or URL of video stream (eg. `protocol://host:port/script_name?script_params|auth`).
     /// Note that each video stream or IP camera feed has its own URL scheme. Please refer to the
-    /// documentation of source stream to know the right URL.</param>
+    /// documentation of source stream to know the right URL.
+    /// On Windows, a path containing characters that can't be represented in the process's ANSI code
+    /// page may fail to open here even though the file exists; use the <see cref="Stream"/>-based
+    /// constructor instead (e.g. wrap the path in a <see cref="FileStream"/>) to open it via Unicode
+    /// file APIs.</param>
     /// <param name="apiPreference">apiPreference preferred Capture API backends to use. Can be used to enforce a specific reader
     /// implementation if multiple are available: e.g. cv::CAP_FFMPEG or cv::CAP_IMAGES or cv::CAP_DSHOW.</param>
-    /// <param name="prms">The `params` parameter allows to specify extra parameters encoded as pairs `(paramId_1, paramValue_1, paramId_2, paramValue_2, ...)`. 
+    /// <param name="prms">The `params` parameter allows to specify extra parameters encoded as pairs `(paramId_1, paramValue_1, paramId_2, paramValue_2, ...)`.
     /// See cv::VideoCaptureProperties</param>
     /// <returns></returns>
     public VideoCapture(string fileName, VideoCaptureAPIs apiPreference, int[] prms)
     {
         if (string.IsNullOrEmpty(fileName))
             throw new ArgumentNullException(nameof(fileName));
-        if (prms is null)
-            throw new ArgumentNullException(nameof(prms));
+        ArgumentNullException.ThrowIfNull(prms);
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_new4(fileName, (int)apiPreference, prms, prms.Length, out ptr));
+            NativeMethods.videoio_VideoCapture_new4(fileName, (int)apiPreference, prms, prms.Length, out var p));
 
-        if (ptr == IntPtr.Zero)
+        if (p == IntPtr.Zero)
             throw new OpenCvSharpException("Failed to create VideoCapture");
 
         captureType = CaptureType.File;
+        InitSafeHandle(p);
     }
 
     /// <summary>
@@ -182,20 +281,11 @@ public class VideoCapture : DisposableCvObject
     /// <param name="prms">Parameters of VideoCature for hardware acceleration</param>
     /// <returns></returns>
     public VideoCapture(string fileName, VideoCaptureAPIs apiPreference, VideoCapturePara prms)
+        : this(
+            string.IsNullOrEmpty(fileName) ? throw new ArgumentNullException(nameof(fileName)) : fileName,
+            apiPreference,
+            (prms ?? throw new ArgumentNullException(nameof(prms))).GetParameters())
     {
-        if (string.IsNullOrEmpty(fileName))
-            throw new ArgumentNullException(nameof(fileName));
-        if (prms is null)
-            throw new ArgumentNullException(nameof(prms));
-        var p = prms.GetParameters();
-
-        NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_new4(fileName, (int)apiPreference, p, p.Length, out ptr));
-
-        if (ptr == IntPtr.Zero)
-            throw new OpenCvSharpException("Failed to create VideoCapture");
-
-        captureType = CaptureType.File;
     }
 
     /// <summary>
@@ -219,18 +309,20 @@ public class VideoCapture : DisposableCvObject
     /// <param name="ptr">CvCapture*</param>
     internal protected VideoCapture(IntPtr ptr)
     {
-        this.ptr = ptr;
+        InitSafeHandle(ptr);
     }
 
     /// <summary>
     /// Releases unmanaged resources
     /// </summary>
-    protected override void DisposeUnmanaged()
+
+    private void InitSafeHandle(IntPtr p, bool ownsHandle = true)
     {
-        if (ptr != IntPtr.Zero)
-            NativeMethods.HandleException(
-                NativeMethods.videoio_VideoCapture_delete(ptr));
-        base.DisposeUnmanaged();
+        var handle = new OpenCvPtrSafeHandle(p, ownsHandle,
+            static h => NativeMethods.HandleException(NativeMethods.videoio_VideoCapture_delete(h)));
+        if (ownsHandle)
+            handle.SetPostReleaseAction(streamReaderBridgeHolder.Dispose);
+        SetSafeHandle(handle);
     }
 
     #endregion
@@ -1043,23 +1135,94 @@ public class VideoCapture : DisposableCvObject
     /// - or image sequence (eg. `img_%02d.jpg`, which will read samples like `img_00.jpg, img_01.jpg, img_02.jpg, ...`)
     /// - or URL of video stream (eg. `protocol://host:port/script_name?script_params|auth`).
     /// Note that each video stream or IP camera feed has its own URL scheme. Please refer to the
-    /// documentation of source stream to know the right URL.</param>
+    /// documentation of source stream to know the right URL.
+    /// On Windows, a path containing characters that can't be represented in the process's ANSI code
+    /// page may fail to open here even though the file exists; use the <see cref="Stream"/>-based
+    /// Open overload instead (e.g. wrap the path in a <see cref="FileStream"/>) to open it via Unicode
+    /// file APIs.</param>
     /// <param name="apiPreference">apiPreference preferred Capture API backends to use. Can be used to enforce a specific reader
     /// implementation if multiple are available: e.g. cv::CAP_FFMPEG or cv::CAP_IMAGES or cv::CAP_DSHOW.</param>
     /// <returns>`true` if the file has been successfully opened</returns>
     public bool Open(string fileName, VideoCaptureAPIs apiPreference = VideoCaptureAPIs.ANY)
     {
         ThrowIfDisposed();
+        if (string.IsNullOrEmpty(fileName))
+            throw new ArgumentNullException(nameof(fileName));
 
-        NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_open1(ptr, fileName, (int)apiPreference, out var ret));
+        lock (streamReaderBridgeSync)
+        {
+            NativeMethods.HandleException(
+                NativeMethods.videoio_VideoCapture_open1(Handle, fileName, (int)apiPreference, out var ret));
 
-        GC.KeepAlive(this);
-        if (ret == 0) 
-            return false;
+            if (ret == 0)
+                return false;
 
-        captureType = CaptureType.File;
-        return true;
+            captureType = CaptureType.File;
+            streamReaderBridgeHolder.Replace(null);
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Opens a video file or a capturing device or an IP video stream for video capturing with API Preference and parameters
+    /// </summary>
+    /// <param name="fileName">it can be:
+    /// - name of video file (eg. `video.avi`)
+    /// - or image sequence (eg. `img_%02d.jpg`, which will read samples like `img_00.jpg, img_01.jpg, img_02.jpg, ...`)
+    /// - or URL of video stream (eg. `protocol://host:port/script_name?script_params|auth`).
+    /// Note that each video stream or IP camera feed has its own URL scheme. Please refer to the
+    /// documentation of source stream to know the right URL.
+    /// On Windows, a path containing characters that can't be represented in the process's ANSI code
+    /// page may fail to open here even though the file exists; use the <see cref="Stream"/>-based
+    /// Open overload instead (e.g. wrap the path in a <see cref="FileStream"/>) to open it via Unicode
+    /// file APIs.</param>
+    /// <param name="apiPreference">apiPreference preferred Capture API backends to use. Can be used to enforce a specific reader
+    /// implementation if multiple are available: e.g. cv::CAP_FFMPEG or cv::CAP_IMAGES or cv::CAP_DSHOW.</param>
+    /// <param name="prms">The `params` parameter allows to specify extra parameters encoded as pairs `(paramId_1, paramValue_1, paramId_2, paramValue_2, ...)`.
+    /// See cv::VideoCaptureProperties</param>
+    /// <returns>`true` if the file has been successfully opened</returns>
+    public bool Open(string fileName, VideoCaptureAPIs apiPreference, int[] prms)
+    {
+        ThrowIfDisposed();
+        if (string.IsNullOrEmpty(fileName))
+            throw new ArgumentNullException(nameof(fileName));
+        ArgumentNullException.ThrowIfNull(prms);
+
+        lock (streamReaderBridgeSync)
+        {
+            NativeMethods.HandleException(
+                NativeMethods.videoio_VideoCapture_open4(Handle, fileName, (int)apiPreference, prms, prms.Length, out var ret));
+
+            if (ret == 0)
+                return false;
+
+            captureType = CaptureType.File;
+            streamReaderBridgeHolder.Replace(null);
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Opens a video file or a capturing device or an IP video stream for video capturing with API Preference and parameters
+    /// </summary>
+    /// <param name="fileName">it can be:
+    /// - name of video file (eg. `video.avi`)
+    /// - or image sequence (eg. `img_%02d.jpg`, which will read samples like `img_00.jpg, img_01.jpg, img_02.jpg, ...`)
+    /// - or URL of video stream (eg. `protocol://host:port/script_name?script_params|auth`).
+    /// Note that each video stream or IP camera feed has its own URL scheme. Please refer to the
+    /// documentation of source stream to know the right URL.
+    /// On Windows, a path containing characters that can't be represented in the process's ANSI code
+    /// page may fail to open here even though the file exists; use the <see cref="Stream"/>-based
+    /// Open overload instead (e.g. wrap the path in a <see cref="FileStream"/>) to open it via Unicode
+    /// file APIs.</param>
+    /// <param name="apiPreference">apiPreference preferred Capture API backends to use. Can be used to enforce a specific reader
+    /// implementation if multiple are available: e.g. cv::CAP_FFMPEG or cv::CAP_IMAGES or cv::CAP_DSHOW.</param>
+    /// <param name="prms">Parameters of VideoCapture for hardware acceleration</param>
+    /// <returns>`true` if the file has been successfully opened</returns>
+    public bool Open(string fileName, VideoCaptureAPIs apiPreference, VideoCapturePara prms)
+    {
+        ArgumentNullException.ThrowIfNull(prms);
+        return Open(fileName, apiPreference, prms.GetParameters());
     }
 
     /// <summary>
@@ -1074,15 +1237,110 @@ public class VideoCapture : DisposableCvObject
     {
         ThrowIfDisposed();
 
-        NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_open2(ptr, index, (int)apiPreference, out var ret));
+        lock (streamReaderBridgeSync)
+        {
+            NativeMethods.HandleException(
+                NativeMethods.videoio_VideoCapture_open2(Handle, index, (int)apiPreference, out var ret));
 
-        GC.KeepAlive(this);
-        if (ret == 0) 
-            return false;
+            if (ret == 0)
+                return false;
 
-        captureType = CaptureType.Camera;
-        return true;
+            captureType = CaptureType.Camera;
+            streamReaderBridgeHolder.Replace(null);
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Opens a video using a custom data stream.
+    /// </summary>
+    /// <param name="source">Custom stream reader providing the encoded video data.</param>
+    /// <param name="apiPreference">preferred Capture API backends to use. Can be used to enforce a specific reader implementation
+    /// if multiple are available: e.g. cv::CAP_FFMPEG.</param>
+    /// <param name="prms">The `params` parameter allows to specify extra parameters encoded as pairs `(paramId_1, paramValue_1, paramId_2, paramValue_2, ...)`.
+    /// See cv::VideoCaptureProperties</param>
+    /// <returns>`true` if the file has been successfully opened</returns>
+    public bool Open(IStreamReader source, VideoCaptureAPIs apiPreference, int[] prms)
+    {
+        ThrowIfDisposed();
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(prms);
+
+        var newBridge = new StreamReaderBridge(source);
+        lock (streamReaderBridgeSync)
+        {
+            int ret;
+            try
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.videoio_VideoCapture_open3(
+                        Handle, newBridge.ReadCallbackPointer, newBridge.SeekCallbackPointer, newBridge.UserData,
+                        (int)apiPreference, prms, prms.Length, out ret));
+            }
+            catch
+            {
+                newBridge.Dispose();
+                throw;
+            }
+
+            if (ret == 0)
+            {
+                newBridge.Dispose();
+                streamReaderBridgeHolder.Replace(null);
+                return false;
+            }
+
+            streamReaderBridgeHolder.Replace(newBridge);
+            captureType = CaptureType.File;
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Opens a video using a custom data stream.
+    /// </summary>
+    /// <param name="source">Custom stream reader providing the encoded video data.</param>
+    /// <param name="apiPreference">preferred Capture API backends to use. Can be used to enforce a specific reader implementation
+    /// if multiple are available: e.g. cv::CAP_FFMPEG.</param>
+    /// <param name="prms">Parameters of VideoCapture for hardware acceleration</param>
+    /// <returns>`true` if the file has been successfully opened</returns>
+    public bool Open(IStreamReader source, VideoCaptureAPIs apiPreference, VideoCapturePara prms)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(prms);
+        return Open(source, apiPreference, prms.GetParameters());
+    }
+
+    /// <summary>
+    /// Opens a video using an in-memory or otherwise custom <see cref="Stream"/> (e.g. a MemoryStream or network stream).
+    /// The caller remains responsible for disposing the stream; VideoCapture does not take ownership of it.
+    /// </summary>
+    /// <param name="source">Stream providing the encoded video data.</param>
+    /// <param name="apiPreference">preferred Capture API backends to use. Can be used to enforce a specific reader implementation
+    /// if multiple are available: e.g. cv::CAP_FFMPEG.</param>
+    /// <param name="prms">The `params` parameter allows to specify extra parameters encoded as pairs `(paramId_1, paramValue_1, paramId_2, paramValue_2, ...)`.
+    /// See cv::VideoCaptureProperties</param>
+    /// <returns>`true` if the file has been successfully opened</returns>
+    public bool Open(Stream source, VideoCaptureAPIs apiPreference, int[] prms)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        return Open(new StreamReaderStreamAdapter(source), apiPreference, prms);
+    }
+
+    /// <summary>
+    /// Opens a video using an in-memory or otherwise custom <see cref="Stream"/> (e.g. a MemoryStream or network stream).
+    /// The caller remains responsible for disposing the stream; VideoCapture does not take ownership of it.
+    /// </summary>
+    /// <param name="source">Stream providing the encoded video data.</param>
+    /// <param name="apiPreference">preferred Capture API backends to use. Can be used to enforce a specific reader implementation
+    /// if multiple are available: e.g. cv::CAP_FFMPEG.</param>
+    /// <param name="prms">Parameters of VideoCapture for hardware acceleration</param>
+    /// <returns>`true` if the file has been successfully opened</returns>
+    public bool Open(Stream source, VideoCaptureAPIs apiPreference, VideoCapturePara prms)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(prms);
+        return Open(new StreamReaderStreamAdapter(source), apiPreference, prms.GetParameters());
     }
 
     /// <summary>
@@ -1093,8 +1351,7 @@ public class VideoCapture : DisposableCvObject
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_isOpened(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.videoio_VideoCapture_isOpened(Handle, out var ret));
         return ret != 0;
     }
 
@@ -1106,7 +1363,7 @@ public class VideoCapture : DisposableCvObject
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_release(ptr));
+            NativeMethods.videoio_VideoCapture_release(Handle));
     }
 
     /// <summary>
@@ -1129,8 +1386,7 @@ public class VideoCapture : DisposableCvObject
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_grab(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.videoio_VideoCapture_grab(Handle, out var ret));
         return ret != 0;
     }
         
@@ -1147,15 +1403,10 @@ public class VideoCapture : DisposableCvObject
     public bool Retrieve(OutputArray image, int flag = 0)
     {
         ThrowIfDisposed();
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
-        image.ThrowIfNotReady();
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_retrieve_OutputArray(ptr, image.CvPtr, flag, out var ret));
+            NativeMethods.videoio_VideoCapture_retrieve_OutputArray(Handle, image.Proxy, flag, out var ret));
 
-        GC.KeepAlive(this);
-        image.Fix();
         return ret != 0;
     }
 
@@ -1172,15 +1423,10 @@ public class VideoCapture : DisposableCvObject
     public bool Retrieve(OutputArray image, CameraChannels streamIdx)
     {
         ThrowIfDisposed();
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
-        image.ThrowIfNotReady();
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_retrieve_OutputArray(ptr, image.CvPtr, (int)streamIdx, out var ret));
+            NativeMethods.videoio_VideoCapture_retrieve_OutputArray(Handle, image.Proxy, (int)streamIdx, out var ret));
 
-        GC.KeepAlive(this);
-        image.Fix();
         return ret != 0;
     }
         
@@ -1197,14 +1443,12 @@ public class VideoCapture : DisposableCvObject
     public bool Retrieve(Mat image, int flag = 0)
     {
         ThrowIfDisposed();
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
+        ArgumentNullException.ThrowIfNull(image);
         image.ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_retrieve_Mat(ptr, image.CvPtr, flag, out var ret));
+            NativeMethods.videoio_VideoCapture_retrieve_Mat(Handle, image.CvPtr, flag, out var ret));
 
-        GC.KeepAlive(this);
         GC.KeepAlive(image);
         return ret != 0;
     }
@@ -1222,14 +1466,12 @@ public class VideoCapture : DisposableCvObject
     public bool Retrieve(Mat image, CameraChannels streamIdx)
     {
         ThrowIfDisposed();
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
+        ArgumentNullException.ThrowIfNull(image);
         image.ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_retrieve_Mat(ptr, image.CvPtr, (int)streamIdx, out var ret));
+            NativeMethods.videoio_VideoCapture_retrieve_Mat(Handle, image.CvPtr, (int)streamIdx, out var ret));
 
-        GC.KeepAlive(this);
         GC.KeepAlive(image);
         return ret != 0;
     }
@@ -1248,8 +1490,7 @@ public class VideoCapture : DisposableCvObject
 
         var mat = new Mat();
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_operatorRightShift_Mat(ptr, mat.CvPtr));
-        GC.KeepAlive(this);
+            NativeMethods.videoio_VideoCapture_operatorRightShift_Mat(Handle, mat.CvPtr));
         return mat;
     }
 
@@ -1265,15 +1506,10 @@ public class VideoCapture : DisposableCvObject
     public bool Read(OutputArray image)
     {
         ThrowIfDisposed();
-        if(image is null)
-            throw new ArgumentNullException(nameof(image));
-        image.ThrowIfNotReady();
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_read_OutputArray(ptr, image.CvPtr, out var ret));
+            NativeMethods.videoio_VideoCapture_read_OutputArray(Handle, image.Proxy, out var ret));
 
-        GC.KeepAlive(this);
-        image.Fix();
         return ret != 0;
     }
         
@@ -1289,14 +1525,12 @@ public class VideoCapture : DisposableCvObject
     public bool Read(Mat image)
     {
         ThrowIfDisposed();
-        if(image is null)
-            throw new ArgumentNullException(nameof(image));
+        ArgumentNullException.ThrowIfNull(image);
         image.ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_read_Mat(ptr, image.CvPtr, out var ret));
+            NativeMethods.videoio_VideoCapture_read_Mat(Handle, image.CvPtr, out var ret));
 
-        GC.KeepAlive(this);
         GC.KeepAlive(image);
         return ret != 0;
     }
@@ -1325,9 +1559,8 @@ public class VideoCapture : DisposableCvObject
         ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_set(ptr, propertyId, value, out var ret));
+            NativeMethods.videoio_VideoCapture_set(Handle, propertyId, value, out var ret));
 
-        GC.KeepAlive(this);
         return ret != 0;
     }
 
@@ -1352,8 +1585,7 @@ public class VideoCapture : DisposableCvObject
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_get(ptr, propertyId, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.videoio_VideoCapture_get(Handle, propertyId, out var ret));
         return ret;
     }
 
@@ -1368,8 +1600,7 @@ public class VideoCapture : DisposableCvObject
 
         using var returnString = new StdString();
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_getBackendName(ptr, returnString.CvPtr));
-        GC.KeepAlive(this);
+            NativeMethods.videoio_VideoCapture_getBackendName(Handle, returnString.CvPtr));
         return returnString.ToString();
     }
 
@@ -1382,8 +1613,7 @@ public class VideoCapture : DisposableCvObject
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_setExceptionMode(ptr, enable ? 1 : 0));
-        GC.KeepAlive(this);
+            NativeMethods.videoio_VideoCapture_setExceptionMode(Handle, enable ? 1 : 0));
     }
 
     /// <summary>
@@ -1394,8 +1624,7 @@ public class VideoCapture : DisposableCvObject
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.videoio_VideoCapture_getExceptionMode(ptr, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.videoio_VideoCapture_getExceptionMode(Handle, out var ret));
         return ret != 0;
     }
         
@@ -1418,8 +1647,7 @@ public class VideoCapture : DisposableCvObject
         out int[] readyIndex, 
         long timeoutNs = 0)
     {
-        if (streams is null) 
-            throw new ArgumentNullException(nameof(streams));
+        ArgumentNullException.ThrowIfNull(streams);
 
         var streamPtrs = streams.Select(s =>
         {
@@ -1428,7 +1656,7 @@ public class VideoCapture : DisposableCvObject
             s.ThrowIfDisposed();
             return s.CvPtr;
         }).ToArray();
-        using var readyIndexVec = new VectorOfInt32();
+        using var readyIndexVec = new StdVector<int>();
 
         NativeMethods.HandleException(
             NativeMethods.videoio_VideoCapture_waitAny(

@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable CommentTypo
@@ -16,16 +16,12 @@ namespace OpenCvSharp.XFeatures2D;
 /// </summary>
 public class LATCH : Feature2D
 {
-    private Ptr? ptrObj;
-
     /// <summary>
     /// 
     /// </summary>
-    internal LATCH(IntPtr p)
-    {
-        ptrObj = new Ptr(p);
-        ptr = ptrObj.Get();
-    }
+    private LATCH(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.xfeatures2d_Ptr_LATCH_delete(p)))
+    { }
 
     /// <summary>
     /// Constructor
@@ -42,34 +38,88 @@ public class LATCH : Feature2D
         NativeMethods.HandleException(
             NativeMethods.xfeatures2d_LATCH_create(
                 bytes, rotationInvariance ? 1 : 0, halfSsdSize, sigma, out var ptr));
-        return new LATCH(ptr);
+        NativeMethods.HandleException(NativeMethods.xfeatures2d_Ptr_LATCH_get(ptr, out var rawPtr));
+        return new LATCH(ptr, rawPtr);
     }
 
     /// <summary>
-    /// Releases managed resources
+    /// The size of the descriptor - can be 64, 32, 16, 8, 4, 2 or 1.
     /// </summary>
-    protected override void DisposeManaged()
+    public int Bytes
     {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
-    }
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
+        get
         {
+            ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xfeatures2d_Ptr_LATCH_get(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.xfeatures2d_LATCH_getBytes(Handle, out var ret));
             return ret;
         }
-
-        protected override void DisposeUnmanaged()
+        set
         {
+            ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xfeatures2d_Ptr_LATCH_delete(ptr));
-            base.DisposeUnmanaged();
+                NativeMethods.xfeatures2d_LATCH_setBytes(Handle, value));
+        }
+    }
+
+    /// <summary>
+    /// Whether or not the descriptor should compensate for orientation changes.
+    /// </summary>
+    public bool RotationInvariance
+    {
+        get
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_LATCH_getRotationInvariance(Handle, out var ret));
+            return ret != 0;
+        }
+        set
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_LATCH_setRotationInvariance(Handle, value ? 1 : 0));
+        }
+    }
+
+    /// <summary>
+    /// The size of half of the mini-patches size.
+    /// </summary>
+    public int HalfSSDsize
+    {
+        get
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_LATCH_getHalfSSDsize(Handle, out var ret));
+            return ret;
+        }
+        set
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_LATCH_setHalfSSDsize(Handle, value));
+        }
+    }
+
+    /// <summary>
+    /// Sigma value for GaussianBlur smoothing of the source image. Source image will be used
+    /// without smoothing in case sigma value is 0.
+    /// </summary>
+    public double Sigma
+    {
+        get
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_LATCH_getSigma(Handle, out var ret));
+            return ret;
+        }
+        set
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_LATCH_setSigma(Handle, value));
         }
     }
 }

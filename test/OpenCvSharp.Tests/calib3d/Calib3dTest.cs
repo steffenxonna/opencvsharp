@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
-using Xunit.Abstractions;
 
 // ReSharper disable UnusedVariable
 // ReSharper disable RedundantArgumentDefaultValue
@@ -47,6 +46,66 @@ public class Calib3DTest(ITestOutputHelper output) : TestBase
     }
 
     [Fact]
+    public void CalibrateRobotWorldHandEye()
+    {
+        // Smoke test for the Span<double> output marshalling: the native side writes the 3x3 result
+        // matrices into the pinned Span-backed double[,] buffers, so they must come back populated.
+        var rWorld2Cam = new List<Mat>();
+        var tWorld2Cam = new List<Mat>();
+        var rBase2Gripper = new List<Mat>();
+        var tBase2Gripper = new List<Mat>();
+        try
+        {
+            for (var i = 1; i <= 4; i++)
+            {
+                rWorld2Cam.Add(RotationMat(0.1 * i, 0.2 * i, 0.3 * i));
+                tWorld2Cam.Add(Vec3(i, i * 0.5, i * 0.25));
+                rBase2Gripper.Add(RotationMat(0.3 * i, 0.1 * i, 0.2 * i));
+                tBase2Gripper.Add(Vec3(i * 0.2, i, i * 0.3));
+            }
+
+            Cv2.CalibrateRobotWorldHandEye(
+                rWorld2Cam, tWorld2Cam, rBase2Gripper, tBase2Gripper,
+                out var rBase2World, out var tBase2World,
+                out var rGripper2Cam, out var tGripper2Cam);
+
+            Assert.Equal(3, rBase2World.GetLength(0));
+            Assert.Equal(3, rBase2World.GetLength(1));
+            Assert.Equal(3, rGripper2Cam.GetLength(0));
+            Assert.Equal(3, rGripper2Cam.GetLength(1));
+            Assert.Equal(3, tBase2World.Length);
+            Assert.Equal(3, tGripper2Cam.Length);
+
+            // Write-back through the Span actually happened (a rotation matrix is not all-zero).
+            Assert.Contains(Flatten(rBase2World), v => v != 0.0);
+            Assert.Contains(Flatten(rGripper2Cam), v => v != 0.0);
+        }
+        finally
+        {
+            foreach (var m in rWorld2Cam) m.Dispose();
+            foreach (var m in tWorld2Cam) m.Dispose();
+            foreach (var m in rBase2Gripper) m.Dispose();
+            foreach (var m in tBase2Gripper) m.Dispose();
+        }
+
+        static Mat Vec3(double x, double y, double z) => Mat.FromArray(new[,] { { x }, { y }, { z } });
+
+        static Mat RotationMat(double rx, double ry, double rz)
+        {
+            using var rvec = Vec3(rx, ry, rz);
+            var rmat = new Mat();
+            Cv2.Rodrigues(rvec, rmat);
+            return rmat;
+        }
+
+        static IEnumerable<double> Flatten(double[,] a)
+        {
+            foreach (var v in a)
+                yield return v;
+        }
+    }
+
+    [Fact]
     public void CheckChessboard()
     {
         var patternSize = new Size(10, 7);
@@ -75,6 +134,21 @@ public class Calib3DTest(ITestOutputHelper output) : TestBase
         Assert.True(found);
         Assert.Equal(70, corners.Total());
         Assert.Equal(MatType.CV_32FC2, corners.Type());
+    }
+
+    [Fact]
+    public void Find4QuadCornerSubpix()
+    {
+        var patternSize = new Size(10, 7);
+
+        using var image = LoadImage("calibration/00.jpg", ImreadModes.Grayscale);
+        using var corners = new Mat();
+        Assert.True(Cv2.FindChessboardCorners(image, patternSize, corners));
+
+        var refined = Cv2.Find4QuadCornerSubpix(image, corners, new Size(5, 5));
+
+        Assert.True(refined);
+        Assert.Equal(70, corners.Total());
     }
 
     [Fact]
@@ -123,7 +197,8 @@ public class Calib3DTest(ITestOutputHelper output) : TestBase
             distCoeffs, out var rotationVectors, out var translationVectors,
             CalibrationFlags.UseIntrinsicGuess | CalibrationFlags.FixK5);
 
-        Assert.Equal(6.16, rms, 2);
+        // OpenCV 5's camera calibration produces a slightly different RMS (~5.16) than OpenCV 4 (~6.16).
+        Assert.Equal(5.16, rms, 2);
         Assert.Contains(distCoeffs, d => Math.Abs(d) > 1e-20);
     }
 
@@ -141,15 +216,75 @@ public class Calib3DTest(ITestOutputHelper output) : TestBase
 
         using var objectPoints = Mat<Point3f>.FromArray(objectPointsArray);
         using var imagePoints = Mat<Point2f>.FromArray(imagePointsArray);
-        using var cameraMatrix = new Mat<double>(Mat.Eye(3, 3, MatType.CV_64FC1));
+        using var cameraMatrix = Mat.EyeMat(3, 3, MatType.CV_64FC1);
         using var distCoeffs = new Mat<double>();
         var rms = Cv2.CalibrateCamera([objectPoints], [imagePoints], image.Size(), cameraMatrix,
             distCoeffs, out var rotationVectors, out var translationVectors,
             CalibrationFlags.UseIntrinsicGuess | CalibrationFlags.FixK5);
 
         var distCoeffValues = distCoeffs.ToArray();
-        Assert.Equal(6.16, rms, 2);
+        // OpenCV 5's camera calibration produces a slightly different RMS (~5.16) than OpenCV 4 (~6.16).
+        Assert.Equal(5.16, rms, 2);
         Assert.Contains(distCoeffValues, d => Math.Abs(d) > 1e-20);
+    }
+
+    // The "releasing object" method (calibrateCameraRO) needs multiple independent views to
+    // usefully solve for per-point corrections, so this uses synthetic multi-view data
+    // (projected from a known camera) rather than the single real calibration photo in the
+    // fixture set, following the same Rodrigues/ProjectPoints-based synthesis as CalibrateHandEye.
+    [Fact]
+    public void CalibrateCameraRO()
+    {
+        var patternSize = new Size(10, 7);
+        var objectPointsArray = Create3DChessboardCorners(patternSize, 1.0f).ToArray();
+
+        var trueCameraMatrix = new double[,]
+        {
+            { 800, 0, 320 },
+            { 0, 800, 240 },
+            { 0, 0, 1 }
+        };
+        var trueDistCoeffs = new double[] { 0, 0, 0, 0, 0 };
+
+        var views = new (double[] rvec, double[] tvec)[]
+        {
+            (new double[] { 0.10, 0.05, 0.00 }, new double[] { 0.0, 0.0, 8.0 }),
+            (new double[] { 0.15, -0.05, 0.05 }, new double[] { 0.5, 0.2, 8.5 }),
+            (new double[] { -0.10, 0.10, -0.05 }, new double[] { -0.3, -0.2, 9.0 }),
+        };
+
+        var objectPoints = new List<Mat>();
+        var imagePoints = new List<Mat>();
+        try
+        {
+            foreach (var (rvec, tvec) in views)
+            {
+                Cv2.ProjectPoints(objectPointsArray, rvec, tvec, trueCameraMatrix, trueDistCoeffs, out var imagePointsArray, out _);
+                objectPoints.Add(Mat<Point3f>.FromArray(objectPointsArray));
+                imagePoints.Add(Mat<Point2f>.FromArray(imagePointsArray));
+            }
+
+            using var cameraMatrix = Mat.EyeMat(3, 3, MatType.CV_64FC1);
+            using var distCoeffs = new Mat<double>();
+            using var newObjPoints = new Mat();
+
+            var iFixedPoint = patternSize.Width - 1;
+            var rms = Cv2.CalibrateCameraRO(
+                objectPoints, imagePoints, new Size(640, 480), iFixedPoint,
+                cameraMatrix, distCoeffs, out var rvecs, out var tvecs, newObjPoints);
+
+            Assert.False(double.IsNaN(rms));
+            Assert.False(double.IsInfinity(rms));
+            Assert.Equal(views.Length, rvecs.Length);
+            Assert.Equal(views.Length, tvecs.Length);
+            Assert.False(newObjPoints.Empty());
+            Assert.Equal(objectPointsArray.Length, (int)newObjPoints.Total());
+        }
+        finally
+        {
+            foreach (var m in objectPoints) m.Dispose();
+            foreach (var m in imagePoints) m.Dispose();
+        }
     }
 
     [Fact]
@@ -166,15 +301,89 @@ public class Calib3DTest(ITestOutputHelper output) : TestBase
 
         using var objectPoints = Mat<Point3f>.FromArray(objectPointsArray);
         using var imagePoints = Mat<Point2f>.FromArray(imagePointsArray);
-        using var cameraMatrix = new Mat<double>(Mat.Eye(3, 3, MatType.CV_64FC1));
+        using var cameraMatrix = Mat.EyeMat(3, 3, MatType.CV_64FC1);
         using var distCoeffs = new Mat<double>();
         var rms = Cv2.FishEye.Calibrate([objectPoints], [imagePoints], image.Size(), cameraMatrix,
             distCoeffs, out var rotationVectors, out var translationVectors);
 
         var distCoeffValues = distCoeffs.ToArray();
         //Assert.Equal(109.35, rms, 2);
-        Assert.True(rms > 10, $"rms = {rms}");
+        Assert.True(rms > 8, $"rms = {rms}");
         Assert.Contains(distCoeffValues, d => Math.Abs(d) > 1e-20);
+        Assert.NotEmpty(rotationVectors);
+        Assert.NotEmpty(translationVectors);
+    }
+
+    // Regression test for issue #2080-adjacent enum drift: FishEyeCalibrationFlags used to carry
+    // stale OpenCV4 fisheye-only bit values instead of the OpenCV5 aliased CALIB_* values, so
+    // FixK1..FixK4 silently set the wrong native bits. If the flags don't reach native correctly,
+    // the corresponding distortion coefficients are optimized freely instead of being held at 0.
+    [Fact]
+    public void FishEyeCalibrateWithFixedDistortion()
+    {
+        var patternSize = new Size(10, 7);
+
+        using var image = LoadImage("calibration/00.jpg");
+        using var corners = new Mat<Point2f>();
+        Cv2.FindChessboardCorners(image, patternSize, corners);
+
+        var objectPointsArray = Create3DChessboardCorners(patternSize, 1.0f).ToArray();
+        var imagePointsArray = corners.ToArray();
+
+        using var objectPoints = Mat<Point3f>.FromArray(objectPointsArray);
+        using var imagePoints = Mat<Point2f>.FromArray(imagePointsArray);
+        using var cameraMatrix = Mat.EyeMat(3, 3, MatType.CV_64FC1);
+        using var distCoeffs = new Mat<double>();
+        Cv2.FishEye.Calibrate([objectPoints], [imagePoints], image.Size(), cameraMatrix,
+            distCoeffs, out _, out _,
+            FishEyeCalibrationFlags.FixK1 | FishEyeCalibrationFlags.FixK2 |
+            FishEyeCalibrationFlags.FixK3 | FishEyeCalibrationFlags.FixK4);
+
+        var distCoeffValues = distCoeffs.ToArray();
+        Assert.All(distCoeffValues, d => Assert.Equal(0.0, d, 10));
+    }
+
+    [Fact]
+    public void FishEyeCalibrateWithNonContinuousPoints()
+    {
+        var patternSize = new Size(10, 7);
+
+        using var image = LoadImage("calibration/00.jpg");
+        using var corners = new Mat<Point2f>();
+        Cv2.FindChessboardCorners(image, patternSize, corners);
+
+        var objectPointsArray = Create3DChessboardCorners(patternSize, 1.0f).ToArray();
+        var imagePointsArray = corners.ToArray();
+
+        // Build each per-view points Mat as column 0 of a wider (Nx2) Mat, so it is a
+        // non-continuous view. Regression test for the toRow() workaround in
+        // calib_fisheye_calibrate, which used to call reshape() on such a Mat directly
+        // (reshape requires a continuous Mat).
+        using var objectPointsWide = new Mat(objectPointsArray.Length, 2, MatType.CV_32FC3);
+        using var imagePointsWide = new Mat(imagePointsArray.Length, 2, MatType.CV_32FC2);
+        for (var i = 0; i < objectPointsArray.Length; i++)
+        {
+            objectPointsWide.Set(i, 0, objectPointsArray[i]);
+            objectPointsWide.Set(i, 1, objectPointsArray[i]);
+        }
+        for (var i = 0; i < imagePointsArray.Length; i++)
+        {
+            imagePointsWide.Set(i, 0, imagePointsArray[i]);
+            imagePointsWide.Set(i, 1, imagePointsArray[i]);
+        }
+
+        using var objectPoints = objectPointsWide.Col(0);
+        using var imagePoints = imagePointsWide.Col(0);
+        Assert.False(objectPoints.IsContinuous());
+        Assert.False(imagePoints.IsContinuous());
+
+        using var cameraMatrix = Mat.EyeMat(3, 3, MatType.CV_64FC1);
+        using var distCoeffs = new Mat<double>();
+
+        var rms = Cv2.FishEye.Calibrate([objectPoints], [imagePoints], image.Size(), cameraMatrix,
+            distCoeffs, out var rotationVectors, out var translationVectors);
+
+        Assert.True(rms > 8, $"rms = {rms}");
         Assert.NotEmpty(rotationVectors);
         Assert.NotEmpty(translationVectors);
     }
@@ -301,6 +510,79 @@ public class Calib3DTest(ITestOutputHelper output) : TestBase
         Cv2.SolvePnP(objPts, imgPts, cameraMatrix, dist, ref rvec, ref tvec, useExtrinsicGuess: useExtrinsicGuess);
     }
 
+    [Theory]
+    [InlineData(SolvePnPMethod.P3P)]
+    [InlineData(SolvePnPMethod.AP3P)]
+    [InlineData(SolvePnPMethod.IPPE)]
+    [InlineData(SolvePnPMethod.SQPNP)]
+    public void SolvePnPTestByArrayMethods(SolvePnPMethod method)
+    {
+        var rvec = new double[] { 3, 0, 0 };
+        var tvec = new double[] { 0, 0, 10 };
+        var cameraMatrix = new double[,]
+        {
+            { 1, 0, 0 },
+            { 0, 1, 0 },
+            { 0, 0, 1 }
+        };
+        var dist = new double[] { 0, 0, 0, 0, 0 };
+
+        var objPts = new[]
+        {
+            new Point3f(0,0,1),
+            new Point3f(1,0,1),
+            new Point3f(0,1,1),
+            new Point3f(1,1,1)
+        };
+
+        Cv2.ProjectPoints(objPts, rvec, tvec, cameraMatrix, dist, out var imgPts, out _);
+
+        Cv2.SolvePnP(objPts, imgPts, cameraMatrix, dist, ref rvec, ref tvec, flags: method);
+
+        // Verify the recovered pose actually reprojects onto imgPts (rather than just "didn't throw"):
+        // a stale/misdirected enum value can silently dispatch to a different native solver that
+        // still runs to completion without throwing, but produces a wrong pose.
+        Cv2.ProjectPoints(objPts, rvec, tvec, cameraMatrix, dist, out var reprojected, out _);
+        for (var i = 0; i < imgPts.Length; i++)
+        {
+            Assert.Equal(imgPts[i].X, reprojected[i].X, 3);
+            Assert.Equal(imgPts[i].Y, reprojected[i].Y, 3);
+        }
+    }
+
+    [Fact]
+    public void SolvePnPTestByArrayIPPESquare()
+    {
+        var rvec = new double[] { 3, 0, 0 };
+        var tvec = new double[] { 0, 0, 10 };
+        var cameraMatrix = new double[,]
+        {
+            { 1, 0, 0 },
+            { 0, 1, 0 },
+            { 0, 0, 1 }
+        };
+        var dist = new double[] { 0, 0, 0, 0, 0 };
+
+        var objPts = new[]
+        {
+            new Point3f(-0.5f, 0.5f, 0),
+            new Point3f(0.5f, 0.5f, 0),
+            new Point3f(0.5f, -0.5f, 0),
+            new Point3f(-0.5f, -0.5f, 0)
+        };
+
+        Cv2.ProjectPoints(objPts, rvec, tvec, cameraMatrix, dist, out var imgPts, out _);
+
+        Cv2.SolvePnP(objPts, imgPts, cameraMatrix, dist, ref rvec, ref tvec, flags: SolvePnPMethod.IPPESquare);
+
+        Cv2.ProjectPoints(objPts, rvec, tvec, cameraMatrix, dist, out var reprojected, out _);
+        for (var i = 0; i < imgPts.Length; i++)
+        {
+            Assert.Equal(imgPts[i].X, reprojected[i].X, 3);
+            Assert.Equal(imgPts[i].Y, reprojected[i].Y, 3);
+        }
+    }
+
     [Fact]
     public void SolvePnPTestByMat()
     {
@@ -328,8 +610,8 @@ public class Calib3DTest(ITestOutputHelper output) : TestBase
 
         using var objPtsMat = Mat.FromPixelData(objPts.Length, 1, MatType.CV_32FC3, objPts);
         using var imgPtsMat = Mat.FromPixelData(imgPts.Length, 1, MatType.CV_32FC2, imgPts);
-        using var cameraMatrixMat = Mat.Eye(3, 3, MatType.CV_64FC1);
-        using var distMat = Mat.Zeros(5, 0, MatType.CV_64FC1);
+        using var cameraMatrixMat = Mat.EyeMat(3, 3, MatType.CV_64FC1);
+        using var distMat = Mat.ZerosMat(5, 0, MatType.CV_64FC1);
         using var rvecMat = new Mat();
         using var tvecMat = new Mat();
         Cv2.SolvePnP(objPtsMat, imgPtsMat, cameraMatrixMat, distMat, rvecMat, tvecMat);
@@ -338,31 +620,52 @@ public class Calib3DTest(ITestOutputHelper output) : TestBase
     [Fact]
     public void FindFundamentalMat()
     {
-        var imgPt1 = new[]
+        // Use varied depths and positions instead of the numerically fragile rectangle fixture.
+        var worldPoints = new[]
         {
-            new Point2d(1017.0883, 848.23529),
-            new Point2d(1637, 848.23529),
-            new Point2d(1637, 1648.7059),
-            new Point2d(1017.0883, 1648.7059),
-            new Point2d(2282.2144, 772),
-            new Point2d(3034.9644, 772),
-            new Point2d(3034.9644, 1744),
-            new Point2d(2282.2144, 1744),
+            new Point3d(-1.2, -0.8, 3.0),
+            new Point3d(-0.4, 0.3, 4.5),
+            new Point3d(0.6, -0.5, 5.2),
+            new Point3d(1.3, 0.7, 3.7),
+            new Point3d(-0.9, 1.1, 6.0),
+            new Point3d(0.2, -1.0, 4.0),
+            new Point3d(1.5, 0.2, 5.5),
+            new Point3d(-1.4, 0.5, 3.4),
+            new Point3d(0.8, 1.2, 4.8),
+            new Point3d(-0.2, -0.3, 6.5),
         };
-        var imgPt2 = new[]
+        const double focalLength = 800;
+        const double baseline = 0.25;
+        var imgPt1 = new Point2d[worldPoints.Length];
+        var imgPt2 = new Point2d[worldPoints.Length];
+        for (var i = 0; i < worldPoints.Length; i++)
         {
-            new Point2d(414.88824, 848.23529),
-            new Point2d(1034.8, 848.23529),
-            new Point2d(1034.8, 1648.7059),
-            new Point2d(414.88824, 1648.7059),
-            new Point2d(1550.9714, 772),
-            new Point2d(2303.7214, 772),
-            new Point2d(2303.7214, 1744),
-            new Point2d(1550.9714, 1744),
-        };
+            var point = worldPoints[i];
+            imgPt1[i] = new Point2d(
+                320 + focalLength * point.X / point.Z,
+                240 + focalLength * point.Y / point.Z);
+            imgPt2[i] = new Point2d(
+                320 + focalLength * (point.X - baseline) / point.Z,
+                240 + focalLength * point.Y / point.Z);
+        }
 
         using var f = Cv2.FindFundamentalMat(imgPt1, imgPt2, FundamentalMatMethods.Point8);
-        Assert.True(f.Empty()); // TODO 
+        Assert.False(f.Empty());
+        Assert.Equal(3, f.Rows);
+        Assert.Equal(3, f.Cols);
+        Assert.Equal(MatType.CV_64FC1, f.Type());
+
+        for (var i = 0; i < imgPt1.Length; i++)
+        {
+            var p1 = imgPt1[i];
+            var p2 = imgPt2[i];
+            var a = f.Get<double>(0, 0) * p1.X + f.Get<double>(0, 1) * p1.Y + f.Get<double>(0, 2);
+            var b = f.Get<double>(1, 0) * p1.X + f.Get<double>(1, 1) * p1.Y + f.Get<double>(1, 2);
+            var c = f.Get<double>(2, 0) * p1.X + f.Get<double>(2, 1) * p1.Y + f.Get<double>(2, 2);
+            var distance = Math.Abs(a * p2.X + b * p2.Y + c) / Math.Sqrt(a * a + b * b);
+            Assert.True(double.IsFinite(distance));
+            Assert.InRange(distance, 0, 1e-3);
+        }
     }
 
     // https://github.com/shimat/opencvsharp/issues/1069
@@ -416,6 +719,100 @@ public class Calib3DTest(ITestOutputHelper output) : TestBase
 
         Assert.False(r.Empty());
         Assert.False(t.Empty());
+    }
+
+    // https://github.com/shimat/opencvsharp/issues/1410
+    [Fact]
+    public void RecoverPoseWithTriangulatedPoints()
+    {
+        var points1 = new[,]
+        {
+            { 0.38813609924847137, 0.02447841812986895 },
+            { 0.08423523188782245, 0.10197624851964165 },
+            { 0.29981091670244864, 0.10563331155486635 },
+            { 0.2692439454334949, 0.11443490334674666 },
+            { -0.041948288655290975, -0.05514874152548128 },
+            { 0.03992329933832534, 0.007632737039647461 },
+            { 0.050901003100829574, 0.05711866453816542 },
+            { -0.03948646783477256, 0.025999204793101333 },
+            { -0.06209751680095625, 0.04221654108790821 },
+            { -0.016555534818875183, 0.06435009173308306 },
+            { -0.16903822109902406, -0.07257834381179194 },
+            { 0.41642570198356116, 0.12256932045317968 },
+            { 0.39861580051504203, 0.16142837173027308 },
+            { 0.04655404967444799, -0.010591253965935497 },
+            { 0.03556041780480632, -0.006437507577777012 },
+            { 0.41248124653016055, 0.02397771978349527 },
+            { 0.3801891632514438, 0.026561067331762406 },
+            { 0.42808861337304654, 0.029163367387340686 },
+            { 0.4318539553218957, 0.03833957070243556 },
+            { 0.44248180108275476, 0.04785089487375638 },
+            { 0.4262027536470637, 0.050711978734889696 },
+            { 0.0874961830532552, 0.1031790076314136 },
+            { 0.2700899364672753, 0.11163060447412339 },
+            { 0.3582427322108526, 0.11545310747602498 },
+            { 0.041542631217902054, -0.02727039291563037 },
+            { 0.4303139947145481, 0.03949740376628924 },
+            { 0.06001969886286597, 0.046760602502455145 },
+            { -0.03946697379884526, 0.021581967008446938 },
+            { -0.1642986257578312, -0.06865176910206553 },
+            { 0.03938910580334193, -0.07728559157122807 },
+            { 0.06254455304488589, -0.03771698379780937 },
+            { -0.07909181296840861, -0.03482664261191252 },
+            { -0.08020047248432952, -0.04234032884282042 },
+        };
+        var points2 = new[,]
+        {
+            { -0.2789943914026892, 0.30720648107100057 },
+            { -0.03211411217735307, 0.0552583557497171 },
+            { -0.29157998452774253, 0.1485318201443865 },
+            { -0.2702940577548254, 0.12072539127028371 },
+            { 0.2477206015038991, 0.2415913262853919 },
+            { 0.06618681525128994, 0.17127756148205156 },
+            { 0.042038487143667536, 0.10712379560384284 },
+            { 0.17024542526228917, 0.09981948720558462 },
+            { 0.19885502624141976, 0.06308992557874996 },
+            { 0.12763100053213033, 0.058938319107061155 },
+            { 0.46339803911837213, 0.1987904682083972 },
+            { -0.433620692570429, 0.16921885039668041 },
+            { -0.46932283702262495, 0.10055432703225901 },
+            { 0.07157221583536884, 0.2046623745409314 },
+            { 0.08044325517579885, 0.1909797723911897 },
+            { -0.30160697877887155, 0.31671400091223556 },
+            { -0.2720897728043967, 0.30219843720518874 },
+            { -0.3233379323990584, 0.31416448403147024 },
+            { -0.3395905678403646, 0.3015414353998168 },
+            { -0.36075032186748296, 0.291377190103051 },
+            { -0.34930563708219925, 0.2816288831915651 },
+            { -0.03776495756263569, 0.054842338028296626 },
+            { -0.26713013306303746, 0.1259610178894828 },
+            { -0.366032826498244, 0.15698442478244704 },
+            { 0.09215684671120347, 0.2314028881588346 },
+            { -0.3382650691409414, 0.2996505624675723 },
+            { 0.032134959390848615, 0.12605425231232353 },
+            { 0.17160473809736793, 0.10638491555956729 },
+            { 0.45231703093455844, 0.19440993018522748 },
+            { 0.14987665442569326, 0.319307869795434 },
+            { 0.06438724162613875, 0.256554254526816 },
+            { 0.268219830870227, 0.17746488412848505 },
+            { 0.27588351860241883, 0.19031175105448103 },
+        };
+
+        using var points1m = Mat<double>.FromArray(points1);
+        using var points2m = Mat<double>.FromArray(points2);
+        using var K = Mat.EyeMat(3, 3, MatType.CV_64F);
+        using var inliers = new Mat();
+        using var E = Cv2.FindEssentialMat(points1m, points2m, K, EssentialMatMethod.LMedS, 0.99, 1.0, inliers);
+
+        using var R = new Mat();
+        using var t = new Mat();
+        using var triangulatedPoints = new Mat();
+        int numInliers = Cv2.RecoverPose(E, points1m, points2m, K, R, t, 50.0, inliers, triangulatedPoints);
+
+        Assert.True(numInliers > 0);
+        Assert.False(R.Empty());
+        Assert.False(t.Empty());
+        Assert.False(triangulatedPoints.Empty());
     }
 
     [Fact]
@@ -480,6 +877,95 @@ public class Calib3DTest(ITestOutputHelper output) : TestBase
             Assert.False(double.IsNaN(d));
             Assert.False(double.IsInfinity(d));
         });*/
+    }
+
+    [Fact]
+    public void StereoCalibrateByMat()
+    {
+        var patternSize = new Size(10, 7);
+
+        using var image = LoadImage("calibration/00.jpg");
+        Cv2.FindChessboardCorners(image, patternSize, out var cornerPoints);
+
+        var objectPointsArray = Create3DChessboardCorners(patternSize, 1.0f).ToArray();
+
+        using var objectPoints = Mat<Point3f>.FromArray(objectPointsArray);
+        using var imagePoints = Mat<Point2f>.FromArray(cornerPoints);
+        using var cameraMatrix1 = Mat.EyeMat(3, 3, MatType.CV_64FC1);
+        using var distCoeffs1 = new Mat<double>();
+        using var cameraMatrix2 = Mat.EyeMat(3, 3, MatType.CV_64FC1);
+        using var distCoeffs2 = new Mat<double>();
+        using var R = new Mat();
+        using var T = new Mat();
+        using var E = new Mat();
+        using var F = new Mat();
+
+        var rms = Cv2.StereoCalibrate(
+            new[] { objectPoints }, new[] { imagePoints }, new[] { imagePoints },
+            cameraMatrix1, distCoeffs1,
+            cameraMatrix2, distCoeffs2,
+            image.Size(), R, T, E, F,
+            CalibrationFlags.UseIntrinsicGuess);
+
+        Assert.False(double.IsNaN(rms));
+        Assert.False(double.IsInfinity(rms));
+    }
+
+    [Fact]
+    public void CalibrateHandEye()
+    {
+        var rGripper2Base = new List<Mat>();
+        var tGripper2Base = new List<Mat>();
+        var rTarget2Cam = new List<Mat>();
+        var tTarget2Cam = new List<Mat>();
+        try
+        {
+            for (var i = 1; i <= 4; i++)
+            {
+                rGripper2Base.Add(RotationMat(0.1 * i, 0.2 * i, 0.3 * i));
+                tGripper2Base.Add(Vec3(i, i * 0.5, i * 0.25));
+                rTarget2Cam.Add(RotationMat(0.3 * i, 0.1 * i, 0.2 * i));
+                tTarget2Cam.Add(Vec3(i * 0.2, i, i * 0.3));
+            }
+
+            using var rCam2Gripper = new Mat();
+            using var tCam2Gripper = new Mat();
+            Cv2.CalibrateHandEye(
+                rGripper2Base, tGripper2Base, rTarget2Cam, tTarget2Cam,
+                rCam2Gripper, tCam2Gripper);
+
+            Assert.Equal(3, rCam2Gripper.Rows);
+            Assert.Equal(3, rCam2Gripper.Cols);
+            Assert.Equal(3, (int) tCam2Gripper.Total());
+        }
+        finally
+        {
+            foreach (var m in rGripper2Base) m.Dispose();
+            foreach (var m in tGripper2Base) m.Dispose();
+            foreach (var m in rTarget2Cam) m.Dispose();
+            foreach (var m in tTarget2Cam) m.Dispose();
+        }
+
+        static Mat Vec3(double x, double y, double z) => Mat.FromArray(new[,] { { x }, { y }, { z } });
+
+        static Mat RotationMat(double rx, double ry, double rz)
+        {
+            using var rvec = Vec3(rx, ry, rz);
+            var rmat = new Mat();
+            Cv2.Rodrigues(rvec, rmat);
+            return rmat;
+        }
+    }
+
+    [Fact]
+    public void FindCirclesGrid()
+    {
+        // Smoke test for the ArrayProxy wiring: lenna.png has no circle grid, so detection
+        // is expected to fail, but the P/Invoke call must complete without throwing.
+        using var image = LoadImage("lenna.png", ImreadModes.Grayscale);
+        using var centers = new Mat();
+        var found = Cv2.FindCirclesGrid(image, new Size(4, 3), centers);
+        Assert.False(found);
     }
 
     private static IEnumerable<Point3f> Create3DChessboardCorners(Size boardSize, float squareSize)

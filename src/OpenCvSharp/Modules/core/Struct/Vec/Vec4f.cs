@@ -1,16 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+
+#pragma warning disable CA1051
 
 namespace OpenCvSharp;
 
 /// <summary>
 /// 4-Tuple of float (System.Single)
 /// </summary>
-[Serializable]
 [StructLayout(LayoutKind.Sequential)]
-[SuppressMessage("Design", "CA1051: Do not declare visible instance fields")]
 // ReSharper disable once InconsistentNaming
-public struct Vec4f : IVec<Vec4f, float>, IEquatable<Vec4f>
+public struct Vec4f : IEquatable<Vec4f>
 {
     /// <summary>
     /// The value of the first component of this object.
@@ -108,6 +107,7 @@ public struct Vec4f : IVec<Vec4f, float>, IEquatable<Vec4f>
     public static Vec4f operator -(Vec4f a, Vec4f b) => a.Subtract(b);
     public static Vec4f operator *(Vec4f a, double alpha) => a.Multiply(alpha);
     public static Vec4f operator /(Vec4f a, double alpha) => a.Divide(alpha);
+    public static Vec4f operator -(Vec4f a) => new(-a.Item0, -a.Item1, -a.Item2, -a.Item3);
 #pragma warning restore 1591
 
     /// <summary>
@@ -148,6 +148,9 @@ public struct Vec4f : IVec<Vec4f, float>, IEquatable<Vec4f>
     // ReSharper restore InconsistentNaming
 #pragma warning restore 1591
 
+    /// <summary>Returns a <see cref="Span{T}"/> over the 4 elements of this vector.</summary>
+    public Span<float> AsSpan() => MemoryMarshal.CreateSpan(ref Item0, 4);
+
     /// <inheritdoc />
     public readonly bool Equals(Vec4f other) =>
         Item0.Equals(other.Item0) &&
@@ -167,30 +170,19 @@ public struct Vec4f : IVec<Vec4f, float>, IEquatable<Vec4f>
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static bool operator ==(Vec4f a, Vec4f b) => a.Equals(b);
+    public static bool operator ==(Vec4f a, Vec4f b) => a.Item0 == b.Item0 && a.Item1 == b.Item1 && a.Item2 == b.Item2 && a.Item3 == b.Item3;
 
     /// <summary> 
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static bool operator !=(Vec4f a, Vec4f b) => !(a == b);
+    public static bool operator !=(Vec4f a, Vec4f b) => a.Item0 != b.Item0 || a.Item1 != b.Item1 || a.Item2 != b.Item2 || a.Item3 != b.Item3;
 
     /// <inheritdoc />
     public readonly override int GetHashCode()
     {
-#if DOTNET_FRAMEWORK || NETSTANDARD2_0
-        unchecked
-        {
-            var hashCode = Item0.GetHashCode();
-            hashCode = (hashCode * 397) ^ Item1.GetHashCode();
-            hashCode = (hashCode * 397) ^ Item2.GetHashCode();
-            hashCode = (hashCode * 397) ^ Item3.GetHashCode();
-            return hashCode;
-        }
-#else
-            return HashCode.Combine(Item0, Item1, Item2, Item3);
-#endif
+        return HashCode.Combine(Item0, Item1, Item2, Item3);
     }
 
     /// <inheritdoc />

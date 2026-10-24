@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp;
 
@@ -8,16 +8,14 @@ namespace OpenCvSharp;
 /// </summary>
 public class SuperResolution : Algorithm
 {
-    private Ptr? detectorPtr;
-
     #region Init & Disposal
 
     /// <summary>
     /// Constructor
     /// </summary>
-    protected SuperResolution()
-    {
-    }
+    private SuperResolution(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.superres_Ptr_SuperResolution_delete(p)))
+    { }
 
     /// <summary>
     /// Creates instance from cv::Ptr&lt;T&gt; .
@@ -29,24 +27,8 @@ public class SuperResolution : Algorithm
         if (ptr == IntPtr.Zero)
             throw new OpenCvSharpException("Invalid FrameSource pointer");
 
-        var ptrObj = new Ptr(ptr);
-        var obj = new SuperResolution
-        {
-            detectorPtr = ptrObj,
-            ptr = ptrObj.Get()
-        };
-        return obj;
-    }
-
-    /// <inheritdoc />
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        detectorPtr?.Dispose();
-        detectorPtr = null;
-        base.DisposeManaged();
+        NativeMethods.HandleException(NativeMethods.superres_Ptr_SuperResolution_get(ptr, out var rawPtr));
+        return new SuperResolution(ptr, rawPtr);
     }
 
     /// <summary>
@@ -82,13 +64,11 @@ public class SuperResolution : Algorithm
     public virtual void SetInput(FrameSource fs)
     {
         ThrowIfDisposed();
-        if (fs is null)
-            throw new ArgumentNullException(nameof(fs));
+        ArgumentNullException.ThrowIfNull(fs);
         fs.ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.superres_SuperResolution_setInput(ptr, fs.CvPtr));
-        GC.KeepAlive(this);
+            NativeMethods.superres_SuperResolution_setInput(Handle, fs.SmartPtr));
         GC.KeepAlive(fs);
     }
 
@@ -99,15 +79,10 @@ public class SuperResolution : Algorithm
     public virtual void NextFrame(OutputArray frame)
     {
         ThrowIfDisposed();
-        if (frame is null)
-            throw new ArgumentNullException(nameof(frame));
-        frame.ThrowIfNotReady();
 
         NativeMethods.HandleException(
-            NativeMethods.superres_SuperResolution_nextFrame(ptr, frame.CvPtr));
-        frame.Fix();
-        GC.KeepAlive(this);
-        GC.KeepAlive(frame);
+            NativeMethods.superres_SuperResolution_nextFrame(Handle, frame.Proxy));
+        GC.KeepAlive(frame.Source);
     }
         
     /// <summary>
@@ -116,8 +91,7 @@ public class SuperResolution : Algorithm
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.superres_SuperResolution_reset(ptr));
-        GC.KeepAlive(this);
+            NativeMethods.superres_SuperResolution_reset(Handle));
     }
 
     /// <summary>
@@ -127,8 +101,7 @@ public class SuperResolution : Algorithm
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.superres_SuperResolution_collectGarbage(ptr));
-        GC.KeepAlive(this);
+            NativeMethods.superres_SuperResolution_collectGarbage(Handle));
     }
         
     /// <summary>
@@ -159,16 +132,14 @@ public class SuperResolution : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_getScale(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_getScale(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_setScale(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_setScale(Handle, value));
         }
     }
 
@@ -181,16 +152,14 @@ public class SuperResolution : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_getIterations(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_getIterations(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_setIterations(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_setIterations(Handle, value));
         }
     }
 
@@ -203,16 +172,14 @@ public class SuperResolution : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_getTau(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_getTau(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_setTau(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_setTau(Handle, value));
         }
     }
 
@@ -225,16 +192,14 @@ public class SuperResolution : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_getLambda(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_getLambda(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_setLambda(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_setLambda(Handle, value));
         }
     }
 
@@ -247,16 +212,14 @@ public class SuperResolution : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_getAlpha(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_getAlpha(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_setAlpha(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_setAlpha(Handle, value));
         }
     }
 
@@ -269,16 +232,14 @@ public class SuperResolution : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_getKernelSize(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_getKernelSize(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_setKernelSize(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_setKernelSize(Handle, value));
         }
     }
 
@@ -291,16 +252,14 @@ public class SuperResolution : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_getBlurKernelSize(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_getBlurKernelSize(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_setBlurKernelSize(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_setBlurKernelSize(Handle, value));
         }
     }
 
@@ -313,16 +272,14 @@ public class SuperResolution : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_getBlurSigma(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_getBlurSigma(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_setBlurSigma(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_setBlurSigma(Handle, value));
         }
     }
 
@@ -335,21 +292,17 @@ public class SuperResolution : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_getTemporalAreaRadius(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_getTemporalAreaRadius(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.superres_SuperResolution_setTemporalAreaRadius(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.superres_SuperResolution_setTemporalAreaRadius(Handle, value));
         }
     }
 
-    // TODO
-    /*
     /// <summary>
     /// Dense optical flow algorithm
     /// </summary>
@@ -358,35 +311,22 @@ public class SuperResolution : Algorithm
         get
         {
             ThrowIfDisposed();
-            var res = NativeMethods.superres_SuperResolution_getOpticalFlow(ptr);
-            GC.KeepAlive(this);
+            NativeMethods.HandleException(
+                NativeMethods.superres_SuperResolution_getOpticalFlow(Handle, out var ptr));
+            return DenseOpticalFlowExt.FromPtr(ptr);
         }
         set
         {
             ThrowIfDisposed();
-            NativeMethods.superres_SuperResolution_setOpticalFlow(ptr, value);
-            GC.KeepAlive(this);
+            ArgumentNullException.ThrowIfNull(value);
+            value.ThrowIfDisposed();
+
+            NativeMethods.HandleException(
+                NativeMethods.superres_SuperResolution_setOpticalFlow(Handle, value.SmartPtr));
+            GC.KeepAlive(value);
         }
     }
-    */
 
     #endregion
 
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.superres_Ptr_SuperResolution_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.superres_Ptr_SuperResolution_delete(ptr));
-            base.DisposeUnmanaged();
-        }
     }
-}

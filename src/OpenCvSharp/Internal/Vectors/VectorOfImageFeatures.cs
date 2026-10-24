@@ -1,17 +1,18 @@
-﻿using OpenCvSharp.Detail;
+using OpenCvSharp.Detail;
 
 namespace OpenCvSharp.Internal.Vectors;
 
 /// <summary> 
 /// </summary>
-public class VectorOfImageFeatures : DisposableCvObject, IStdVector<ImageFeatures>
+public class VectorOfImageFeatures : CvObject, IStdVector<ImageFeatures>
 {
     /// <summary>
     /// Constructor
     /// </summary>
     public VectorOfImageFeatures()
     {
-        ptr = NativeMethods.vector_ImageFeatures_new1();
+        var p = NativeMethods.vector_ImageFeatures_new1();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
     }
         
     /// <summary>
@@ -19,7 +20,7 @@ public class VectorOfImageFeatures : DisposableCvObject, IStdVector<ImageFeature
     /// </summary>
     protected override void DisposeUnmanaged()
     {
-        NativeMethods.vector_ImageFeatures_delete(ptr);
+        NativeMethods.vector_ImageFeatures_delete(CvPtr);
         base.DisposeUnmanaged();
     }
 
@@ -30,8 +31,7 @@ public class VectorOfImageFeatures : DisposableCvObject, IStdVector<ImageFeature
     {
         get
         {
-            var res = NativeMethods.vector_ImageFeatures_getSize(ptr);
-            GC.KeepAlive(this);
+            var res = NativeMethods.vector_ImageFeatures_getSize(Handle);
             return (int)res;
         }
     }
@@ -46,22 +46,22 @@ public class VectorOfImageFeatures : DisposableCvObject, IStdVector<ImageFeature
         if (size == 0)
             return [];
             
-        VectorOfKeyPoint[]? keypointsVecs = null;
+        StdVector<KeyPoint>[]? keypointsVecs = null;
         Mat[]? descriptors = null;
         try
         {
             var nativeResult = new WImageFeatures[size];
-            keypointsVecs = new VectorOfKeyPoint[size];
+            keypointsVecs = new StdVector<KeyPoint>[size];
             descriptors = new Mat[size];
             for (var i = 0; i < size; i++)
             {
-                keypointsVecs[i] = new VectorOfKeyPoint();
+                keypointsVecs[i] = new StdVector<KeyPoint>();
                 descriptors[i] = new Mat();
                 nativeResult[i].Keypoints = keypointsVecs[i].CvPtr;
                 nativeResult[i].Descriptors = descriptors[i].CvPtr;
             }
 
-            NativeMethods.vector_ImageFeatures_getElements(ptr, nativeResult);
+            NativeMethods.vector_ImageFeatures_getElements(Handle, nativeResult);
 
             var result = new ImageFeatures[size];
             for (int i = 0; i < size; i++)
@@ -74,7 +74,6 @@ public class VectorOfImageFeatures : DisposableCvObject, IStdVector<ImageFeature
             }
 
             // ElemPtr is IntPtr to memory held by this object, so make sure we are not disposed until finished with copy.
-            GC.KeepAlive(this);
             return result;
         }
         catch
@@ -101,13 +100,5 @@ public class VectorOfImageFeatures : DisposableCvObject, IStdVector<ImageFeature
             }
 #pragma warning restore CA1508
         }
-    }
-
-    private int[] KeypointsSizes(int size)
-    {
-        var ret = new nuint[size];
-        NativeMethods.vector_ImageFeatures_getKeypointsSize(ptr, ret);
-        GC.KeepAlive(this);
-        return ret.Select(v => (int)v).ToArray();
     }
 }

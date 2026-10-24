@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp;
 
@@ -7,27 +7,9 @@ namespace OpenCvSharp;
 /// </summary>
 public abstract class Tracker : Algorithm
 {
-    internal Ptr? PtrObj { get; private set; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="ptrObj"></param>
-    protected Tracker(Ptr ptrObj)
-    {
-        PtrObj = ptrObj ?? throw new ArgumentNullException(nameof(ptrObj));
-        ptr = ptrObj.Get();
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        PtrObj?.Dispose();
-        PtrObj = null;
-        base.DisposeManaged();
-    }
+    /// <inheritdoc />
+    protected Tracker(IntPtr smartPtr, IntPtr rawPtr, Action<IntPtr> release)
+        : base(smartPtr, rawPtr, release) { }
 
     /// <summary>
     /// Initialize the tracker with a know bounding box that surrounding the target
@@ -39,13 +21,11 @@ public abstract class Tracker : Algorithm
     {
         ThrowIfDisposed();
 
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
+        ArgumentNullException.ThrowIfNull(image);
 
         image.ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.video_Tracker_init(ptr, image.CvPtr, boundingBox));
-        GC.KeepAlive(this);
+            NativeMethods.video_Tracker_init(Handle, image.CvPtr, boundingBox));
         GC.KeepAlive(image);
     }
 
@@ -61,15 +41,26 @@ public abstract class Tracker : Algorithm
     {
         ThrowIfDisposed();
 
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
+        ArgumentNullException.ThrowIfNull(image);
 
         image.ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.video_Tracker_update(ptr, image.CvPtr, ref boundingBox, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.video_Tracker_update(Handle, image.CvPtr, ref boundingBox, out var ret));
         GC.KeepAlive(image);
 
         return ret != 0;
+    }
+
+    /// <summary>
+    /// Return tracking score
+    /// </summary>
+    /// <returns></returns>
+    public float GetTrackingScore()
+    {
+        ThrowIfDisposed();
+
+        NativeMethods.HandleException(
+            NativeMethods.video_Tracker_getTrackingScore(Handle, out var ret));
+        return ret;
     }
 }

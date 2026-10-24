@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable IdentifierTypo
@@ -14,16 +14,12 @@ public sealed class CLAHE : Algorithm
     /// <summary>
     /// cv::Ptr&lt;CLAHE&gt;
     /// </summary>
-    private Ptr? ptrObj;
-
     /// <summary>
     /// 
     /// </summary>
-    private CLAHE(IntPtr p)
-    {
-        ptrObj = new Ptr(p);
-        ptr = ptrObj.Get();
-    }
+    private CLAHE(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.imgproc_Ptr_CLAHE_delete(p)))
+    { }
 
     /// <summary>
     /// Creates a predefined CLAHE object
@@ -36,18 +32,9 @@ public sealed class CLAHE : Algorithm
         var tileGridSizeValue = tileGridSize.GetValueOrDefault(new Size(8, 8));
         NativeMethods.HandleException(
             NativeMethods.imgproc_createCLAHE(
-                clipLimit, tileGridSizeValue, out var ptr));
-        return new CLAHE(ptr);
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
+                clipLimit, tileGridSizeValue, out var smartPtr));
+        NativeMethods.HandleException(NativeMethods.imgproc_Ptr_CLAHE_get(smartPtr, out var rawPtr));
+        return new CLAHE(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -58,20 +45,13 @@ public sealed class CLAHE : Algorithm
     public void Apply(InputArray src, OutputArray dst)
     {
         ThrowIfDisposed();
-        if (src is null)
-            throw new ArgumentNullException(nameof(src));
-        if (dst is null)
-            throw new ArgumentNullException(nameof(dst));
-        src.ThrowIfDisposed();
-        dst.ThrowIfNotReady();
 
         NativeMethods.HandleException(
-            NativeMethods.imgproc_CLAHE_apply(ptr, src.CvPtr, dst.CvPtr));
+            NativeMethods.imgproc_CLAHE_apply(Handle, src.Proxy, dst.Proxy));
 
-        dst.Fix();
-        GC.KeepAlive(this);
-        GC.KeepAlive(src);
-        GC.KeepAlive(dst);
+        // Handle (a SafeHandle) keeps this alive across the call, so no GC.KeepAlive(this) is needed.
+        GC.KeepAlive(src.Source);
+        GC.KeepAlive(dst.Source);
     }
 
     /// <summary>
@@ -83,16 +63,14 @@ public sealed class CLAHE : Algorithm
         { 
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.imgproc_CLAHE_getClipLimit(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.imgproc_CLAHE_getClipLimit(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.imgproc_CLAHE_setClipLimit(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.imgproc_CLAHE_setClipLimit(Handle, value));
         }
     }
 
@@ -105,46 +83,44 @@ public sealed class CLAHE : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.imgproc_CLAHE_getTilesGridSize(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.imgproc_CLAHE_getTilesGridSize(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.imgproc_CLAHE_setTilesGridSize(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.imgproc_CLAHE_setTilesGridSize(Handle, value));
         }
     }
 
+    /// <summary>
+    /// Gets or sets the bit shift parameter for histogram bins (default is 0).
+    /// </summary>
+    public int BitShift
+    {
+        get
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.imgproc_CLAHE_getBitShift(Handle, out var ret));
+            return ret;
+        }
+        set
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.imgproc_CLAHE_setBitShift(Handle, value));
+        }
+    }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public void CollectGarbage()
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.imgproc_CLAHE_collectGarbage(ptr));
-        GC.KeepAlive(this);
-    }
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.imgproc_Ptr_CLAHE_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.imgproc_Ptr_CLAHE_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+            NativeMethods.imgproc_CLAHE_collectGarbage(Handle));
     }
 }

@@ -1,6 +1,5 @@
-﻿using OpenCvSharp.Face;
+using OpenCvSharp.Face;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace OpenCvSharp.Tests.Face;
 
@@ -25,7 +24,8 @@ public class LBPHFaceRecognizerTest : TestBase
     public void TrainAndPredict()
     {
         using var image = LoadImage("lenna.png");
-        using var grayImage = image.CvtColor(ColorConversionCodes.BGR2GRAY);
+        using var grayImage = new Mat();
+        Cv2.CvtColor(image, grayImage, ColorConversionCodes.BGR2GRAY);
         using var model = LBPHFaceRecognizer.Create();
         using var cascade = new CascadeClassifier("_data/text/haarcascade_frontalface_default.xml");
 
@@ -44,6 +44,13 @@ public class LBPHFaceRecognizerTest : TestBase
                 testOutputHelper.WriteLine($"{label} ({confidence})");
                 Assert.Equal(1, label);
                 Assert.NotEqual(0, confidence, 9);
+
+                Assert.Equal(1, model.Predict(face));
+
+                using var collector = StandardCollector.Create();
+                model.Predict(face, collector);
+                Assert.Equal(1, collector.MinLabel);
+                Assert.NotEmpty(collector.GetResults());
             }
         }
     }

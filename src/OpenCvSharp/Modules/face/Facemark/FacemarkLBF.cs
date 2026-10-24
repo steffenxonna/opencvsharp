@@ -1,481 +1,320 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 using OpenCvSharp.Internal.Vectors;
 
 namespace OpenCvSharp.Face;
 
 /// <inheritdoc />
 /// <summary>
-/// 
+///
 /// </summary>
 // ReSharper disable once InconsistentNaming
-public sealed class FacemarkLBF : Facemark
+public sealed class FacemarkLBF : FacemarkTrain
 {
-    private Ptr? ptrObj;
+    private FacemarkLBF(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.face_Ptr_FacemarkLBF_delete(p)))
+    { }
 
     /// <summary>
     ///
-    /// </summary>
-    private FacemarkLBF()
-    {
-        ptrObj = null;
-        ptr = IntPtr.Zero;
-    }
-        
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
-    }
-
-    /// <summary>
-    /// 
     /// </summary>
     /// <param name="parameters"></param>
     /// <returns></returns>
     public static FacemarkLBF Create(Params? parameters = null)
     {
-        NativeMethods.HandleException(
-            NativeMethods.face_FacemarkLBF_create(parameters?.CvPtr ?? IntPtr.Zero, out var p));
-        if (p == IntPtr.Zero)
-            throw new OpenCvSharpException($"Invalid cv::Ptr<{nameof(FacemarkLBF)}> pointer");
-        var ptrObj = new Ptr(p);
-        var detector = new FacemarkLBF
+        IntPtr smartPtr;
+        if (parameters is null)
         {
-            ptrObj = ptrObj,
-            ptr = ptrObj.Get()
-        };
-        return detector;
+            NativeMethods.HandleException(
+                NativeMethods.face_FacemarkLBF_create(IntPtr.Zero, out smartPtr));
+        }
+        else
+        {
+            var p = parameters.ToNative();
+            try
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.face_FacemarkLBF_create(p, out smartPtr));
+            }
+            finally
+            {
+                NativeMethods.HandleException(NativeMethods.face_FacemarkLBF_Params_delete(p));
+            }
+        }
+
+        if (smartPtr == IntPtr.Zero)
+            throw new OpenCvSharpException($"Invalid cv::Ptr<{nameof(FacemarkLBF)}> pointer");
+        NativeMethods.HandleException(NativeMethods.face_Ptr_FacemarkLBF_get(smartPtr, out var rawPtr));
+        return new FacemarkLBF(smartPtr, rawPtr);
+    }
+
+    /// <summary>
+    /// Stores algorithm parameters in a file storage.
+    /// </summary>
+    /// <remarks>
+    /// Overrides the generic Algorithm.Write, which passes a cv::Algorithm* to the native side.
+    /// cv::face::Facemark inherits Algorithm virtually, so a raw pointer obtained as FacemarkLBF*
+    /// cannot be safely reinterpreted as Algorithm* on the managed side; this override calls
+    /// write() with the pointer kept at its concrete native type instead.
+    /// </remarks>
+    /// <param name="fs"></param>
+    public override void Write(FileStorage fs)
+    {
+        ThrowIfDisposed();
+        ArgumentNullException.ThrowIfNull(fs);
+        fs.ThrowIfDisposed();
+
+        NativeMethods.HandleException(NativeMethods.face_FacemarkLBF_write(Handle, fs.CvPtr));
+        GC.KeepAlive(fs);
+    }
+
+    /// <summary>
+    /// Reads algorithm parameters from a file storage.
+    /// </summary>
+    /// <remarks>
+    /// See the remarks on <see cref="Write"/> for why this override is needed.
+    /// </remarks>
+    /// <param name="fn"></param>
+    public override void Read(FileNode fn)
+    {
+        ThrowIfDisposed();
+        ArgumentNullException.ThrowIfNull(fn);
+        fn.ThrowIfDisposed();
+
+        NativeMethods.HandleException(NativeMethods.face_FacemarkLBF_read(Handle, fn.CvPtr));
+        GC.KeepAlive(fn);
     }
 
 #pragma warning disable CA1034
-    /// <inheritdoc />
     /// <summary>
+    /// Parameters for the FacemarkLBF model.
+    /// This is a plain managed value holder; it is materialised into a native
+    /// cv::face::FacemarkLBF::Params only at the moment of Create / Read / Write.
     /// </summary>
-    public sealed class Params : DisposableCvObject
+    public sealed class Params
     {
         /// <summary>
-        /// Constructor
+        /// Constructs a parameter set initialised with the OpenCV default values.
         /// </summary>
         public Params()
         {
             NativeMethods.HandleException(
-                NativeMethods.face_FacemarkLBF_Params_new(out ptr));
-            if (ptr == IntPtr.Zero)
-                throw new OpenCvSharpException($"Invalid {GetType().Name} pointer");
-        }
-
-        /// <summary>
-        /// Releases managed resources
-        /// </summary>
-        protected override void DisposeUnmanaged()
-        {
-            if (ptr != IntPtr.Zero)
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_delete(ptr));
-            base.DisposeUnmanaged();
+                NativeMethods.face_FacemarkLBF_Params_new(out var p));
+            if (p == IntPtr.Zero)
+                throw new OpenCvSharpException($"Invalid {nameof(Params)} pointer");
+            try
+            {
+                LoadFrom(p);
+            }
+            finally
+            {
+                NativeMethods.HandleException(NativeMethods.face_FacemarkLBF_Params_delete(p));
+            }
         }
 
         /// <summary>
         /// offset for the loaded face landmark points
         /// </summary>
-        public double ShapeOffset
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_shape_offset_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_shape_offset_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public double ShapeOffset { get; set; }
 
         /// <summary>
         /// filename of the face detector model
         /// </summary>
-        public string CascadeFace
-        {
-            get
-            {
-                using var s = new StdString();
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_cascade_face_get(ptr, s.CvPtr));
-                GC.KeepAlive(this);
-                return s.ToString();
-            }
-            set
-            {
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value));
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_cascade_face_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public string CascadeFace { get; set; } = "";
 
         /// <summary>
         /// show the training print-out
         /// </summary>
-        public bool Verbose
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_verbose_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret != 0;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_verbose_set(ptr, value ? 1 : 0));
-                GC.KeepAlive(this);
-            }
-        }
+        public bool Verbose { get; set; }
 
         /// <summary>
         /// number of landmark points
         /// </summary>
-        public int NLandmarks
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_n_landmarks_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_n_landmarks_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public int NLandmarks { get; set; }
 
         /// <summary>
         /// multiplier for augment the training data
         /// </summary>
-        public int InitShapeN
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_initShape_n_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_initShape_n_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public int InitShapeN { get; set; }
 
         /// <summary>
         /// number of refinement stages
         /// </summary>
-        public int StagesN
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_stages_n_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_stages_n_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public int StagesN { get; set; }
 
         /// <summary>
         /// number of tree in the model for each landmark point refinement
         /// </summary>
-        public int TreeN
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_tree_n_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_tree_n_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public int TreeN { get; set; }
 
         /// <summary>
         /// the depth of decision tree, defines the size of feature
         /// </summary>
-        public int TreeDepth
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_tree_depth_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_tree_depth_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public int TreeDepth { get; set; }
 
         /// <summary>
         /// overlap ratio for training the LBF feature
         /// </summary>
-        public double BaggingOverlap
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_bagging_overlap_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_bagging_overlap_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public double BaggingOverlap { get; set; }
 
         /// <summary>
         /// filename where the trained model will be saved
         /// </summary>
-        public string ModelFilename
-        {
-            get
-            {
-                using var s = new StdString();
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_model_filename_get(ptr, s.CvPtr));
-                GC.KeepAlive(this);
-                return s.ToString();
-            }
-            set
-            {
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value));
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_model_filename_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public string ModelFilename { get; set; } = "";
 
         /// <summary>
         /// flag to save the trained model or not
         /// </summary>
-        public bool SaveModel
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_save_model_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret != 0;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_save_model_set(ptr, value ? 1 : 0));
-                GC.KeepAlive(this);
-            }
-        }
+        public bool SaveModel { get; set; }
 
         /// <summary>
         /// seed for shuffling the training data
         /// </summary>
-        public uint Seed
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_seed_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_seed_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public uint Seed { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        public IReadOnlyList<int> FeatsM
-        {
-            get
-            {
-                using var vec = new VectorOfInt32();
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_feats_m_get(ptr, vec.CvPtr));
-                GC.KeepAlive(this);
-                return vec.ToArray();
-            }
-            set
-            {
-                using var vec = new VectorOfInt32(value);
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_feats_m_set(ptr, vec.CvPtr));
-                GC.KeepAlive(this);
-            }
-        }
+        public IReadOnlyList<int> FeatsM { get; set; } = [];
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        public IReadOnlyList<double> RadiusM
-        {
-            get
-            {
-                using var vec = new VectorOfDouble();
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_radius_m_get(ptr, vec.CvPtr));
-                GC.KeepAlive(this);
-                return vec.ToArray();
-            }
-            set
-            {
-                using var vec = new VectorOfDouble(value);
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_radius_m_set(ptr, vec.CvPtr));
-                GC.KeepAlive(this);
-            }
-        }
+        public IReadOnlyList<double> RadiusM { get; set; } = [];
 
         /// <summary>
         /// index of facemark points on pupils of left and right eye
         /// </summary>
-        public IReadOnlyList<int> Pupils0
-        {
-            get
-            {
-                using var vec = new VectorOfInt32();
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_pupils0_get(ptr, vec.CvPtr));
-                GC.KeepAlive(this);
-                return vec.ToArray();
-            }
-            set
-            {
-                using var vec = new VectorOfInt32(value);
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_pupils0_set(ptr, vec.CvPtr));
-                GC.KeepAlive(this);
-            }
-        }
+        public IReadOnlyList<int> Pupils0 { get; set; } = [];
 
         /// <summary>
         /// index of facemark points on pupils of left and right eye
         /// </summary>
-        public IReadOnlyList<int> Pupils1
-        {
-            get
-            {
-                using var vec = new VectorOfInt32();
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_pupils1_get(ptr, vec.CvPtr));
-                GC.KeepAlive(this);
-                return vec.ToArray();
-            }
-            set
-            {
-                using var vec = new VectorOfInt32(value);
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_pupils1_set(ptr, vec.CvPtr));
-                GC.KeepAlive(this);
-            }
-        }
-            
+        public IReadOnlyList<int> Pupils1 { get; set; } = [];
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         // ReSharper disable once InconsistentNaming
-        public Rect DetectROI
-        {
-            get
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_detectROI_get(ptr, out var ret));
-                GC.KeepAlive(this);
-                return ret;
-            }
-            set
-            {
-                NativeMethods.HandleException(
-                    NativeMethods.face_FacemarkLBF_Params_detectROI_set(ptr, value));
-                GC.KeepAlive(this);
-            }
-        }
+        public Rect DetectROI { get; set; }
 
         /// <summary>
-        /// 
+        /// Reads the parameters from a file node.
         /// </summary>
         /// <param name="fn"></param>
         public void Read(FileNode fn)
         {
-            if (fn is null)
-                throw new ArgumentNullException(nameof(fn));
-            NativeMethods.HandleException(
-                NativeMethods.face_FacemarkLBF_Params_write(ptr, fn.CvPtr));
-            GC.KeepAlive(this);
+            ArgumentNullException.ThrowIfNull(fn);
+            fn.ThrowIfDisposed();
+            var p = ToNative();
+            try
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.face_FacemarkLBF_Params_read(p, fn.CvPtr));
+                GC.KeepAlive(fn);
+                LoadFrom(p);
+            }
+            finally
+            {
+                NativeMethods.HandleException(NativeMethods.face_FacemarkLBF_Params_delete(p));
+            }
         }
 
         /// <summary>
-        /// 
+        /// Writes the parameters to a file storage.
         /// </summary>
         /// <param name="fs"></param>
         public void Write(FileStorage fs)
         {
-            if (fs is null)
-                throw new ArgumentNullException(nameof(fs));
-            NativeMethods.HandleException(
-                NativeMethods.face_FacemarkLBF_Params_write(ptr, fs.CvPtr));
-            GC.KeepAlive(this);
-        }
-    }
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.face_Ptr_FacemarkLBF_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
+            ArgumentNullException.ThrowIfNull(fs);
+            fs.ThrowIfDisposed();
+            var p = ToNative();
+            try
+            {
+                NativeMethods.HandleException(
+                    NativeMethods.face_FacemarkLBF_Params_write(p, fs.CvPtr));
+                GC.KeepAlive(fs);
+            }
+            finally
+            {
+                NativeMethods.HandleException(NativeMethods.face_FacemarkLBF_Params_delete(p));
+            }
         }
 
-        protected override void DisposeUnmanaged()
+        /// <summary>
+        /// Copies every field of a native Params into this managed instance.
+        /// </summary>
+        private void LoadFrom(IntPtr nativeParams)
+        {
+            using var cascadeFace = new StdString();
+            using var modelFilename = new StdString();
+            using var featsM = new StdVector<int>();
+            using var radiusM = new StdVector<double>();
+            using var pupils0 = new StdVector<int>();
+            using var pupils1 = new StdVector<int>();
+            NativeMethods.HandleException(
+                NativeMethods.face_FacemarkLBF_Params_getAll(
+                    nativeParams, out var data, cascadeFace.CvPtr, modelFilename.CvPtr,
+                    featsM.CvPtr, radiusM.CvPtr, pupils0.CvPtr, pupils1.CvPtr));
+            ShapeOffset = data.ShapeOffset;
+            Verbose = data.Verbose != 0;
+            NLandmarks = data.NLandmarks;
+            InitShapeN = data.InitShapeN;
+            StagesN = data.StagesN;
+            TreeN = data.TreeN;
+            TreeDepth = data.TreeDepth;
+            BaggingOverlap = data.BaggingOverlap;
+            SaveModel = data.SaveModel != 0;
+            Seed = data.Seed;
+            DetectROI = data.DetectROI;
+            CascadeFace = cascadeFace.ToString();
+            ModelFilename = modelFilename.ToString();
+            FeatsM = featsM.ToArray();
+            RadiusM = radiusM.ToArray();
+            Pupils0 = pupils0.ToArray();
+            Pupils1 = pupils1.ToArray();
+        }
+
+        /// <summary>
+        /// Builds a native cv::face::FacemarkLBF::Params from this managed instance.
+        /// The caller is responsible for deleting the returned pointer.
+        /// </summary>
+        internal IntPtr ToNative()
         {
             NativeMethods.HandleException(
-                NativeMethods.face_Ptr_FacemarkLBF_delete(ptr));
-            base.DisposeUnmanaged();
+                NativeMethods.face_FacemarkLBF_Params_new(out var p));
+            if (p == IntPtr.Zero)
+                throw new OpenCvSharpException($"Invalid {nameof(Params)} pointer");
+            try
+            {
+                var data = new FacemarkLBFParamsData
+                {
+                    ShapeOffset = ShapeOffset,
+                    Verbose = Verbose ? 1 : 0,
+                    NLandmarks = NLandmarks,
+                    InitShapeN = InitShapeN,
+                    StagesN = StagesN,
+                    TreeN = TreeN,
+                    TreeDepth = TreeDepth,
+                    BaggingOverlap = BaggingOverlap,
+                    SaveModel = SaveModel ? 1 : 0,
+                    Seed = Seed,
+                    DetectROI = DetectROI,
+                };
+                using var featsM = new StdVector<int>(FeatsM);
+                using var radiusM = new StdVector<double>(RadiusM);
+                using var pupils0 = new StdVector<int>(Pupils0);
+                using var pupils1 = new StdVector<int>(Pupils1);
+                NativeMethods.HandleException(
+                    NativeMethods.face_FacemarkLBF_Params_setAll(
+                        p, data, CascadeFace, ModelFilename,
+                        featsM.CvPtr, radiusM.CvPtr, pupils0.CvPtr, pupils1.CvPtr));
+                return p;
+            }
+            catch
+            {
+                NativeMethods.HandleException(NativeMethods.face_FacemarkLBF_Params_delete(p));
+                throw;
+            }
         }
     }
 }

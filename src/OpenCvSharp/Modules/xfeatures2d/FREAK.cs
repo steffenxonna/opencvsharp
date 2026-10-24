@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 // ReSharper disable once InconsistentNaming
 
@@ -9,16 +9,12 @@ namespace OpenCvSharp.XFeatures2D;
 /// </summary>
 public class FREAK : Feature2D
 {
-    private Ptr? ptrObj;
-
     /// <summary>
     /// 
     /// </summary>
-    protected FREAK(IntPtr p)
-    {
-        ptrObj = new Ptr(p);
-        ptr = ptrObj.Get();
-    }
+    private FREAK(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.xfeatures2d_Ptr_FREAK_delete(p)))
+    { }
 
     /// <summary>
     /// Constructor
@@ -41,35 +37,88 @@ public class FREAK : Feature2D
             NativeMethods.xfeatures2d_FREAK_create(
                 orientationNormalized ? 1 : 0,
                 scaleNormalized ? 1 : 0, patternScale, nOctaves,
-                selectedPairsArray, selectedPairsArray?.Length ?? 0, out var ret));
-        return new FREAK(ret);
+                selectedPairsArray, selectedPairsArray?.Length ?? 0, out var ptr));
+        NativeMethods.HandleException(NativeMethods.xfeatures2d_Ptr_FREAK_get(ptr, out var rawPtr));
+        return new FREAK(ptr, rawPtr);
     }
 
     /// <summary>
-    /// Releases managed resources
+    /// Enable orientation normalization.
     /// </summary>
-    protected override void DisposeManaged()
+    public bool OrientationNormalized
     {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
-    }
-        
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
+        get
         {
+            ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xfeatures2d_Ptr_FREAK_get(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.xfeatures2d_FREAK_getOrientationNormalized(Handle, out var ret));
+            return ret != 0;
+        }
+        set
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_FREAK_setOrientationNormalized(Handle, value ? 1 : 0));
+        }
+    }
+
+    /// <summary>
+    /// Enable scale normalization.
+    /// </summary>
+    public bool ScaleNormalized
+    {
+        get
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_FREAK_getScaleNormalized(Handle, out var ret));
+            return ret != 0;
+        }
+        set
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_FREAK_setScaleNormalized(Handle, value ? 1 : 0));
+        }
+    }
+
+    /// <summary>
+    /// Scaling of the description pattern.
+    /// </summary>
+    public double PatternScale
+    {
+        get
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_FREAK_getPatternScale(Handle, out var ret));
             return ret;
         }
-
-        protected override void DisposeUnmanaged()
+        set
         {
+            ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xfeatures2d_Ptr_FREAK_delete(ptr));
-            base.DisposeUnmanaged();
+                NativeMethods.xfeatures2d_FREAK_setPatternScale(Handle, value));
+        }
+    }
+
+    /// <summary>
+    /// Number of octaves covered by the detected keypoints.
+    /// </summary>
+    public int NOctaves
+    {
+        get
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_FREAK_getNOctaves(Handle, out var ret));
+            return ret;
+        }
+        set
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_FREAK_setNOctaves(Handle, value));
         }
     }
 }

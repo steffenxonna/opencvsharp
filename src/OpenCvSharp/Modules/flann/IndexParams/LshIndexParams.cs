@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp.Flann;
 
@@ -14,40 +14,24 @@ public class LshIndexParams : IndexParams
     /// <param name="keySize">The size of the hash key in bits (between 10 and 20 usually).</param>
     /// <param name="multiProbeLevel">The number of bits to shift to check for neighboring buckets (0 is regular LSH, 2 is recommended).</param>
     public LshIndexParams(int tableNumber, int keySize, int multiProbeLevel)
-        : base(null)
+        : this(Create(tableNumber, keySize, multiProbeLevel))
+    {
+    }
+
+    private LshIndexParams((IntPtr smartPtr, IntPtr rawPtr) ptrs)
+        : base(ptrs.smartPtr, ptrs.rawPtr,
+            static h => NativeMethods.HandleException(NativeMethods.flann_Ptr_LshIndexParams_delete(h)))
+    {
+    }
+
+    private static (IntPtr smartPtr, IntPtr rawPtr) Create(int tableNumber, int keySize, int multiProbeLevel)
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_Ptr_LshIndexParams_new(tableNumber, keySize, multiProbeLevel, out var p));
-        if (p == IntPtr.Zero)
+            NativeMethods.flann_Ptr_LshIndexParams_new(tableNumber, keySize, multiProbeLevel, out var smartPtr));
+        if (smartPtr == IntPtr.Zero)
             throw new OpenCvSharpException($"Failed to create {nameof(LshIndexParams)}");
-
-        PtrObj = new Ptr(p);
-        ptr = PtrObj.Get();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    protected LshIndexParams(OpenCvSharp.Ptr ptrObj)
-        : base(ptrObj)
-    {
-    }
-
-    internal new class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.flann_Ptr_LshIndexParams_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.flann_Ptr_LshIndexParams_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+        NativeMethods.HandleException(
+            NativeMethods.flann_Ptr_LshIndexParams_get(smartPtr, out var rawPtr));
+        return (smartPtr, rawPtr);
     }
 }

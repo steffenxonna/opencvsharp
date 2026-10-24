@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 // ReSharper disable once CheckNamespace
 namespace OpenCvSharp.XImgProc;
@@ -17,27 +17,12 @@ namespace OpenCvSharp.XImgProc;
 // ReSharper disable once InconsistentNaming
 public class SuperpixelSEEDS : Algorithm
 {
-    private Ptr? detectorPtr;
-
     /// <summary>
     /// Creates instance by raw pointer
     /// </summary>
-    protected SuperpixelSEEDS(IntPtr p)
-    {
-        detectorPtr = new Ptr(p);
-        ptr = detectorPtr.Get();
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        detectorPtr?.Dispose();
-        detectorPtr = null;
-        base.DisposeManaged();
-    }
-
+    private SuperpixelSEEDS(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.ximgproc_Ptr_SuperpixelSEEDS_delete(p)))
+    { }
     /// <summary>
     /// Initializes a SuperpixelSEEDS object.
     ///
@@ -74,9 +59,10 @@ public class SuperpixelSEEDS : Algorithm
         NativeMethods.HandleException(
             NativeMethods.ximgproc_createSuperpixelSEEDS(
                 imageWidth, imageHeight, imageChannels, numSuperpixels, numLevels, prior,
-                histogramBins, doubleStep ? 1 : 0, out var p));
+                histogramBins, doubleStep ? 1 : 0, out var smartPtr));
              
-        return new SuperpixelSEEDS(p);
+        NativeMethods.HandleException(NativeMethods.ximgproc_Ptr_SuperpixelSEEDS_get(smartPtr, out var rawPtr));
+        return new SuperpixelSEEDS(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -91,8 +77,7 @@ public class SuperpixelSEEDS : Algorithm
         ThrowIfDisposed(); 
         NativeMethods.HandleException(
             NativeMethods.ximgproc_SuperpixelSEEDS_getNumberOfSuperpixels(
-                ptr, out var ret));
-        GC.KeepAlive(this);
+                Handle, out var ret));
         return ret;
     }
 
@@ -108,16 +93,12 @@ public class SuperpixelSEEDS : Algorithm
     public virtual void Iterate(InputArray img, int numIterations = 10)
     {
         ThrowIfDisposed();
-        if (img is null)
-            throw new ArgumentNullException(nameof(img));
-        img.ThrowIfDisposed();
 
         NativeMethods.HandleException(
             NativeMethods.ximgproc_SuperpixelSEEDS_iterate(
-                ptr, img.CvPtr, numIterations));
+                Handle, img.Proxy, numIterations));
 
-        GC.KeepAlive(this);
-        GC.KeepAlive(img);
+        GC.KeepAlive(img.Source);
     }
 
     /// <summary>
@@ -132,15 +113,10 @@ public class SuperpixelSEEDS : Algorithm
     public virtual void GetLabels(OutputArray labelsOut)
     {
         ThrowIfDisposed();
-        if (labelsOut is null)
-            throw new ArgumentNullException(nameof(labelsOut));
-        labelsOut.ThrowIfNotReady();
 
         NativeMethods.HandleException(
             NativeMethods.ximgproc_SuperpixelSEEDS_getLabels(
-                ptr, labelsOut.CvPtr));
-        GC.KeepAlive(this);
-        labelsOut.Fix();
+                Handle, labelsOut.Proxy));
     }
 
     /// <summary>
@@ -152,32 +128,9 @@ public class SuperpixelSEEDS : Algorithm
     public virtual void GetLabelContourMask(OutputArray image, bool thickLine = true)
     {
         ThrowIfDisposed();
-        if (image is null)
-            throw new ArgumentNullException(nameof(image));
-        image.ThrowIfNotReady();
 
         NativeMethods.HandleException(
             NativeMethods.ximgproc_SuperpixelSEEDS_getLabelContourMask(
-                ptr, image.CvPtr, thickLine ? 1 : 0));
-        GC.KeepAlive(this);
-        image.Fix();
-    }
-        
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ximgproc_Ptr_SuperpixelSEEDS_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ximgproc_Ptr_SuperpixelSEEDS_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+                Handle, image.Proxy, thickLine ? 1 : 0));
     }
 }

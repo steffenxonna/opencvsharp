@@ -5,41 +5,39 @@ namespace OpenCvSharp.Flann;
 /// <summary>
 /// 
 /// </summary>
-public class IndexParams : DisposableCvObject
+public class IndexParams : CvPtrObject
 {
-    internal OpenCvSharp.Ptr? PtrObj { get; set; }
-
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public IndexParams()
+        : this(Create())
+    {
+    }
+
+    private IndexParams((IntPtr smartPtr, IntPtr rawPtr) ptrs)
+        : base(ptrs.smartPtr, ptrs.rawPtr,
+            static h => NativeMethods.HandleException(NativeMethods.flann_Ptr_IndexParams_delete(h)))
+    {
+    }
+
+    private static (IntPtr smartPtr, IntPtr rawPtr) Create()
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_Ptr_IndexParams_new(out var p));
-        if (p == IntPtr.Zero)
+            NativeMethods.flann_Ptr_IndexParams_new(out var smartPtr));
+        if (smartPtr == IntPtr.Zero)
             throw new OpenCvSharpException($"Failed to create {nameof(IndexParams)}");
-
-        PtrObj = new Ptr(p);
-        ptr = PtrObj.Get();
+        NativeMethods.HandleException(
+            NativeMethods.flann_Ptr_IndexParams_get(smartPtr, out var rawPtr));
+        return (smartPtr, rawPtr);
     }
 
     /// <summary>
-    /// 
+    /// Creates an instance that owns a <c>cv::Ptr&lt;T&gt;</c> smart pointer (used by subclasses).
     /// </summary>
-    protected IndexParams(OpenCvSharp.Ptr? ptrObj)
+    protected IndexParams(IntPtr smartPtr, IntPtr rawPtr, Action<IntPtr> deleteAction)
+        : base(smartPtr, rawPtr, deleteAction)
     {
-        PtrObj = ptrObj;
-        ptr = PtrObj?.Get() ?? IntPtr.Zero;
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        PtrObj?.Dispose();
-        PtrObj = null;
-        base.DisposeManaged();
     }
 
     #region Methods
@@ -54,8 +52,7 @@ public class IndexParams : DisposableCvObject
     {
         using var result = new StdString();
         NativeMethods.HandleException(
-            NativeMethods.flann_IndexParams_getString(ptr, key, defaultVal, result.CvPtr));
-        GC.KeepAlive(this);
+            NativeMethods.flann_IndexParams_getString(Handle, key, defaultVal, result.CvPtr));
         return result.ToString();
     }
 
@@ -68,8 +65,7 @@ public class IndexParams : DisposableCvObject
     public int GetInt(string key, int defaultVal = -1)
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_IndexParams_getInt(ptr, key, defaultVal, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.flann_IndexParams_getInt(Handle, key, defaultVal, out var ret));
         return ret;
     }
 
@@ -82,8 +78,7 @@ public class IndexParams : DisposableCvObject
     public double GetDouble(string key, double defaultVal = -1)
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_IndexParams_getDouble(ptr, key, defaultVal, out var ret));
-        GC.KeepAlive(this);
+            NativeMethods.flann_IndexParams_getDouble(Handle, key, defaultVal, out var ret));
         return ret;
     }
 
@@ -97,8 +92,7 @@ public class IndexParams : DisposableCvObject
     public void SetString(string key, string value)
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_IndexParams_setString(ptr, key, value));
-        GC.KeepAlive(this);
+            NativeMethods.flann_IndexParams_setString(Handle, key, value));
     }
     /// <summary>
     /// 
@@ -108,8 +102,7 @@ public class IndexParams : DisposableCvObject
     public void SetInt(string key, int value)
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_IndexParams_setInt(ptr, key, value));
-        GC.KeepAlive(this);
+            NativeMethods.flann_IndexParams_setInt(Handle, key, value));
     }
     /// <summary>
     /// 
@@ -119,8 +112,7 @@ public class IndexParams : DisposableCvObject
     public void SetDouble(string key, double value)
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_IndexParams_setDouble(ptr, key, value));
-        GC.KeepAlive(this);
+            NativeMethods.flann_IndexParams_setDouble(Handle, key, value));
     }
     /// <summary>
     /// 
@@ -130,8 +122,7 @@ public class IndexParams : DisposableCvObject
     public void SetFloat(string key, float value)
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_IndexParams_setFloat(ptr, key, value));
-        GC.KeepAlive(this);
+            NativeMethods.flann_IndexParams_setFloat(Handle, key, value));
     }
     /// <summary>
     /// 
@@ -141,8 +132,7 @@ public class IndexParams : DisposableCvObject
     public void SetBool(string key, bool value)
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_IndexParams_setBool(ptr, key, value ? 1 : 0));
-        GC.KeepAlive(this);
+            NativeMethods.flann_IndexParams_setBool(Handle, key, value ? 1 : 0));
     }
     /// <summary>
     /// 
@@ -151,27 +141,8 @@ public class IndexParams : DisposableCvObject
     public void SetAlgorithm(int value)
     {
         NativeMethods.HandleException(
-            NativeMethods.flann_IndexParams_setAlgorithm(ptr, value));
-        GC.KeepAlive(this);
+            NativeMethods.flann_IndexParams_setAlgorithm(Handle, value));
     }
     #endregion
     #endregion
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.flann_Ptr_IndexParams_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.flann_Ptr_IndexParams_delete(ptr));
-            base.DisposeUnmanaged();
-        }
-    }
 }

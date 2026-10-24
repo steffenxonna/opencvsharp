@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp.Flann;
 
@@ -12,43 +12,26 @@ public class SavedIndexParams : IndexParams
     /// </summary>
     /// <param name="fileName"></param>
     public SavedIndexParams(string fileName)
-        : base(null)
+        : this(Create(fileName))
+    {
+    }
+
+    private SavedIndexParams((IntPtr smartPtr, IntPtr rawPtr) ptrs)
+        : base(ptrs.smartPtr, ptrs.rawPtr,
+            static h => NativeMethods.HandleException(NativeMethods.flann_Ptr_SavedIndexParams_delete(h)))
+    {
+    }
+
+    private static (IntPtr smartPtr, IntPtr rawPtr) Create(string fileName)
     {
         if (string.IsNullOrEmpty(fileName))
             throw new ArgumentNullException(nameof(fileName));
-
         NativeMethods.HandleException(
-            NativeMethods.flann_Ptr_SavedIndexParams_new(fileName, out var p));
-        if (p == IntPtr.Zero)
+            NativeMethods.flann_Ptr_SavedIndexParams_new(fileName, out var smartPtr));
+        if (smartPtr == IntPtr.Zero)
             throw new OpenCvSharpException($"Failed to create {nameof(SavedIndexParams)}");
-
-        PtrObj = new Ptr(p);
-        ptr = PtrObj.Get();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    protected SavedIndexParams(OpenCvSharp.Ptr ptrObj)
-        : base(ptrObj)
-    {
-    }
-
-    internal new class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException( 
-                NativeMethods.flann_Ptr_SavedIndexParams_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.flann_Ptr_SavedIndexParams_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+        NativeMethods.HandleException(
+            NativeMethods.flann_Ptr_SavedIndexParams_get(smartPtr, out var rawPtr));
+        return (smartPtr, rawPtr);
     }
 }

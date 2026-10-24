@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 #pragma warning disable 1591
@@ -10,38 +10,38 @@ namespace OpenCvSharp.Internal;
 
 static partial class NativeMethods
 {
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, BestFitMapping = false, ThrowOnUnmappableChar = true, ExactSpelling = true)]
-    public static extern ExceptionStatus objdetect_QRCodeDetector_new(out IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus objdetect_QRCodeDetector_new(out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, BestFitMapping = false, ThrowOnUnmappableChar = true, ExactSpelling = true)]
-    public static extern ExceptionStatus objdetect_QRCodeDetector_delete(IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus objdetect_QRCodeDetector_delete(IntPtr obj);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, BestFitMapping = false, ThrowOnUnmappableChar = true, ExactSpelling = true)]
-    public static extern ExceptionStatus objdetect_QRCodeDetector_setEpsX(IntPtr obj, double epsX);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus objdetect_QRCodeDetector_setEpsX(OpenCvSafeHandle obj, double epsX);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, BestFitMapping = false, ThrowOnUnmappableChar = true, ExactSpelling = true)]
-    public static extern ExceptionStatus objdetect_QRCodeDetector_setEpsY(IntPtr obj, double epsY);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus objdetect_QRCodeDetector_setEpsY(OpenCvSafeHandle obj, double epsY);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, BestFitMapping = false, ThrowOnUnmappableChar = true, ExactSpelling = true)]
-    public static extern ExceptionStatus objdetect_QRCodeDetector_detect(IntPtr obj, IntPtr img, IntPtr points, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus objdetect_QRCodeDetector_detect(OpenCvSafeHandle obj, in InputArrayProxy img, IntPtr points, out int returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, BestFitMapping = false, ThrowOnUnmappableChar = true, ExactSpelling = true)]
-    public static extern ExceptionStatus objdetect_QRCodeDetector_decode(
-        IntPtr obj, IntPtr img, IntPtr points, IntPtr straightQrCode, IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus objdetect_QRCodeDetector_decode(
+        OpenCvSafeHandle obj, in InputArrayProxy img, IntPtr points, in OutputArrayProxy straightQrCode, IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, BestFitMapping = false, ThrowOnUnmappableChar = true, ExactSpelling = true)]
-    public static extern ExceptionStatus objdetect_QRCodeDetector_detectAndDecode(
-        IntPtr obj, IntPtr img, IntPtr points,
-        IntPtr straightQrCode, IntPtr returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus objdetect_QRCodeDetector_detectAndDecode(
+        OpenCvSafeHandle obj, in InputArrayProxy img, IntPtr points,
+        in OutputArrayProxy straightQrCode, IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, BestFitMapping = false, ThrowOnUnmappableChar = true, ExactSpelling = true)]
-    public static extern ExceptionStatus objdetect_QRCodeDetector_detectMulti(IntPtr obj, IntPtr img, IntPtr points, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus objdetect_QRCodeDetector_detectMulti(OpenCvSafeHandle obj, in InputArrayProxy img, IntPtr points, out int returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, BestFitMapping = false, ThrowOnUnmappableChar = true, ExactSpelling = true)]
-    public static extern ExceptionStatus objdetect_QRCodeDetector_decodeMulti(
-        IntPtr obj, IntPtr img, IntPtr points, IntPtr decodedInfo, IntPtr straightQrCode, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus objdetect_QRCodeDetector_decodeMulti(
+        OpenCvSafeHandle obj, in InputArrayProxy img, IntPtr points, IntPtr decodedInfo, IntPtr straightQrCode, out int returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, BestFitMapping = false, ThrowOnUnmappableChar = true, ExactSpelling = true)]
-    public static extern ExceptionStatus objdetect_QRCodeDetector_decodeMulti_NoStraightQrCode(
-        IntPtr obj, IntPtr img, IntPtr points, IntPtr decodedInfo, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus objdetect_QRCodeDetector_decodeMulti_NoStraightQrCode(
+        OpenCvSafeHandle obj, in InputArrayProxy img, IntPtr points, IntPtr decodedInfo, out int returnValue);
 }

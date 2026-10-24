@@ -1,19 +1,18 @@
-﻿using System.Runtime.InteropServices;
-using OpenCvSharp.Internal.Util;
 using OpenCvSharp.ML;
 
 namespace OpenCvSharp.Internal.Vectors;
 
 /// <summary> 
 /// </summary>
-public class VectorOfDTreesNode : DisposableCvObject, IStdVector<DTrees.Node>
+public class VectorOfDTreesNode : CvObject, IStdVector<DTrees.Node>
 {
     /// <summary>
     /// Constructor
     /// </summary>
     public VectorOfDTreesNode()
     {
-        ptr = NativeMethods.vector_DTrees_Node_new1();
+        var p = NativeMethods.vector_DTrees_Node_new1();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
     }
         
     /// <summary>
@@ -21,7 +20,7 @@ public class VectorOfDTreesNode : DisposableCvObject, IStdVector<DTrees.Node>
     /// </summary>
     protected override void DisposeUnmanaged()
     {
-        NativeMethods.vector_DTrees_Node_delete(ptr);
+        NativeMethods.vector_DTrees_Node_delete(CvPtr);
         base.DisposeUnmanaged();
     }
 
@@ -32,8 +31,7 @@ public class VectorOfDTreesNode : DisposableCvObject, IStdVector<DTrees.Node>
     {
         get
         {
-            var res = NativeMethods.vector_DTrees_Node_getSize(ptr);
-            GC.KeepAlive(this);
+            var res = NativeMethods.vector_DTrees_Node_getSize(Handle);
             return (int)res;
         }
     }
@@ -45,7 +43,8 @@ public class VectorOfDTreesNode : DisposableCvObject, IStdVector<DTrees.Node>
     {
         get
         {
-            var res = NativeMethods.vector_DTrees_Node_getPointer(ptr);
+            var res = NativeMethods.vector_DTrees_Node_getPointer(Handle);
+            // Returns an interior pointer into this vector; keep it alive for the caller's dereference.
             GC.KeepAlive(this);
             return res;
         }
@@ -62,17 +61,12 @@ public class VectorOfDTreesNode : DisposableCvObject, IStdVector<DTrees.Node>
         {
             return [];
         }
-        var dst = new DTrees.Node[size];
-        using (var dstPtr = new ArrayAddress1<DTrees.Node>(dst))
+        unsafe
         {
-            long bytesToCopy = Marshal.SizeOf<DTrees.Node>() * dst.Length;
-            unsafe
-            {
-                Buffer.MemoryCopy(ElemPtr.ToPointer(), dstPtr.Pointer.ToPointer(), bytesToCopy, bytesToCopy);
-            }
+            var dst = new ReadOnlySpan<DTrees.Node>((void*)ElemPtr, size).ToArray();
+            // ElemPtr aliases memory held by this object; keep it alive until the copy completes.
+            GC.KeepAlive(this);
+            return dst;
         }
-        GC.KeepAlive(this); // ElemPtr is IntPtr to memory held by this object, so
-        // make sure we are not disposed until finished with copy.
-        return dst;
     }
 }

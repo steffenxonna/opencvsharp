@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 // ReSharper disable once CheckNamespace
 namespace OpenCvSharp.XImgProc;
@@ -9,26 +9,13 @@ namespace OpenCvSharp.XImgProc;
 // ReSharper disable once InconsistentNaming
 public class FastBilateralSolverFilter : Algorithm
 {
-    private Ptr? detectorPtr;
 
     /// <summary>
     /// Creates instance by raw pointer
     /// </summary>
-    protected FastBilateralSolverFilter(IntPtr p)
-    {
-        detectorPtr = new Ptr(p);
-        ptr = detectorPtr.Get();
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        detectorPtr?.Dispose();
-        detectorPtr = null;
-        base.DisposeManaged();
-    }
+    private FastBilateralSolverFilter(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.ximgproc_Ptr_FastBilateralSolverFilter_delete(p)))
+    { }
 
     /// <summary>
     /// Factory method, create instance of FastBilateralSolverFilter and execute the initialization routines.
@@ -45,16 +32,13 @@ public class FastBilateralSolverFilter : Algorithm
         InputArray guide, double sigmaSpatial, double sigmaLuma, double sigmaChroma, 
         double lambda = 128.0, int numIter = 25, double maxTol = 1e-5)
     {
-        if (guide is null)
-            throw new ArgumentNullException(nameof(guide));
-        guide.ThrowIfDisposed();
-
         NativeMethods.HandleException(
             NativeMethods.ximgproc_createFastBilateralSolverFilter(
-                guide.CvPtr, sigmaSpatial, sigmaLuma, sigmaChroma, lambda, numIter, maxTol, out var p));
+                guide.Proxy, sigmaSpatial, sigmaLuma, sigmaChroma, lambda, numIter, maxTol, out var smartPtr));
             
-        GC.KeepAlive(guide); 
-        return new FastBilateralSolverFilter(p);
+        GC.KeepAlive(guide.Source); 
+        NativeMethods.HandleException(NativeMethods.ximgproc_Ptr_FastBilateralSolverFilter_get(smartPtr, out var rawPtr));
+        return new FastBilateralSolverFilter(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -66,41 +50,12 @@ public class FastBilateralSolverFilter : Algorithm
     public virtual void Filter(InputArray src, InputArray confidence, OutputArray dst)
     {
         ThrowIfDisposed();
-        if (src is null)
-            throw new ArgumentNullException(nameof(src));
-        if (confidence is null)
-            throw new ArgumentNullException(nameof(confidence));
-        if (dst is null)
-            throw new ArgumentNullException(nameof(dst));
-        src.ThrowIfDisposed();
-        confidence.ThrowIfDisposed();
-        dst.ThrowIfNotReady();
 
         NativeMethods.HandleException(
             NativeMethods.ximgproc_FastBilateralSolverFilter_filter(
-                ptr, src.CvPtr, confidence.CvPtr, dst.CvPtr));
+                Handle, src.Proxy, confidence.Proxy, dst.Proxy));
 
-        GC.KeepAlive(this);
-        GC.KeepAlive(src);
-        GC.KeepAlive(confidence);
-        dst.Fix();
-    }
-        
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ximgproc_Ptr_FastBilateralSolverFilter_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.ximgproc_Ptr_FastBilateralSolverFilter_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+        GC.KeepAlive(src.Source);
+        GC.KeepAlive(confidence.Source);
     }
 }

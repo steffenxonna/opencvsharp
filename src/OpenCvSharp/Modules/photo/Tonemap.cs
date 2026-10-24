@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp;
 
@@ -7,22 +7,17 @@ namespace OpenCvSharp;
 /// </summary>
 public class Tonemap : Algorithm
 {
-    private Ptr? ptrObj;
-
     /// <summary>
-    /// Constructor used by Tonemap.Create
+    /// Relay constructor for subclasses.
     /// </summary>
-    private Tonemap()
+    protected Tonemap(IntPtr smartPtr, IntPtr rawPtr, Action<IntPtr> release)
+        : base(smartPtr, rawPtr, release)
     {
     }
 
-    /// <summary>
-    /// Constructor used by subclasses
-    /// </summary>
-    protected Tonemap(IntPtr ptr)
+    private Tonemap(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.photo_Ptr_Tonemap_delete(p)))
     {
-        this.ptrObj = null;
-        this.ptr = ptr;
     }
 
     /// <summary>
@@ -35,24 +30,9 @@ public class Tonemap : Algorithm
     public static Tonemap Create(float gamma = 1f)
     {
         NativeMethods.HandleException(
-            NativeMethods.photo_createTonemap(gamma, out var ptrObjPtr));
-
-        var ptrObj = new Ptr(ptrObjPtr);
-        return new Tonemap
-        {
-            ptrObj = ptrObj,
-            ptr = ptrObj.Get()
-        };
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
+            NativeMethods.photo_createTonemap(gamma, out var smartPtr));
+        NativeMethods.HandleException(NativeMethods.photo_Ptr_Tonemap_get(smartPtr, out var rawPtr));
+        return new Tonemap(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -62,20 +42,10 @@ public class Tonemap : Algorithm
     /// <param name="dst">destination image - CV_32FC3 Mat with values in [0, 1] range</param>
     public virtual void Process(InputArray src, OutputArray dst)
     {
-        if (src is null)
-            throw new ArgumentNullException(nameof(src));
-        if (dst is null)
-            throw new ArgumentNullException(nameof(dst));
-
-        src.ThrowIfDisposed();
-        dst.ThrowIfNotReady();
-
         NativeMethods.HandleException(
-            NativeMethods.photo_Tonemap_process(ptr, src.CvPtr, dst.CvPtr));
+            NativeMethods.photo_Tonemap_process(Handle, src.Proxy, dst.Proxy));
 
-        GC.KeepAlive(this);
-        GC.KeepAlive(src);
-        dst.Fix();
+        GC.KeepAlive(src.Source);
     }
 
     /// <summary>
@@ -89,34 +59,15 @@ public class Tonemap : Algorithm
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.photo_Tonemap_getGamma(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.photo_Tonemap_getGamma(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.photo_Tonemap_setGamma(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.photo_Tonemap_setGamma(Handle, value));
         }
     }
 
-    private class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.photo_Ptr_Tonemap_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.photo_Ptr_Tonemap_delete(ptr));
-            base.DisposeUnmanaged();
-        }
     }
-}

@@ -9,48 +9,29 @@ namespace OpenCvSharp;
 /// Object detection model is applied to detect QRCode with the bounding box.
 /// super resolution model is applied to zoom in QRCode when it is small.
 /// </summary>
-public class WeChatQRCode : DisposableCvObject
+public class WeChatQRCode : CvObject
 {
-    private Ptr? objectPtr;
-
-    internal WeChatQRCode(IntPtr ptr)
-    {
-        objectPtr = new Ptr(ptr);
-        this.ptr = objectPtr.Get();
-    }
-
     /// <summary>
     /// Initialize the WeChatQRCode.
-    /// It includes two models, which are packaged with caffe format.
-    /// Therefore, there are prototxt and caffe models (In total, four paramenters).
+    /// It includes two ONNX models: an object detection model and a super resolution model.
+    /// Pass empty strings to create a detector without neural network models.
     /// </summary>
-    /// <param name="detectorPrototxtPath">prototxt file path for the detector</param>
-    /// <param name="detectorCaffeModelPath">caffe model file path for the detector</param>
-    /// <param name="superResolutionPrototxtPath">prototxt file path for the super resolution model</param>
-    /// <param name="superResolutionCaffeModelPath">caffe file path for the super resolution model</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    public static WeChatQRCode Create(
-        string detectorPrototxtPath,
-        string detectorCaffeModelPath,
-        string superResolutionPrototxtPath,
-        string superResolutionCaffeModelPath)
+    /// <param name="detectorModelPath">ONNX model file path for the detector</param>
+    /// <param name="superResolutionModelPath">ONNX model file path for the super resolution model</param>
+    public WeChatQRCode(
+        string detectorModelPath = "",
+        string superResolutionModelPath = "")
     {
-        if (string.IsNullOrWhiteSpace(detectorPrototxtPath))
-            throw new ArgumentException("empty string", nameof(detectorPrototxtPath));
-        if (string.IsNullOrWhiteSpace(detectorCaffeModelPath))
-            throw new ArgumentException("empty string", nameof(detectorCaffeModelPath));
-        if (string.IsNullOrWhiteSpace(superResolutionPrototxtPath))
-            throw new ArgumentException("empty string", nameof(superResolutionPrototxtPath));
-        if (string.IsNullOrWhiteSpace(superResolutionCaffeModelPath))
-            throw new ArgumentException("empty string", nameof(superResolutionCaffeModelPath));
+        ArgumentNullException.ThrowIfNull(detectorModelPath);
+        ArgumentNullException.ThrowIfNull(superResolutionModelPath);
 
         NativeMethods.HandleException(
             NativeMethods.wechat_qrcode_create1(
-                detectorPrototxtPath, detectorCaffeModelPath, superResolutionPrototxtPath, superResolutionCaffeModelPath,
+                detectorModelPath, superResolutionModelPath,
                 out var ptr));
 
-        return new WeChatQRCode(ptr);
+        SetSafeHandle(new OpenCvPtrSafeHandle(ptr, ownsHandle: true,
+            releaseAction: h => NativeMethods.HandleException(NativeMethods.wechat_qrcode_delete(h))));
     }
 
     /// <summary>
@@ -58,49 +39,46 @@ public class WeChatQRCode : DisposableCvObject
     /// To simplify the usage, there is a only API: detectAndDecode
     /// </summary>
     /// <param name="inputImage">supports grayscale or color(BGR) image.</param>
-    /// <param name="bbox">optional output array of vertices of the found QR code quadrangle.Will be empty if not found.</param>
-    /// <param name="results">list of decoded string.</param>
-    public void DetectAndDecode(InputArray inputImage, out Mat[] bbox, out string[] results)
+    /// <param name="points">
+    /// output array of vertices of the found QR code quadrangles.
+    /// Each element is an array of 4 <see cref="Point2f"/> representing the corners of one detected QR code.
+    /// Will be empty if not found.
+    /// </param>
+    /// <returns>list of decoded string.</returns>
+    public string[] DetectAndDecode(InputArray inputImage, out Point2f[][] points)
     {
-        if (inputImage is null)
-            throw new ArgumentNullException(nameof(inputImage));
-        inputImage.ThrowIfDisposed();
+        using var pointsVec = new VectorOfVectorPoint2f();
+        using var texts = new VectorOfString();
+        NativeMethods.HandleException(
+            NativeMethods.wechat_qrcode_WeChatQRCode_detectAndDecode_points(
+                Handle, inputImage.Proxy, pointsVec.CvPtr, texts.CvPtr));
 
+        points = pointsVec.ToArray();
+        GC.KeepAlive(inputImage.Source);
+        return texts.ToArray();
+    }
+
+    /// <summary>
+    /// Both detects and decodes QR code.
+    /// Returns each QR code's corner points as a raw <see cref="Mat"/> (4x2, CV_32FC1),
+    /// which can be passed directly to other OpenCV functions.
+    /// </summary>
+    /// <param name="inputImage">supports grayscale or color(BGR) image.</param>
+    /// <param name="bbox">
+    /// output array of vertices of the found QR code quadrangles as raw <see cref="Mat"/> (4x2, CV_32FC1).
+    /// Will be empty if not found.
+    /// </param>
+    /// <returns>list of decoded string.</returns>
+    public string[] DetectAndDecodeRaw(InputArray inputImage, out Mat[] bbox)
+    {
         using var bboxVec = new VectorOfMat();
         using var texts = new VectorOfString();
         NativeMethods.HandleException(
             NativeMethods.wechat_qrcode_WeChatQRCode_detectAndDecode(
-                ptr, inputImage.CvPtr, bboxVec.CvPtr, texts.CvPtr));
+                Handle, inputImage.Proxy, bboxVec.CvPtr, texts.CvPtr));
 
         bbox = bboxVec.ToArray();
-        results = texts.ToArray();
-        GC.KeepAlive(this);
-        GC.KeepAlive(inputImage);
-    }
-
-    /// <inheritdoc />
-    protected override void DisposeManaged()
-    {
-        objectPtr?.Dispose();
-        objectPtr = null;
-        base.DisposeManaged();
-    }
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.wechat_qrcode_Ptr_WeChatQRCode_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.wechat_qrcode_Ptr_delete(ptr));
-            base.DisposeUnmanaged();
-        }
+        GC.KeepAlive(inputImage.Source);
+        return texts.ToArray();
     }
 }

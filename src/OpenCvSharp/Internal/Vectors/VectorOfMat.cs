@@ -1,15 +1,16 @@
-﻿namespace OpenCvSharp.Internal.Vectors;
+namespace OpenCvSharp.Internal.Vectors;
 
 /// <summary> 
 /// </summary>
-public class VectorOfMat : DisposableCvObject, IStdVector<Mat>
+public class VectorOfMat : CvObject, IStdVector<Mat>
 {
     /// <summary>
     /// Constructor
     /// </summary>
     public VectorOfMat()
     {
-        ptr = NativeMethods.vector_Mat_new1();
+        var p = NativeMethods.vector_Mat_new1();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
     }
 
     /// <summary>
@@ -18,9 +19,9 @@ public class VectorOfMat : DisposableCvObject, IStdVector<Mat>
     /// <param name="size"></param>
     public VectorOfMat(int size)
     {
-        if (size < 0)
-            throw new ArgumentOutOfRangeException(nameof(size));
-        ptr = NativeMethods.vector_Mat_new2((uint)size);
+        ArgumentOutOfRangeException.ThrowIfNegative(size);
+        var p = NativeMethods.vector_Mat_new2((uint)size);
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
     }
         
     /// <summary>
@@ -29,15 +30,16 @@ public class VectorOfMat : DisposableCvObject, IStdVector<Mat>
     /// <param name="mats"></param>
     public VectorOfMat(IEnumerable<Mat> mats)
     {
-        if (mats is null)
-            throw new ArgumentNullException(nameof(mats));
+        ArgumentNullException.ThrowIfNull(mats);
 
         var matsArray = mats.ToArray();
         var matPointers = matsArray.Select(x => x.CvPtr).ToArray();
 
-        ptr = NativeMethods.vector_Mat_new3(
+        var p = NativeMethods.vector_Mat_new3(
             matPointers,
             (uint) matPointers.Length);
+
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
 
         GC.KeepAlive(matPointers);
         GC.KeepAlive(mats); // todo: rsb - should probably generate Mat[] and then get CvPtrs
@@ -52,7 +54,7 @@ public class VectorOfMat : DisposableCvObject, IStdVector<Mat>
     /// </summary>
     protected override void DisposeUnmanaged()
     {
-        NativeMethods.vector_Mat_delete(ptr);
+        NativeMethods.vector_Mat_delete(CvPtr);
         base.DisposeUnmanaged();
     }
 
@@ -63,22 +65,8 @@ public class VectorOfMat : DisposableCvObject, IStdVector<Mat>
     {
         get
         {
-            var res = NativeMethods.vector_Mat_getSize(ptr);
-            GC.KeepAlive(this);
+            var res = NativeMethods.vector_Mat_getSize(Handle);
             return (int)res;
-        }
-    }
-
-    /// <summary>
-    /// &amp;vector[0]
-    /// </summary>
-    public IntPtr ElemPtr
-    {
-        get
-        {
-            var res = NativeMethods.vector_Mat_getPointer(ptr);
-            GC.KeepAlive(this);
-            return res;
         }
     }
 
@@ -110,8 +98,7 @@ public class VectorOfMat : DisposableCvObject, IStdVector<Mat>
             dst[i] = m;
             dstPtr[i] = m.CvPtr;
         }
-        NativeMethods.vector_Mat_assignToArray(ptr, dstPtr);
-        GC.KeepAlive(this);
+        NativeMethods.vector_Mat_assignToArray(Handle, dstPtr);
 
         return dst;
     }

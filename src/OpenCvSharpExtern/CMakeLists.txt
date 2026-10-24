@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.15)
 
 include_directories(${OpenCV_INCLUDE_DIR})
 IF(!EMSCRIPTEN)
@@ -6,21 +6,91 @@ IF(!EMSCRIPTEN)
 ENDIF()
 IF(APPLE)
     # Fix linking on 10.14+. See https://stackoverflow.com/questions/54068035
-    link_directories(/usr/local/lib)
+    # Intel Homebrew: /usr/local/lib; Apple Silicon Homebrew: /opt/homebrew/lib
+    link_directories(/usr/local/lib /opt/homebrew/lib)
 ENDIF()
 
 file(GLOB OPENCVSHARP_FILES *.cpp)
+if(OPENCVSHARP_MINIMAL)
+	set(OPENCVSHARP_FILES core.cpp imgproc.cpp imgcodecs.cpp std_string.cpp std_vector.cpp)
+endif()
+
+# Resolve Eigen3, HDF5 and libavif targets before OpenCV config is loaded.
+# OpenCV's static cmake config references these targets but does not
+# call find_package for them, so they must be pre-defined.
+# Note: OpenCV's bundled protobuf (libprotobuf) is defined by OpenCV's own
+# OpenCVModules.cmake — do NOT pre-create it or it will conflict.
+if(APPLE)
+	find_package(Eigen3 CONFIG REQUIRED)
+	find_package(HDF5 CONFIG REQUIRED)
+	find_package(libavif CONFIG REQUIRED)
+endif()
+
+# On Windows, OpenCV is built as a static library; tell the Windows Pack config to look for static libs.
+# Also force /MT (static CRT) to match OpenCV's build configuration, and enable /MP for parallel compilation.
+# Add the vcpkg lib dir to the linker search path so that plain-name lib references in
+# OpenCVModules.cmake (e.g. tesseract55.lib) are resolved even on multi-config generators
+# where cmake may not emit the full path for release-only vcpkg builds.
+if(WIN32)
+	set(OpenCV_STATIC ON)
+	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
+	if(DEFINED VCPKG_INSTALLED_DIR AND DEFINED VCPKG_TARGET_TRIPLET)
+		link_directories("${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib")
+	endif()
+endif()
 
 find_package(OpenCV REQUIRED)
 
-# iconv support isn't automatic on some systems
-if(CMAKE_VERSION VERSION_GREATER "3.11")
-  find_package(Iconv QUIET)
-  if(Iconv_FOUND)
-    ocv_target_link_libraries(${the_module} Iconv::Iconv)
-  else()
-    ocv_target_compile_definitions(${the_module} PRIVATE "NO_ICONV=1")
-  endif()
+# OpenCV's installed package exposes built modules as imported targets, but it
+# does not propagate the HAVE_OPENCV_* macros used by OpenCV's own build. Mirror
+# module-presence macros so the bindings stay disabled in slim/WASM
+# profiles where the corresponding targets are absent.
+if(TARGET opencv_structured_light)
+	add_compile_definitions(HAVE_OPENCV_STRUCTURED_LIGHT)
+endif()
+if(TARGET opencv_surface_matching)
+	add_compile_definitions(HAVE_OPENCV_SURFACE_MATCHING)
+endif()
+if(TARGET opencv_intensity_transform)
+	add_compile_definitions(HAVE_OPENCV_INTENSITY_TRANSFORM)
+endif()
+if(TARGET opencv_fuzzy)
+	add_compile_definitions(HAVE_OPENCV_FUZZY)
+endif()
+if(TARGET opencv_bioinspired)
+	add_compile_definitions(HAVE_OPENCV_BIOINSPIRED)
+endif()
+if(TARGET opencv_ccalib)
+	add_compile_definitions(HAVE_OPENCV_CCALIB)
+endif()
+if(TARGET opencv_dnn_objdetect)
+	add_compile_definitions(HAVE_OPENCV_DNN_OBJDETECT)
+endif()
+if(TARGET opencv_dpm)
+	add_compile_definitions(HAVE_OPENCV_DPM)
+endif()
+if(TARGET opencv_rapid)
+	add_compile_definitions(HAVE_OPENCV_RAPID)
+endif()
+if(TARGET opencv_reg)
+	add_compile_definitions(HAVE_OPENCV_REG)
+endif()
+if(TARGET opencv_videostab)
+	add_compile_definitions(HAVE_OPENCV_VIDEOSTAB)
+endif()
+if(TARGET opencv_xfeatures2d)
+	add_compile_definitions(HAVE_OPENCV_XFEATURES2D)
+endif()
+
+# iconv and Tesseract are not part of the minimal Android module profile.
+if(OPENCVSHARP_MINIMAL)
+	add_compile_definitions(NO_ICONV=1)
+else()
+	find_package(Iconv QUIET)
+	if(NOT Iconv_FOUND)
+		add_compile_definitions(NO_ICONV=1)
+	endif()
 endif()
 
 if(OpenCV_FOUND)
@@ -28,9 +98,6 @@ if(OpenCV_FOUND)
 	#set(LIBS ${LIBS} ${OpenCV_LIBRARIES})
 
 	if(CMAKE_GENERATOR MATCHES "Visual Studio")
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-		
 		set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib")
 	endif()
 
@@ -40,6 +107,49 @@ if(OpenCV_FOUND)
 	else()
 		add_library(OpenCvSharpExtern SHARED ${OPENCVSHARP_FILES})
 		target_link_libraries(OpenCvSharpExtern ${OpenCV_LIBRARIES})
+		if(ANDROID)
+			# NDK r27 needs explicit 16 KB ELF and RELRO alignment for 16 KB page devices.
+			target_link_options(OpenCvSharpExtern PRIVATE
+				-Wl,-z,max-page-size=16384
+				-Wl,-z,common-page-size=16384)
+		endif()
+
+		if(UNIX AND NOT APPLE)
+			# Drop NEEDED entries for libraries that are passed on the link line by some static
+			# 3rd-party dependency (e.g. libatomic.so.1) but whose symbols are never actually
+			# referenced by the resulting binary. See issue #2065.
+			target_link_options(OpenCvSharpExtern PRIVATE -Wl,--as-needed)
+
+			# FFmpeg's optimized x86-64 assembly uses direct PC-relative references to global
+			# constants. Keep the statically linked FFmpeg implementation private so those
+			# references bind locally when producing this shared library. See issue #2085.
+			foreach(ffmpeg_archive IN ITEMS libavcodec.a libavformat.a libavutil.a libswscale.a)
+				target_link_options(OpenCvSharpExtern PRIVATE
+					"-Wl,--exclude-libs,${ffmpeg_archive}")
+			endforeach()
+		endif()
+	endif()
+
+	if(Iconv_FOUND)
+		target_link_libraries(OpenCvSharpExtern Iconv::Iconv)
+	endif()
+
+	# Link Tesseract on Windows, Linux, and macOS.
+	# Windows: installed as a static library via vcpkg (CMAKE_PREFIX_PATH points to vcpkg_installed/).
+	# Linux:   installed as a static library by packaging/docker/manylinux/build_static_deps.sh
+	#          into CMAKE_PREFIX_PATH (typically /opt/deps).
+	# macOS:   installed as a static library via vcpkg (CMAKE_PREFIX_PATH includes vcpkg_installed/).
+	if(NOT EMSCRIPTEN AND NOT OPENCVSHARP_MINIMAL)
+		find_package(Tesseract QUIET)
+		if(Tesseract_FOUND)
+			if(WIN32)
+				# vcpkg installs only the release variant of Tesseract (no debug libs).
+				# Map Debug configuration to Release so the linker does not look for tesseract*d.lib.
+				set_target_properties(Tesseract::libtesseract PROPERTIES
+					MAP_IMPORTED_CONFIG_DEBUG Release)
+			endif()
+			target_link_libraries(OpenCvSharpExtern Tesseract::libtesseract)
+		endif()
 	endif()
 
 	install(TARGETS OpenCvSharpExtern
@@ -47,4 +157,30 @@ if(OpenCV_FOUND)
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib/static
 	)
+
+	# On Windows: copy DLL and the OpenCV FFmpeg plugin DLL to the test project directory.
+	# Disabled for slim builds (NO_INSTALL_TO_TEST=ON) to avoid overwriting the full DLL.
+	if(WIN32 AND NOT EMSCRIPTEN AND NOT NO_INSTALL_TO_TEST)
+		set(TEST_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/../test/OpenCvSharp.Tests")
+
+		add_custom_command(TARGET OpenCvSharpExtern POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				$<TARGET_FILE:OpenCvSharpExtern>
+				"${TEST_OUTPUT_DIR}/OpenCvSharpExtern.dll"
+			COMMENT "Copying OpenCvSharpExtern.dll to test project"
+		)
+
+		set(OPENCV_VER_STR "${OpenCV_VERSION_MAJOR}${OpenCV_VERSION_MINOR}${OpenCV_VERSION_PATCH}")
+		set(OPENCV_FFMPEG_DLL
+			"${OpenCV_INSTALL_PATH}/${OpenCV_ARCH}/${OpenCV_RUNTIME}/bin/opencv_videoio_ffmpeg${OPENCV_VER_STR}_64.dll")
+
+		if(EXISTS "${OPENCV_FFMPEG_DLL}")
+			add_custom_command(TARGET OpenCvSharpExtern POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different
+					"${OPENCV_FFMPEG_DLL}"
+					"${TEST_OUTPUT_DIR}/opencv_videoio_ffmpeg${OPENCV_VER_STR}_64.dll"
+				COMMENT "Copying opencv_videoio_ffmpeg DLL to test project"
+			)
+		endif()
+	endif()
 endif(OpenCV_FOUND)

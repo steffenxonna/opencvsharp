@@ -1,18 +1,19 @@
-﻿using OpenCvSharp.Internal.Util;
+using OpenCvSharp.Internal.Util;
 
 namespace OpenCvSharp.Internal.Vectors;
 
 /// <summary> 
 /// </summary>
 // ReSharper disable once InconsistentNaming
-public class VectorOfVectorPoint2f : DisposableCvObject, IStdVector<Point2f[]>
+public class VectorOfVectorPoint2f : CvObject, IStdVector<Point2f[]>
 {
     /// <summary>
     /// Constructor
     /// </summary>
     public VectorOfVectorPoint2f()
     {
-        ptr = NativeMethods.vector_vector_Point2f_new1();
+        var p = NativeMethods.vector_vector_Point2f_new1();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
     }
         
     /// <summary>
@@ -20,7 +21,7 @@ public class VectorOfVectorPoint2f : DisposableCvObject, IStdVector<Point2f[]>
     /// </summary>
     protected override void DisposeUnmanaged()
     {
-        NativeMethods.vector_vector_Point2f_delete(ptr);
+        NativeMethods.vector_vector_Point2f_delete(CvPtr);
         base.DisposeUnmanaged();
     }
 
@@ -29,8 +30,7 @@ public class VectorOfVectorPoint2f : DisposableCvObject, IStdVector<Point2f[]>
     /// </summary>
     public int GetSize1()
     {
-        var res = NativeMethods.vector_vector_Point2f_getSize1(ptr);
-        GC.KeepAlive(this);
+        var res = NativeMethods.vector_vector_Point2f_getSize1(Handle);
         return (int)res;
     }
 
@@ -46,9 +46,8 @@ public class VectorOfVectorPoint2f : DisposableCvObject, IStdVector<Point2f[]>
     {
         var size1 = GetSize1();
         var size2 = new nuint[size1];
-        NativeMethods.vector_vector_Point2f_getSize2(ptr, size2);
-        GC.KeepAlive(this);
-        return size2.Select(s => (long)s).ToArray();
+        NativeMethods.vector_vector_Point2f_getSize2(Handle, size2);
+        return size2.ToInt64Array();
     }
 
     /// <summary>
@@ -69,8 +68,7 @@ public class VectorOfVectorPoint2f : DisposableCvObject, IStdVector<Point2f[]>
         }
 
         using var retPtr = new ArrayAddress2<Point2f>(ret);
-        NativeMethods.vector_vector_Point2f_copy(ptr, retPtr.GetPointer());
-        GC.KeepAlive(this);
+        NativeMethods.vector_vector_Point2f_copy(Handle, retPtr.GetPointer());
         return ret;
     }
 }

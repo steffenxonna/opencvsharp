@@ -1,17 +1,18 @@
-﻿using OpenCvSharp.Internal.Util;
+using OpenCvSharp.Internal.Util;
 
 namespace OpenCvSharp.Internal.Vectors;
 
 /// <summary> 
 /// </summary>
-public class VectorOfVectorInt32 : DisposableCvObject, IStdVector<int[]>
+public class VectorOfVectorInt32 : CvObject, IStdVector<int[]>
 {
     /// <summary>
     /// Constructor
     /// </summary>
     public VectorOfVectorInt32()
     {
-        ptr = NativeMethods.vector_vector_int_new1();
+        var p = NativeMethods.vector_vector_int_new1();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle: false, releaseAction: null));
     }
         
     /// <summary>
@@ -19,7 +20,7 @@ public class VectorOfVectorInt32 : DisposableCvObject, IStdVector<int[]>
     /// </summary>
     protected override void DisposeUnmanaged()
     {
-        NativeMethods.vector_vector_int_delete(ptr);
+        NativeMethods.vector_vector_int_delete(CvPtr);
         base.DisposeUnmanaged();
     }
 
@@ -28,8 +29,7 @@ public class VectorOfVectorInt32 : DisposableCvObject, IStdVector<int[]>
     /// </summary>
     public int GetSize1()
     {
-        var res = NativeMethods.vector_vector_int_getSize1(ptr);
-        GC.KeepAlive(this);
+        var res = NativeMethods.vector_vector_int_getSize1(Handle);
         return (int)res;
     }
 
@@ -45,9 +45,8 @@ public class VectorOfVectorInt32 : DisposableCvObject, IStdVector<int[]>
     {
         var size1 = GetSize1();
         var size2 = new nuint[size1];
-        NativeMethods.vector_vector_int_getSize2(ptr, size2);
-        GC.KeepAlive(this);
-        return size2.Select(s => (long)s).ToArray();
+        NativeMethods.vector_vector_int_getSize2(Handle, size2);
+        return size2.ToInt64Array();
     }
 
     /// <summary>
@@ -68,8 +67,7 @@ public class VectorOfVectorInt32 : DisposableCvObject, IStdVector<int[]>
         }
 
         using var retPtr = new ArrayAddress2<int>(ret);
-        NativeMethods.vector_vector_int_copy(ptr, retPtr.GetPointer());
-        GC.KeepAlive(this);
+        NativeMethods.vector_vector_int_copy(Handle, retPtr.GetPointer());
         return ret;
     }
 }

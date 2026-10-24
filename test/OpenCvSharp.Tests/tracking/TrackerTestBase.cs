@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace OpenCvSharp.Tests.Tracking;
 
@@ -6,8 +6,7 @@ public abstract class TrackerTestBase : TestBase
 {
     protected static void InitBase(Tracker tracker)
     {
-        if (tracker is null) 
-            throw new ArgumentNullException(nameof(tracker));
+        ArgumentNullException.ThrowIfNull(tracker);
 
         using var vc = LoadImage("lenna.png");
         tracker.Init(vc, new Rect(220, 60, 200, 220));
@@ -15,8 +14,7 @@ public abstract class TrackerTestBase : TestBase
 
     protected static void UpdateBase(Tracker tracker)
     {
-        if (tracker is null)            
-            throw new System.ArgumentNullException(nameof(tracker));
+        ArgumentNullException.ThrowIfNull(tracker);
             
         // ETHZ dataset
         // ETHZ is Eidgenössische Technische Hochschule Zürich, in Deutsch
@@ -47,9 +45,10 @@ public abstract class TrackerTestBase : TestBase
             if (Debugger.IsAttached)
             {
                 Directory.CreateDirectory(path);
-                mat.Rectangle(
-                    new Point((int) bb.X, (int) bb.Y),
-                    new Point((int) (bb.X + bb.Width), (int) (bb.Y + bb.Height)),
+                Cv2.Rectangle(
+                    mat,
+                    new Point(bb.X, bb.Y),
+                    new Point(bb.X + bb.Width, bb.Y + bb.Height),
                     new Scalar(0, 0, 255));
                 Cv2.ImWrite(Path.Combine(path, file), mat);
             }

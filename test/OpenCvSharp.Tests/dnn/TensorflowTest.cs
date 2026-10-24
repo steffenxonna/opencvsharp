@@ -1,4 +1,5 @@
-﻿using OpenCvSharp.Dnn;
+using System.Runtime.InteropServices;
+using OpenCvSharp.Dnn;
 using Xunit;
 
 #pragma warning disable CA1707
@@ -7,17 +8,20 @@ namespace OpenCvSharp.Tests.Dnn;
 
 public class TensorflowTest : TestBase
 {
-    [PlatformSpecificFact("Windows", "Linux")]
+    // Platform check for conditional test execution
+    public static bool IsWindowsOrLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+
+    [Fact(Skip = "Only runs on Windows or Linux", SkipUnless = nameof(IsWindowsOrLinux))]
     // ReSharper disable once IdentifierTypo
     public void LoadMnistTrainingDataFromFile_NetRecognizesAnImageOfA9Correctly()
     {
         using var imgOf9 = LoadImage(Path.Combine("Dnn","MNIST_9.png"), ImreadModes.Grayscale);
             
-        var img9DataBlob = CvDnn.BlobFromImage(imgOf9, 1f / 255.0f);
+        var img9DataBlob = Cv2.Dnn.BlobFromImage(imgOf9, 1f / 255.0f);
         var modelPath = Path.Combine("_data", "model", "MNISTTest_tensorflow.pb");
         var res = -1;
 
-        using (var tfGraph = CvDnn.ReadNetFromTensorflow(modelPath))
+        using (var tfGraph = Cv2.Dnn.ReadNetFromTensorflow(modelPath))
         {
             Assert.NotNull(tfGraph);
             tfGraph!.SetInput(img9DataBlob);
@@ -29,19 +33,19 @@ public class TensorflowTest : TestBase
         Assert.Equal(9, res);
     }
     
-    [PlatformSpecificFact("Windows", "Linux")]
+    [Fact(Skip = "Only runs on Windows or Linux", SkipUnless = nameof(IsWindowsOrLinux))]
     // ReSharper disable once IdentifierTypo
     public void LoadMnistTrainingDataFromStream_NetRecognizesAnImageOfA5Correctly()
     {
         using var imgOf5 = LoadImage(Path.Combine("Dnn", "MNIST_5.png"), ImreadModes.Grayscale);
 
-        var img5DataBlob = CvDnn.BlobFromImage(imgOf5, 1f / 255.0f);
+        var img5DataBlob = Cv2.Dnn.BlobFromImage(imgOf5, 1f / 255.0f);
         var modelPath = Path.Combine("_data", "model", "MNISTTest_tensorflow.pb");
         var res = -1;
 
         using (var stream = new FileStream(modelPath, FileMode.Open))
         {
-            using (var tfGraph = CvDnn.ReadNetFromTensorflow(stream))
+            using (var tfGraph = Cv2.Dnn.ReadNetFromTensorflow(stream))
             {
                 Assert.NotNull(tfGraph);
                 tfGraph!.SetInput(img5DataBlob);
@@ -63,7 +67,7 @@ public class TensorflowTest : TestBase
 
         var minIdx = new[] {-1};
         var maxIdx = new[] { -1 };
-        strip.MinMaxIdx(minIdx,maxIdx); 
+        Cv2.MinMaxIdx(strip, minIdx, maxIdx);
 
         return maxIdx[0];
     }

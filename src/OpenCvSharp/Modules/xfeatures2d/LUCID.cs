@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 namespace OpenCvSharp.XFeatures2D;
 
@@ -12,16 +12,12 @@ namespace OpenCvSharp.XFeatures2D;
 // ReSharper disable once InconsistentNaming
 public class LUCID : Feature2D
 {
-    private Ptr? ptrObj;
-
     /// <summary>
     /// 
     /// </summary>
-    internal LUCID(IntPtr p)
-    {
-        ptrObj = new Ptr(p);
-        ptr = ptrObj.Get();
-    }
+    private LUCID(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.xfeatures2d_Ptr_LUCID_delete(p)))
+    { }
 
     /// <summary>
     /// Constructor
@@ -33,34 +29,47 @@ public class LUCID : Feature2D
         NativeMethods.HandleException(
             NativeMethods.xfeatures2d_LUCID_create(
                 lucidKernel, blurKernel, out var ptr));
-        return new LUCID(ptr);
+        NativeMethods.HandleException(NativeMethods.xfeatures2d_Ptr_LUCID_get(ptr, out var rawPtr));
+        return new LUCID(ptr, rawPtr);
     }
 
     /// <summary>
-    /// Releases managed resources
+    /// Kernel for descriptor construction, where 1=3x3, 2=5x5, 3=7x7 and so forth.
     /// </summary>
-    protected override void DisposeManaged()
+    public int LucidKernel
     {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
-    }
-
-    internal class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
+        get
         {
+            ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xfeatures2d_Ptr_LUCID_get(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.xfeatures2d_LUCID_getLucidKernel(Handle, out var ret));
             return ret;
         }
-
-        protected override void DisposeUnmanaged()
+        set
         {
+            ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xfeatures2d_Ptr_LUCID_delete(ptr));
-            base.DisposeUnmanaged();
+                NativeMethods.xfeatures2d_LUCID_setLucidKernel(Handle, value));
+        }
+    }
+
+    /// <summary>
+    /// Kernel for blurring image prior to descriptor construction, where 1=3x3, 2=5x5, 3=7x7 and so forth.
+    /// </summary>
+    public int BlurKernel
+    {
+        get
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_LUCID_getBlurKernel(Handle, out var ret));
+            return ret;
+        }
+        set
+        {
+            ThrowIfDisposed();
+            NativeMethods.HandleException(
+                NativeMethods.xfeatures2d_LUCID_setBlurKernel(Handle, value));
         }
     }
 }

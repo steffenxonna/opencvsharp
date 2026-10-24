@@ -1,9 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace OpenCvSharp.Tests.VideoIO;
-#if NETFRAMEWORK
 public class VideoWriterTest : TestBase
 {
     private readonly ITestOutputHelper testOutputHelper;
@@ -24,9 +22,9 @@ public class VideoWriterTest : TestBase
             {
                 using var writer = new VideoWriter(fileName, VideoCaptureAPIs.OPENCV_MJPEG, FourCC.MJPG, 10, image.Size());
                 Assert.True(writer.IsOpened());
-                writer.Write(image);
-                writer.Write(image);
-                writer.Write(image);
+                Assert.True(writer.Write(image));
+                Assert.True(writer.Write(image));
+                Assert.True(writer.Write(image));
             }
 
             using var capture = new VideoCapture(fileName);
@@ -203,4 +201,3 @@ public class VideoWriterTest : TestBase
         }
     }
 }
-#endif

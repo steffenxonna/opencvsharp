@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 #pragma warning disable 1591
@@ -9,18 +9,20 @@ namespace OpenCvSharp.Internal;
 
 static partial class NativeMethods
 {
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus core_Algorithm_write(IntPtr obj, IntPtr fs);
+    // The Algorithm object handle is an OpenCvSafeHandle, so the marshaller keeps the managed object
+    // alive for the call and callers drop GC.KeepAlive(this). Shared by all Algorithm-derived types.
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus core_Algorithm_write(OpenCvSafeHandle obj, IntPtr fs);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus core_Algorithm_read(IntPtr obj, IntPtr fn);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus core_Algorithm_read(OpenCvSafeHandle obj, IntPtr fn);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus core_Algorithm_empty(IntPtr obj, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus core_Algorithm_empty(OpenCvSafeHandle obj, out int returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, BestFitMapping = true, ThrowOnUnmappableChar = true)]
-    public static extern ExceptionStatus core_Algorithm_save(IntPtr obj, string filename);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus core_Algorithm_save(OpenCvSafeHandle obj, [MarshalAs(UnmanagedType.LPStr)] string filename);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus core_Algorithm_getDefaultName(IntPtr obj, IntPtr buf);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus core_Algorithm_getDefaultName(OpenCvSafeHandle obj, IntPtr buf);
 }

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 #pragma warning disable 1591
@@ -9,34 +9,34 @@ namespace OpenCvSharp.Internal;
 
 static partial class NativeMethods
 {
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus ml_StatModel_clear(IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus ml_StatModel_clear(OpenCvSafeHandle obj);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus ml_StatModel_getVarCount(IntPtr obj, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus ml_StatModel_getVarCount(OpenCvSafeHandle obj, out int returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus ml_StatModel_empty(IntPtr obj, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus ml_StatModel_empty(OpenCvSafeHandle obj, out int returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus ml_StatModel_isTrained(IntPtr obj, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus ml_StatModel_isTrained(OpenCvSafeHandle obj, out int returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus ml_StatModel_isClassifier(IntPtr obj, out int returnValue);
-        
-    /*[Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus ml_StatModel_train1(
-        IntPtr obj, IntPtr trainData, int flags, out int returnValue);*/
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus ml_StatModel_isClassifier(OpenCvSafeHandle obj, out int returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus ml_StatModel_train2(
-        IntPtr obj, IntPtr samples, int layout, IntPtr responses, out int returnValue);
-        
-    /*[Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus ml_StatModel_calcError(
-        IntPtr obj, IntPtr data, int test, IntPtr resp, out float returnValue);*/
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus ml_StatModel_train1(
+        OpenCvSafeHandle obj, IntPtr trainData, int flags, out int returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus ml_StatModel_predict(
-        IntPtr obj, IntPtr samples, IntPtr results, int flags, out float returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus ml_StatModel_train2(
+        OpenCvSafeHandle obj, in InputArrayProxy samples, int layout, in InputArrayProxy responses, out int returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus ml_StatModel_calcError(
+        OpenCvSafeHandle obj, IntPtr data, [MarshalAs(UnmanagedType.Bool)] bool test, in OutputArrayProxy resp, out float returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial ExceptionStatus ml_StatModel_predict(
+        OpenCvSafeHandle obj, in InputArrayProxy samples, in OutputArrayProxy results, int flags, out float returnValue);
 }

@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using OpenCvSharp.XPhoto;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace OpenCvSharp.Tests.XPhoto;
 
@@ -22,9 +21,9 @@ public class XPhotoTest : TestBase
         using var b = new Mat(src.Rows, src.Cols, src.Type());
         using var g = new Mat(src.Rows, src.Cols, src.Type());
         using var r = new Mat(src.Rows, src.Cols, src.Type());
-        CvXPhoto.ApplyChannelGains(src, b, 2, 1, 1);
-        CvXPhoto.ApplyChannelGains(src, g, 1, 2, 1);
-        CvXPhoto.ApplyChannelGains(src, r, 1, 1, 2);
+        Cv2.XPhoto.ApplyChannelGains(src, b, 2, 1, 1);
+        Cv2.XPhoto.ApplyChannelGains(src, g, 1, 2, 1);
+        Cv2.XPhoto.ApplyChannelGains(src, r, 1, 1, 2);
 
         if (Debugger.IsAttached)
         {
@@ -44,7 +43,7 @@ public class XPhotoTest : TestBase
     [Fact]
     public void GrayworldWBBalanceWhite()
     {
-        using var wb = CvXPhoto.CreateGrayworldWB();
+        using var wb = Cv2.XPhoto.CreateGrayworldWB();
         using var src = LoadImage("lenna.png");
         using var dst = new Mat(src.Rows, src.Cols, src.Type());
         wb.BalanceWhite(src, dst);
@@ -63,7 +62,7 @@ public class XPhotoTest : TestBase
     [Fact]
     public void GrayworldWBProperties()
     {
-        using var wb = CvXPhoto.CreateGrayworldWB();
+        using var wb = Cv2.XPhoto.CreateGrayworldWB();
         var saturationThreshold = wb.SaturationThreshold;
 
         const float val = 100f;
@@ -79,7 +78,7 @@ public class XPhotoTest : TestBase
         using var src = LoadImage("building.jpg");
         using var mask = LoadImage("building_mask.bmp", ImreadModes.Grayscale);
         using var dst = new Mat(src.Size(), src.Type());
-        CvXPhoto.Inpaint(src, mask, dst, InpaintTypes.SHIFTMAP);
+        Cv2.XPhoto.Inpaint(src, mask, dst, OpenCvSharp.XPhoto.InpaintTypes.SHIFTMAP);
         ShowImagesWhenDebugMode(src);
         ShowImagesWhenDebugMode(dst);
     }
@@ -87,7 +86,7 @@ public class XPhotoTest : TestBase
     [Fact]
     public void LearningBasedWBBalanceWhite()
     {
-        using var wb = CvXPhoto.CreateLearningBasedWB(null);
+        using var wb = Cv2.XPhoto.CreateLearningBasedWB(null);
         using var src = LoadImage("lenna.png");
         using var dst = new Mat(src.Rows, src.Cols, src.Type());
         wb.BalanceWhite(src, dst);
@@ -133,7 +132,7 @@ public class XPhotoTest : TestBase
     {
         // About model file
         // http://docs.opencv.org/trunk/dc/dcb/tutorial_xphoto_training_white_balance.html
-        using var wb = CvXPhoto.CreateLearningBasedWB("");
+        using var wb = Cv2.XPhoto.CreateLearningBasedWB("");
         using var src = LoadImage("lenna.png");
         using var dst = new Mat(src.Rows, src.Cols, src.Type());
         wb.BalanceWhite(src, dst);
@@ -175,7 +174,7 @@ public class XPhotoTest : TestBase
     [Fact]
     public void SimpleWBBalanceWhite()
     {
-        using var wb = CvXPhoto.CreateSimpleWB();
+        using var wb = Cv2.XPhoto.CreateSimpleWB();
         using var src = LoadImage("lenna.png");
         using var dst = new Mat(src.Rows, src.Cols, src.Type());
         wb.BalanceWhite(src, dst);
@@ -226,7 +225,7 @@ public class XPhotoTest : TestBase
     {
         using var src = LoadImage("lenna.png");
         using var dst = new Mat();
-        CvXPhoto.DctDenoising(src, dst, 1);
+        Cv2.XPhoto.DctDenoising(src, dst, 1);
 
         if (Debugger.IsAttached)
         {
@@ -234,12 +233,12 @@ public class XPhotoTest : TestBase
         }
     }
 
-    [Fact]
+    [Fact(Skip = "OpenCV 5: bm3dDenoising corrupts the heap and crashes the test process. See https://github.com/shimat/opencvsharp/issues/1904")]
     public void Bm3dDenoising()
     {
         using var src = LoadImage("lenna.png", ImreadModes.Grayscale);
         using var dst = new Mat();
-        CvXPhoto.Bm3dDenoising(src, dst);
+        Cv2.XPhoto.Bm3dDenoising(src, dst);
 
         if (Debugger.IsAttached)
         {
@@ -252,7 +251,7 @@ public class XPhotoTest : TestBase
     {
         using var src = LoadImage("lenna.png", ImreadModes.Grayscale);
         using var dst = new Mat();
-        CvXPhoto.OilPainting(src, dst, 5, 10);
+        Cv2.XPhoto.OilPainting(src, dst, 5, 10);
 
         if (Debugger.IsAttached)
         {
@@ -260,61 +259,5 @@ public class XPhotoTest : TestBase
         }
     }
 
-#if NET48
-        [ExplicitStaFact]
-        public void Sample()
-        {
-            if (!Debugger.IsAttached)
-                return;
-
-            string[] files;
-            using (var dialog = new System.Windows.Forms.OpenFileDialog
-            {
-                RestoreDirectory = true,
-                Multiselect = true,
-                Filter = "LoadImage Files(*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp"
-            })
-            {
-                if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-                    return;
-                files = dialog.FileNames;
-            }
-
-            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var dstDir = System.IO.Path.Combine(desktop, "WB");
-            System.IO.Directory.CreateDirectory(dstDir);
-
-            using var simpleWB = SimpleWB.Create();
-            using var learningWB = LearningBasedWB.Create("");
-            using var grayworldWB = GrayworldWB.Create();
-
-            foreach (var file in files)
-            {
-                testOutputHelper.WriteLine(System.IO.Path.GetFileNameWithoutExtension(file));
-
-                using var src = new Mat(file);
-                using var dstSimple = new Mat();
-                using var dstLearning = new Mat();
-                using var dstGrayworld = new Mat();
-                simpleWB.BalanceWhite(src, dstSimple);
-                learningWB.BalanceWhite(src, dstLearning);
-                grayworldWB.BalanceWhite(src, dstGrayworld);
-
-                using var temp1 = new Mat();
-                using var temp2 = new Mat();
-                using var dst = new Mat();
-                Cv2.HConcat(src, dstSimple, temp1);
-                Cv2.HConcat(dstLearning, dstGrayworld, temp2);
-                Cv2.VConcat(temp1, temp2, dst);
-
-                /*
-                using (new Window("src", src))
-                using (new Window("dst", dst))
-                {
-                    Cv2.WaitKey();
-                }*/
-                dst.SaveImage(System.IO.Path.Combine(dstDir, $"{System.IO.Path.GetFileNameWithoutExtension(file)}.png"));
-            }
-        }
-#endif
 }
+

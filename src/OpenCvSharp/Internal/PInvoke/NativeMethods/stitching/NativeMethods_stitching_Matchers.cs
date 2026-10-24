@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using OpenCvSharp.Detail;
 
@@ -10,27 +10,27 @@ namespace OpenCvSharp.Internal;
 
 static partial class NativeMethods
 {
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus stitching_computeImageFeatures1(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_computeImageFeatures1(
         IntPtr featuresFinder,
         IntPtr[] images,
         int imagesLength,
         IntPtr featuresVec,
         IntPtr[]? masks);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern unsafe ExceptionStatus stitching_computeImageFeatures2(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static unsafe partial ExceptionStatus stitching_computeImageFeatures2(
         IntPtr featuresFinder,
-        IntPtr image,
+        in InputArrayProxy image,
         WImageFeatures* features,
-        IntPtr mask);
+        in InputArrayProxy mask);
 
 
     // FeaturesMatcher
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus stitching_FeaturesMatcher_apply(
-        IntPtr obj,
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_FeaturesMatcher_apply(
+        OpenCvSafeHandle obj,
         ref WImageFeatures features1, 
         ref WImageFeatures features2,
         out int outSrcImgIdx, 
@@ -41,11 +41,11 @@ static partial class NativeMethods
         IntPtr outH,
         out double outConfidence);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus stitching_FeaturesMatcher_apply2(
-        IntPtr obj,
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_FeaturesMatcher_apply2(
+        OpenCvSafeHandle obj,
         WImageFeatures[] features, int featuresSize,
-        IntPtr mask,
+        OpenCvSafeHandle mask,
         IntPtr outSrcImgIdx,
         IntPtr outDstImgIdx,
         IntPtr outMatches,
@@ -54,37 +54,65 @@ static partial class NativeMethods
         IntPtr outH,
         IntPtr outConfidence);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus stitching_FeaturesMatcher_isThreadSafe(
-        IntPtr obj, out int returnValue);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_FeaturesMatcher_isThreadSafe(
+        OpenCvSafeHandle obj, out int returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus stitching_FeaturesMatcher_collectGarbage(
-        IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_FeaturesMatcher_collectGarbage(
+        OpenCvSafeHandle obj);
 
 
     // BestOf2NearestMatcher
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus stitching_BestOf2NearestMatcher_new(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_BestOf2NearestMatcher_new(
         int tryUseGpu, float matchConf, int numMatchesThresh1, int numMatchesThresh2,
         out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus stitching_BestOf2NearestMatcher_delete(IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_BestOf2NearestMatcher_delete(IntPtr obj);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus stitching_BestOf2NearestMatcher_collectGarbage(IntPtr obj);
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_BestOf2NearestMatcher_collectGarbage(OpenCvSafeHandle obj);
 
 
     // AffineBestOf2NearestMatcher
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus stitching_AffineBestOf2NearestMatcher_new(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_AffineBestOf2NearestMatcher_new(
         int fullAffine, int tryUseGpu, float matchConf, int numMatchesThresh1,
         out IntPtr returnValue);
 
-    [Pure, DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern ExceptionStatus stitching_AffineBestOf2NearestMatcher_delete(
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_AffineBestOf2NearestMatcher_delete(
         IntPtr obj);
+
+
+    // BestOf2NearestRangeMatcher
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_BestOf2NearestRangeMatcher_new(
+        int rangeWidth, int tryUseGpu, float matchConf, int numMatchesThresh1, int numMatchesThresh2,
+        out IntPtr returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_BestOf2NearestRangeMatcher_delete(
+        IntPtr obj);
+
+
+    // LightGlueFeaturesMatcher
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_LightGlueFeaturesMatcher_new(
+        IntPtr lgMatcherSmartPtr, int numMatchesThresh1, int numMatchesThresh2, double matchesConfidenceThresh,
+        out IntPtr returnValue);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_LightGlueFeaturesMatcher_delete(
+        IntPtr obj);
+
+    [LibraryImport(DllExtern), UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial ExceptionStatus stitching_LightGlueFeaturesMatcher_setScoreThreshold(
+        OpenCvSafeHandle obj, float thresh);
 }

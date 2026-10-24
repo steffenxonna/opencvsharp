@@ -10,13 +10,15 @@ public partial class Mat
     protected override void DisposeManaged()
     {
         pinLifetime?.Dispose();
+        // Keep the view's owner (if any) alive until this view is disposed.
+        GC.KeepAlive(viewOwner);
         base.DisposeManaged();
     }
 
     /// <summary>
     /// Pins an array and unpins it when all references are released.
     /// </summary>
-    private class ArrayPinningLifetime : IDisposable
+    private sealed class ArrayPinningLifetime : IDisposable
     {
         private GCHandle handle;
         private int refCount;

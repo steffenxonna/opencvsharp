@@ -1,4 +1,4 @@
-﻿using OpenCvSharp.Internal;
+using OpenCvSharp.Internal;
 
 // ReSharper disable UnusedMember.Global
 
@@ -16,22 +16,9 @@ namespace OpenCvSharp.XPhoto;
 /// </summary>
 public sealed class TonemapDurand : Tonemap
 {
-    private Ptr? ptrObj;
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    private TonemapDurand(IntPtr ptrObjPtr)
-        : base(GetEntityPointer(ptrObjPtr, out var po))
-    {
-        ptrObj = po;
-    }
-
-    private static IntPtr GetEntityPointer(IntPtr ptrObjPtr, out Ptr ptrObj)
-    {
-        ptrObj = new Ptr(ptrObjPtr);
-        return ptrObj.Get();
-    }
+    private TonemapDurand(IntPtr smartPtr, IntPtr rawPtr)
+        : base(smartPtr, rawPtr, p => NativeMethods.HandleException(NativeMethods.xphoto_Ptr_TonemapDurand_delete(p)))
+    { }
 
     /// <summary>
     /// Creates TonemapDurand object
@@ -49,18 +36,9 @@ public sealed class TonemapDurand : Tonemap
         float gamma = 1.0f, float contrast = 4.0f, float saturation = 1.0f, float sigmaSpace = 2.0f, float sigmaColor = 2.0f)
     {
         NativeMethods.HandleException(
-            NativeMethods.xphoto_createTonemapDurand(gamma, contrast, saturation, sigmaSpace, sigmaColor, out var ptr));
-        return new TonemapDurand(ptr);
-    }
-
-    /// <summary>
-    /// Releases managed resources
-    /// </summary>
-    protected override void DisposeManaged()
-    {
-        ptrObj?.Dispose();
-        ptrObj = null;
-        base.DisposeManaged();
+            NativeMethods.xphoto_createTonemapDurand(gamma, contrast, saturation, sigmaSpace, sigmaColor, out var smartPtr));
+        NativeMethods.HandleException(NativeMethods.xphoto_Ptr_TonemapDurand_get(smartPtr, out var rawPtr));
+        return new TonemapDurand(smartPtr, rawPtr);
     }
 
     /// <summary>
@@ -73,19 +51,17 @@ public sealed class TonemapDurand : Tonemap
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xphoto_TonemapDurand_getSaturation(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.xphoto_TonemapDurand_getSaturation(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xphoto_TonemapDurand_setSaturation(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.xphoto_TonemapDurand_setSaturation(Handle, value));
         }
     }
-        
+
     /// <summary>
     /// Gets or sets resulting contrast on logarithmic scale, i. e. log(max / min), where max and min
     /// </summary>
@@ -95,16 +71,14 @@ public sealed class TonemapDurand : Tonemap
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xphoto_TonemapDurand_getContrast(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.xphoto_TonemapDurand_getContrast(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xphoto_TonemapDurand_setContrast(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.xphoto_TonemapDurand_setContrast(Handle, value));
         }
     }
 
@@ -117,16 +91,14 @@ public sealed class TonemapDurand : Tonemap
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xphoto_TonemapDurand_getSigmaSpace(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.xphoto_TonemapDurand_getSigmaSpace(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xphoto_TonemapDurand_setSigmaSpace(ptr, value));
-            GC.KeepAlive(this);
+                NativeMethods.xphoto_TonemapDurand_setSigmaSpace(Handle, value));
         }
     }
 
@@ -139,34 +111,14 @@ public sealed class TonemapDurand : Tonemap
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xphoto_TonemapDurand_getSigmaColor(ptr, out var ret));
-            GC.KeepAlive(this);
+                NativeMethods.xphoto_TonemapDurand_getSigmaColor(Handle, out var ret));
             return ret;
         }
         set
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.xphoto_TonemapDurand_setSigmaColor(ptr, value));
-            GC.KeepAlive(this);
-        }
-    }
-
-    private class Ptr(IntPtr ptr) : OpenCvSharp.Ptr(ptr)
-    {
-        public override IntPtr Get()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.xphoto_Ptr_TonemapDurand_get(ptr, out var ret));
-            GC.KeepAlive(this);
-            return ret;
-        }
-
-        protected override void DisposeUnmanaged()
-        {
-            NativeMethods.HandleException(
-                NativeMethods.xphoto_Ptr_TonemapDurand_delete(ptr));
-            base.DisposeUnmanaged();
+                NativeMethods.xphoto_TonemapDurand_setSigmaColor(Handle, value));
         }
     }
 }

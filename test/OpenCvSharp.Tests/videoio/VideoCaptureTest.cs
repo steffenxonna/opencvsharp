@@ -1,14 +1,34 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace OpenCvSharp.Tests.VideoIO;
-#if NETFRAMEWORK
     public class VideoCaptureTest : TestBase
     {
+        // Platform check for conditional test execution
+        public static bool IsLinux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+        public static bool IsWindows => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+        // True only when a real V4L2 device is present (e.g. /dev/video0)
+        public static bool HasV4L2Device => IsLinux && Directory.EnumerateFiles("/dev", "video*").Any();
+
+        private const string RtspUrlEnvironmentVariable = "OPENCVSHARP_TEST_RTSP_URL";
+
+        // The CI workflows start a local MediaMTX instance and set this URL.
+        public static bool HasRtspTestUrl =>
+            !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(RtspUrlEnvironmentVariable));
+
+        // Backend used for the custom-stream (IStreamReader/Stream) VideoCapture tests below.
+        // FFMPEG's custom-stream support (VideoCapture(Ptr<IStreamReader>, ...)) is flaky on the
+        // Windows CI runners' prebuilt FFmpeg plugin DLL (createCapture(stream, ...) reports not
+        // opened there, while it works locally and on Linux/macOS); MSMF is stream-capable on
+        // Windows and avoids that CI-only failure.
+        private static VideoCaptureAPIs StreamCaptureApi => IsWindows ? VideoCaptureAPIs.MSMF : VideoCaptureAPIs.FFMPEG;
+
         [Fact]
         public void ReadImageSequence()
         {
-            using var capture = new VideoCapture("_data/image/blob/shapes%d.png");
+            using var capture = new VideoCapture("_data/image/blob/shapes%d.png", VideoCaptureAPIs.IMAGES);
             using var image1 = new Mat("_data/image/blob/shapes1.png", ImreadModes.Color);
             using var image2 = new Mat("_data/image/blob/shapes2.png", ImreadModes.Color);
             using var image3 = new Mat("_data/image/blob/shapes3.png", ImreadModes.Color);
@@ -46,7 +66,7 @@ namespace OpenCvSharp.Tests.VideoIO;
         [Fact]
         public void GrabAndRetrieveImageSequence()
         {
-            using var capture = new VideoCapture("_data/image/blob/shapes%d.png");
+            using var capture = new VideoCapture("_data/image/blob/shapes%d.png", VideoCaptureAPIs.IMAGES);
             using var image1 = new Mat("_data/image/blob/shapes1.png", ImreadModes.Color);
             using var image2 = new Mat("_data/image/blob/shapes2.png", ImreadModes.Color);
             using var image3 = new Mat("_data/image/blob/shapes3.png", ImreadModes.Color);
@@ -86,6 +106,30 @@ namespace OpenCvSharp.Tests.VideoIO;
             }
         }
 
+        [Fact(
+            Skip = $"Set {RtspUrlEnvironmentVariable} to run the RTSP integration test",
+            SkipUnless = nameof(HasRtspTestUrl))]
+        public void ReadRtspStreamWithFFmpeg()
+        {
+            var url = Environment.GetEnvironmentVariable(RtspUrlEnvironmentVariable)!;
+            using var capture = new VideoCapture(
+                url,
+                VideoCaptureAPIs.FFMPEG,
+                [
+                    (int)VideoCaptureProperties.OpenTimeoutMsec, 10_000,
+                    (int)VideoCaptureProperties.ReadTimeoutMsec, 10_000,
+                ]);
+
+            Assert.True(capture.IsOpened());
+            Assert.Equal("FFMPEG", capture.GetBackendName());
+
+            using var frame = new Mat();
+            Assert.True(capture.Read(frame));
+            Assert.False(frame.Empty());
+            Assert.True(frame.Width > 0);
+            Assert.True(frame.Height > 0);
+        }
+
         [Fact]
         public void GetSetExceptionMode()
         {
@@ -98,7 +142,7 @@ namespace OpenCvSharp.Tests.VideoIO;
             Assert.True(capture.GetExceptionMode());
         }
 
-        [PlatformSpecificFact("Windows")]
+        [Fact(Skip = "Only runs on Windows", SkipUnless = nameof(IsWindows))]
         public void WaitAnyWindows()
         {
             using var capture = new VideoCapture("_data/image/blob/shapes%d.png");
@@ -106,23 +150,129 @@ namespace OpenCvSharp.Tests.VideoIO;
 
             var ex = Assert.Throws<OpenCVException>(() =>
             {
-                var result = VideoCapture.WaitAny(new[] {capture}, out var readyIndex, 0);
+                var result = VideoCapture.WaitAny([capture], out var readyIndex, 0);
             });
             Assert.Equal("VideoCapture::waitAny() is supported by V4L backend only", ex.ErrMsg);
         }
 
-        [PlatformSpecificFact("Linux")]
+        [Fact(Skip = "Requires a V4L2 device (/dev/video*)", SkipUnless = nameof(HasV4L2Device))]
         public void WaitAnyLinux()
         {
             using var capture = new VideoCapture("_data/image/blob/shapes%d.png", VideoCaptureAPIs.V4L2);
             Assert.True(capture.IsOpened());
 
-            var result = VideoCapture.WaitAny(new[] {capture}, out var readyIndex, 0);
+            var result = VideoCapture.WaitAny([capture], out var readyIndex, 0);
             Assert.True(result);
-            Assert.Equal(new[]{0}, readyIndex);
+            var expected = new[] { 0 };
+            Assert.Equal(expected, readyIndex);
 
             Assert.True(capture.IsOpened());
             Assert.True(capture.Grab());
         }
+
+        private static byte[] CreateSampleVideoBytes()
+        {
+            // OPENCV_MJPEG is a built-in codec (no external plugin DLL required), so this is stable
+            // across all CI platforms, unlike relying on an FFmpeg-specific fourcc/container combination.
+            const string fileName = "temp_stream_source.avi";
+            try
+            {
+                using var image = LoadImage("lenna.png");
+                using (var writer = new VideoWriter(fileName, VideoCaptureAPIs.OPENCV_MJPEG, FourCC.MJPG, 10, image.Size()))
+                {
+                    Assert.True(writer.IsOpened());
+                    Assert.True(writer.Write(image));
+                    Assert.True(writer.Write(image));
+                    Assert.True(writer.Write(image));
+                }
+                return File.ReadAllBytes(fileName);
+            }
+            finally
+            {
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+            }
+        }
+
+        [Fact]
+        public void OpenFromStream()
+        {
+            using var stream = new MemoryStream(CreateSampleVideoBytes());
+            using var capture = new VideoCapture(stream, StreamCaptureApi, Array.Empty<int>());
+
+            Assert.True(capture.IsOpened());
+            Assert.Equal(3, capture.FrameCount);
+
+            using var frame = new Mat();
+            Assert.True(capture.Read(frame));
+            Assert.False(frame.Empty());
+        }
+
+        [Fact]
+        public void OpenNonAsciiPathViaFileStream()
+        {
+            // On Windows, the narrow-string VideoCapture(string) constructor can fail to open a path
+            // containing characters that aren't representable in the process's ANSI code page, even
+            // though the file exists. Wrapping the path in a FileStream (which uses Unicode file APIs)
+            // works around that without buffering the whole file into memory.
+            var dir = Path.Combine(Path.GetTempPath(), "非ASCIIパステスト");
+            Directory.CreateDirectory(dir);
+            var fileName = Path.Combine(dir, "動画.avi");
+            try
+            {
+                File.WriteAllBytes(fileName, CreateSampleVideoBytes());
+
+                using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                using var capture = new VideoCapture(stream, StreamCaptureApi, Array.Empty<int>());
+
+                Assert.True(capture.IsOpened());
+                using var frame = new Mat();
+                Assert.True(capture.Read(frame));
+                Assert.False(frame.Empty());
+            }
+            finally
+            {
+                try { Directory.Delete(dir, true); } catch (IOException) { /* best-effort cleanup */ }
+            }
+        }
+
+        [Fact]
+        public void OpenMethodFromStream()
+        {
+            using var stream = new MemoryStream(CreateSampleVideoBytes());
+            using var capture = new VideoCapture();
+            capture.SetExceptionMode(true);
+            var opened = capture.Open(stream, StreamCaptureApi, Array.Empty<int>());
+
+            Assert.True(opened);
+            Assert.True(capture.IsOpened());
+            Assert.Equal(3, capture.FrameCount);
+        }
+
+        private sealed class CountingStreamReader(Stream inner) : IStreamReader
+        {
+            public int ReadCount { get; private set; }
+
+            public long Read(Span<byte> buffer)
+            {
+                ReadCount++;
+                return inner.Read(buffer);
+            }
+
+            public long Seek(long offset, SeekOrigin origin) => inner.Seek(offset, origin);
+        }
+
+        [Fact]
+        public void OpenFromCustomStreamReader()
+        {
+            using var stream = new MemoryStream(CreateSampleVideoBytes());
+            var reader = new CountingStreamReader(stream);
+            using var capture = new VideoCapture(reader, StreamCaptureApi, Array.Empty<int>());
+
+            Assert.True(capture.IsOpened());
+            using var frame = new Mat();
+            Assert.True(capture.Read(frame));
+            Assert.False(frame.Empty());
+            Assert.True(reader.ReadCount > 0);
+        }
     }
-#endif

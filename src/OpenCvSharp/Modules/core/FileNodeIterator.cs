@@ -1,15 +1,15 @@
-﻿using System.Collections;
+using System.Collections;
 using OpenCvSharp.Internal;
 
 // ReSharper disable UnusedMember.Global
 
 namespace OpenCvSharp;
 
-/// <inheritdoc cref="DisposableCvObject" />
+/// <inheritdoc cref="CvObject" />
 /// <summary>
 /// File Storage Node class
 /// </summary>
-public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>, IEnumerator<FileNode>
+public class FileNodeIterator : CvObject, IEquatable<FileNodeIterator>, IEnumerator<FileNode>
 {
     /// <summary>
     /// The default constructor
@@ -17,7 +17,8 @@ public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>
     public FileNodeIterator()
     {
         NativeMethods.HandleException(
-            NativeMethods.core_FileNodeIterator_new1(out ptr));
+            NativeMethods.core_FileNodeIterator_new1(out var p));
+        InitSafeHandle(p);
     }
 
     /// <summary>
@@ -26,17 +27,17 @@ public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>
     /// <param name="ptr"></param>
     public FileNodeIterator(IntPtr ptr)
     {
-        this.ptr = ptr;
+        InitSafeHandle(ptr);
     }
 
     /// <summary>
     /// Releases unmanaged resources
     /// </summary>
-    protected override void DisposeUnmanaged()
+
+    private void InitSafeHandle(IntPtr p, bool ownsHandle = true)
     {
-        NativeMethods.HandleException(
-            NativeMethods.core_FileNodeIterator_delete(ptr));
-        base.DisposeUnmanaged();
+        SetSafeHandle(new OpenCvPtrSafeHandle(p, ownsHandle,
+            static h => NativeMethods.HandleException(NativeMethods.core_FileNodeIterator_delete(h))));
     }
 
     /// <summary>
@@ -49,11 +50,9 @@ public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>
     /// <returns></returns>
     public FileNodeIterator ReadRaw(string fmt, IntPtr vec, long maxCount = int.MaxValue)
     {
-        if (fmt is null)
-            throw new ArgumentNullException(nameof(fmt));
+        ArgumentNullException.ThrowIfNull(fmt);
         NativeMethods.HandleException(
-            NativeMethods.core_FileNodeIterator_readRaw(ptr, fmt, vec, new IntPtr(maxCount)));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNodeIterator_readRaw(Handle, fmt, vec, new IntPtr(maxCount)));
         return this;
     }      
 
@@ -66,8 +65,7 @@ public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>
         {
             ThrowIfDisposed();
             NativeMethods.HandleException(
-                NativeMethods.core_FileNodeIterator_operatorAsterisk(ptr, out var p));
-            GC.KeepAlive(this);
+                NativeMethods.core_FileNodeIterator_operatorAsterisk(Handle, out var p));
             return new FileNode(p);
         }
     }
@@ -87,8 +85,7 @@ public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNodeIterator_operatorIncrement(ptr, out var changed));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNodeIterator_operatorIncrement(Handle, out var changed));
         return changed != 0;
     }
 
@@ -101,8 +98,7 @@ public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>
     {
         ThrowIfDisposed();
         NativeMethods.HandleException(
-            NativeMethods.core_FileNodeIterator_operatorPlusEqual(ptr, ofs, out var changed));
-        GC.KeepAlive(this);
+            NativeMethods.core_FileNodeIterator_operatorPlusEqual(Handle, ofs, out var changed));
         return changed != 0;
     }
 
@@ -111,24 +107,21 @@ public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>
     /// Usually it is more convenient to use operator `>>` instead of this method.
     /// </summary>
     /// <param name="fmt">Specification of each array element.See @ref format_spec "format specification"</param>
-    /// <param name="vec">Pointer to the destination array.</param>
+    /// <param name="vec">Output array the decoded elements are written into, overwritten in place.</param>
     /// <param name="maxCount">Number of elements to read. If it is greater than number of remaining elements then all of them will be read.</param>
     /// <returns></returns>
     public FileNodeIterator ReadRaw(string fmt, byte[] vec, long maxCount = int.MaxValue)
     {
-        if (fmt is null)
-            throw new ArgumentNullException(nameof(fmt));
-        if (vec is null)
-            throw new ArgumentNullException(nameof(vec));
+        ArgumentNullException.ThrowIfNull(fmt);
+        ArgumentNullException.ThrowIfNull(vec);
         unsafe
         {
             fixed (byte* vecPtr = vec)
             {
                 NativeMethods.HandleException(
-                    NativeMethods.core_FileNodeIterator_readRaw(ptr, fmt, new IntPtr(vecPtr), new IntPtr(maxCount)));
+                    NativeMethods.core_FileNodeIterator_readRaw(Handle, fmt, new IntPtr(vecPtr), new IntPtr(maxCount)));
             }
         }
-        GC.KeepAlive(this);
         return this;
     }
         
@@ -148,9 +141,8 @@ public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>
         other.ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.core_FileNodeIterator_operatorEqual(ptr, other.CvPtr, out var ret));
+            NativeMethods.core_FileNodeIterator_operatorEqual(Handle, other.CvPtr, out var ret));
 
-        GC.KeepAlive(this);
         GC.KeepAlive(other);
 
         return ret != 0;
@@ -160,15 +152,13 @@ public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>
         
     public long Minus(FileNodeIterator it)
     {
-        if (it is null)
-            throw new ArgumentNullException(nameof(it));
+        ArgumentNullException.ThrowIfNull(it);
         ThrowIfDisposed();
         it.ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.core_FileNodeIterator_operatorMinus(ptr, it.CvPtr, out var ret));
+            NativeMethods.core_FileNodeIterator_operatorMinus(Handle, it.CvPtr, out var ret));
 
-        GC.KeepAlive(this);
         GC.KeepAlive(it);
 
         return ret.ToInt64();
@@ -176,15 +166,13 @@ public class FileNodeIterator : DisposableCvObject, IEquatable<FileNodeIterator>
         
     public bool LessThan(FileNodeIterator it)
     {
-        if (it is null)
-            throw new ArgumentNullException(nameof(it));
+        ArgumentNullException.ThrowIfNull(it);
         ThrowIfDisposed();
         it.ThrowIfDisposed();
 
         NativeMethods.HandleException(
-            NativeMethods.core_FileNodeIterator_operatorLessThan(ptr, it.CvPtr, out var ret));
+            NativeMethods.core_FileNodeIterator_operatorLessThan(Handle, it.CvPtr, out var ret));
 
-        GC.KeepAlive(this);
         GC.KeepAlive(it);
 
         return ret != 0;

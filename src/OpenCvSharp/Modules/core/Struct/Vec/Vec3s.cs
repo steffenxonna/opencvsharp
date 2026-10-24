@@ -1,53 +1,31 @@
-﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using OpenCvSharp.Internal.Util;
+
+#pragma warning disable CA1051
 
 namespace OpenCvSharp;
 
 /// <summary>
 /// 3-Tuple of short (System.Int16)
 /// </summary>
-[Serializable]
 [StructLayout(LayoutKind.Sequential)]
-[SuppressMessage("Design", "CA1051: Do not declare visible instance fields")]
 // ReSharper disable once InconsistentNaming
-public struct Vec3s : IVec<Vec3s, short>, IEquatable<Vec3s>
+public record struct Vec3s(short Item0, short Item1, short Item2)
 {
     /// <summary>
     /// The value of the first component of this object.
     /// </summary>
-    public short Item0;
+    public short Item0 = Item0;
 
     /// <summary>
     /// The value of the second component of this object.
     /// </summary>
-    public short Item1;
+    public short Item1 = Item1;
 
     /// <summary>
     /// The value of the third component of this object.
     /// </summary>
-    public short Item2;
-
-    /// <summary>
-    /// Deconstructing a Vector
-    /// </summary>
-    /// <param name="item0"></param>
-    /// <param name="item1"></param>
-    /// <param name="item2"></param>
-    public readonly void Deconstruct(out short item0, out short item1, out short item2) => (item0, item1, item2) = (Item0, Item1, Item2);
-
-    /// <summary>
-    /// Initializer
-    /// </summary>
-    /// <param name="item0"></param>
-    /// <param name="item1"></param>
-    /// <param name="item2"></param>
-    public Vec3s(short item0, short item1, short item2)
-    {
-        Item0 = item0;
-        Item1 = item1;
-        Item2 = item2;
-    }
+    public short Item2 = Item2;
 
     #region Operators
 
@@ -96,6 +74,7 @@ public struct Vec3s : IVec<Vec3s, short>, IEquatable<Vec3s>
     public static Vec3s operator -(Vec3s a, Vec3s b) => a.Subtract(b);
     public static Vec3s operator *(Vec3s a, double alpha) => a.Multiply(alpha);
     public static Vec3s operator /(Vec3s a, double alpha) => a.Divide(alpha);
+    public static Vec3s operator -(Vec3s a) => new(SaturateCast.ToInt16(-a.Item0), SaturateCast.ToInt16(-a.Item1), SaturateCast.ToInt16(-a.Item2));
 #pragma warning restore 1591
 
     /// <summary>
@@ -137,49 +116,6 @@ public struct Vec3s : IVec<Vec3s, short>, IEquatable<Vec3s>
     // ReSharper restore InconsistentNaming
 #pragma warning restore 1591
 
-    /// <inheritdoc />
-    public readonly bool Equals(Vec3s other) =>
-        Item0 == other.Item0 &&
-        Item1 == other.Item1 &&
-        Item2 == other.Item2;
-
-    /// <inheritdoc />
-    public readonly override bool Equals(object? obj)
-    {
-        if (obj is null) return false;
-        return obj is Vec3s v && Equals(v);
-    }
-
-    /// <summary> 
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    public static bool operator ==(Vec3s a, Vec3s b) => a.Equals(b);
-
-    /// <summary> 
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    public static bool operator !=(Vec3s a, Vec3s b) => !a.Equals(b);
-
-    /// <inheritdoc />
-    public readonly override int GetHashCode()
-    {
-#if DOTNET_FRAMEWORK || NETSTANDARD2_0
-        unchecked
-        {
-            var hashCode = Item0.GetHashCode();
-            hashCode = (hashCode * 397) ^ Item1.GetHashCode();
-            hashCode = (hashCode * 397) ^ Item2.GetHashCode();
-            return hashCode;
-        }
-#else
-            return HashCode.Combine(Item0, Item1, Item2);
-#endif
-    }
-
-    /// <inheritdoc />
-    public readonly override string ToString() => $"{nameof(Vec3s)} ({Item0}, {Item1}, {Item2})";
+    /// <summary>Returns a <see cref="Span{T}"/> over the 3 elements of this vector.</summary>
+    public Span<short> AsSpan() => MemoryMarshal.CreateSpan(ref Item0, 3);
 }

@@ -1,14 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net48;net6.0;</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>OpenCvSharp</AssemblyName>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-    <PackageId>OpenCvSharp</PackageId>
+    <PackageId>OpenCvSharp5</PackageId>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
@@ -21,20 +21,48 @@
     <RepositoryUrl>https://github.com/shimat/opencvsharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <!-- NuGet Package Metadata -->
+    <Title>OpenCvSharp core library. A package of separate native bindings for your OS is required.</Title>
+    <Authors>shimat</Authors>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/shimat/opencvsharp</PackageProjectUrl>
+    <PackageIcon>opencvsharp.png</PackageIcon>
+    <Description>OpenCV wrapper for .NET. Since this package includes only core managed libraries, another package of native bindings for your OS is required (OpenCvSharp5.runtime.*).</Description>
+    <PackageTags>Image Processing OpenCV Wrapper FFI opencvsharp</PackageTags>
+    <Copyright>Copyright 2008-2026</Copyright>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.managed.md</PackageReadmeFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+  <PropertyGroup>
+    <AnalysisMode>recommended</AnalysisMode>
   </PropertyGroup>
-    
+
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.6.3" />
+    <!-- OutputItemType="Analyzer" enables the analyzer during in-solution builds.
+         The None item below is also required to place the DLL under analyzers/dotnet/cs/
+         inside the NuGet package; OutputItemType alone does not trigger packaging. -->
+    <!-- UndefineProperties: a consumer publishing with PublishAot/RuntimeIdentifier (e.g.
+         OpenCvSharp.Tests.NativeAot) would otherwise propagate those global properties down to
+         this netstandard2.0 analyzer project, which fails with NETSDK1207 (AOT unsupported on
+         that TFM) even though the analyzer itself is never part of the AOT-published output. -->
+    <ProjectReference Include="..\OpenCvSharp.Analyzers\OpenCvSharp.Analyzers.csproj"
+                      ReferenceOutputAssembly="false"
+                      OutputItemType="Analyzer"
+                      SetTargetFramework="TargetFramework=netstandard2.0"
+                      UndefineProperties="PublishAot;PublishTrimmed;PublishReadyToRun;PublishSingleFile;RuntimeIdentifier;SelfContained" />
+    <None Include="..\OpenCvSharp.Analyzers\bin\$(Configuration)\netstandard2.0\OpenCvSharp.Analyzers.dll"
+          Pack="true"
+          PackagePath="analyzers/dotnet/cs"
+          Visible="false" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.402" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <None Include="../../packaging/nuget/icon/opencvsharp.png" Pack="true" PackagePath="" />
+    <None Include="../../packaging/nuget/README.managed.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,24 +71,8 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48'">
-    <Reference Include="System.Security" />
-    <Reference Include="System.Web" />
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <PackageReference Include="System.ValueTuple" Version="4.6.1" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
-    <DefineConstants>$(DefineConstants);DOTNET_FRAMEWORK;</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$(TargetFramework.Contains('netstandard')) Or $(TargetFramework.Contains('netcoreapp')) ">
-    <DefineConstants>TRACE;DOTNETCORE;WINRT</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$(TargetFramework.Contains('net6.0')) ">
-    <DefineConstants>TRACE;DOTNETCORE;</DefineConstants>
+  <PropertyGroup>
+    <DefineConstants>TRACE;</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release-JP' ">
@@ -68,7 +80,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NoWarn>1701;1702;CA1303;CA1707;CA1814;CA1401;CA1720;CA2213;</NoWarn>
+    <NoWarn>1701;1702;CA1303;CA1707;CA1814;CA1401;CA1720;CA2213;CA1510;CA1512;CA1513</NoWarn>
   </PropertyGroup>
 
 </Project>
